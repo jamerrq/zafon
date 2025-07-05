@@ -1,0 +1,8 @@
+# Paquetes que requieren setup especial o repositorios externos
+# (NO instalar directo con apt, usar scripts dedicados)
+docker-ce
+docker-buildx-plugin
+docker-compose-plugin
+brave-browser
+code
+microsoft-edge-stable

@@ -1,0 +1,58 @@
+# Set personal aliases, overriding those provided by Oh My Zsh libs,
+# plugins, and themes. Aliases can be placed here, though Oh My Zsh
+# users are encouraged to define aliases within a top-level file in
+# the $ZSH_CUSTOM folder, with .zsh extension. Examples:
+# - $ZSH_CUSTOM/aliases.zsh
+# - $ZSH_CUSTOM/macos.zsh
+# For a full list of active aliases, run `alias`.
+#
+# Example aliases
+# alias zshconfig="mate ~/.zshrc"
+# alias ohmyzsh="mate ~/.oh-my-zsh"
+
+alias zshconfig="vi ~/.zshrc"
+alias omzconfig="vi ~/.oh-my-zsh"
+
+alias py3='python3'
+alias py='python'
+
+alias ils='timg --grid=2x1 --upscale=i --center --title --frames=1 '
+
+# GIT ALIASES
+alias br='branch'
+alias pull='branch pull'
+alias push='branch push'
+alias st='git status -s'
+alias cm='git commit -a -m'
+
+# Zafon
+alias zafon="~/zafon/zafon-launcher.sh"
+
+# YADM ALIASES (loaded from .zsh_yadm_aliases if exists)
+# if not, generate it from git.plugin.zsh
+if [[ -f ~/.zsh_yadm_aliases ]]; then
+  source ~/.zsh_yadm_aliases
+else
+  grep '^alias ' ~/.oh-my-zsh/plugins/git/git.plugin.zsh | \
+  sed 's/git /yadm /g; s/alias g/alias y/' > ~/.zsh_yadm_aliases
+  source ~/.zsh_yadm_aliases
+fi
+
+# info para aliases
+local -a exclude_aliases=('cat' 'ls' 'll' 'la' 'l' 'ils' 'md' 'history' 'which-command' 'pull' 'push' 'py' 'py3' 'rd' 'st' 'zafon', 'grep')
+
+for alias_name in ${(ok)aliases}; do
+  if (( ${exclude_aliases[(Ie)$alias_name]} )); then
+    continue
+  fi
+
+  if [[ "$alias_name" == g* || "$alias_name" == git-* ]]; then
+    local original_command="${aliases[$alias_name]}"
+    unalias "$alias_name"
+
+    functions[$alias_name]="
+      print -P \"\n%F{yellow}\ueeed %F{green}${(q)original_command}%f\n\"
+      command ${(z)original_command} \"\$@\"
+    "
+  fi
+done

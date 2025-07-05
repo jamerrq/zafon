@@ -1,0 +1,291 @@
+# i3 config file (v4)
+
+bindsym F13 exec --no-startup-id rofi -show drun -show-icons
+bindsym F14 exec --no-startup-id kitty
+bindsym F15 exec --no-startup-id brave-browser
+bindsym F16 exec --no-startup-id playerctl play-pause
+bindsym Shift+F13 kill
+bindsym Shift+F16 exec --no-startup-id playerctl next
+bindsym Control+F16 exec --no-startup-id playerctl previous
+
+# --- Default Layout ---
+workspace_layout tabbed
+
+# Default border (to see round corners)
+for_window [all] border pixel 0
+gaps inner 9
+
+# load Xmodmap
+exec --no-startup-id xmodmap ~/.Xmodmap
+
+# --- Test notifications ---
+bindsym $mod+F8 exec --no-startup-id sh ~/dev/scripts/bash/test-notifications.sh
+
+# --- Right Ctrl for Right Click (broken mouse) ----
+# exec --no-startup-id xbindkeys
+# exec --no-startup-id xmodmap -e "pointer = 3 2 1"
+# exec --no-startup-id notify-send -u "low" "Right Ctrl" "Right Click"
+
+# --- Autoclicker ---
+# --- Currently replaced by xclicker ---
+# https://github.com/robiot/xclicker
+
+# bindsym $mod+p exec --no-startup-id /home/jamerrq/.config/i3/scripts/auto-clicker.sh
+# bindsym $mod+Shift+p exec --no-startup-id killall auto-clicker.sh
+
+# --- Media Control Keybinds ---
+
+# bindsym $mod+F5 exec --no-startup-id playerctl previous
+# bindsym $mod+F6 exec --no-startup-id playerctl play-pause
+# bindsym $mod+F7 exec --no-startup-id playerctl next
+
+# --- Volume Keys ---
+
+bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ +5%
+bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ -5%
+bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute @DEFAULT_SINK@ toggle
+bindsym XF86AudioMicMute exec --no-startup-id pactl set-source-mute @DEFAULT_SOURCE@ toggle
+
+# --- Screenshots ---
+
+bindsym Print exec --no-startup-id flameshot gui
+bindsym $mod+Print exec --no-startup-id flameshot full -p ~/pictures/flameshot
+bindsym $mod+Shift+Print exec --no-startup-id flameshot full -p ~/pictures/flameshot
+
+# --- Floating windows ---
+
+# for_window [class=kitty] floating enable
+# for_window [class=Spotify] floating enable
+# for_window [class=Minecraft] floating enable
+
+# --- Resizing ---
+
+# Use Mouse+$mod to drag floating windows to their wanted position
+floating_modifier $mod
+
+mode "resize" {
+        # These bindings trigger as soon as you enter the resize mode
+
+        # Pressing left will shrink the window’s width.
+        # Pressing right will grow the window’s width.
+        # Pressing up will shrink the window’s height.
+        # Pressing down will grow the window’s height.
+        bindsym j resize shrink width 10 px or 10 ppt
+        bindsym k resize grow height 10 px or 10 ppt
+        bindsym l resize shrink height 10 px or 10 ppt
+        bindsym ntilde resize grow width 10 px or 10 ppt
+
+        # same bindings, but for the arrow keys
+        bindsym Left resize shrink width 10 px or 10 ppt
+        bindsym Down resize grow height 10 px or 10 ppt
+        bindsym Up resize shrink height 10 px or 10 ppt
+        bindsym Right resize grow width 10 px or 10 ppt
+
+        # back to normal: Enter or Escape or $mod+r
+        bindsym Return mode "default"
+        bindsym Escape mode "default"
+        bindsym $mod+r mode "default"
+}
+
+bindsym $mod+r mode "resize"
+
+# --- Wallpaper ---
+exec --no-startup-id feh --bg-scale --zoom fill ~/pictures/background.jpg
+
+# # --- Capslock ---
+# mode "\ueeb1 " {
+#     bindsym Caps_Lock mode "default"
+# }
+
+# bindsym Caps_Lock mode "\ueeb1 "
+
+#
+
+# --- Variables ---
+set $mod Mod4
+set $term kitty
+
+# --- Font ---
+font pango:ShureTechMono Nerd Font Mono Bold 10.5
+
+# --- Gaps (i3-gaps) ---
+# gaps inner 10
+# gaps outer 10
+# smart_borders on
+
+# --- Colors ---
+client.focused          #4c7899 #285577 #ffffff #2e9ef4 #285577
+client.focused_inactive #333333 #5f676a #ffffff #484e50 #5f676a
+client.unfocused        #333333 #222222 #888888 #292d2e #222222
+client.urgent           #2f343a #900000 #ffffff #900000 #900000
+client.placeholder      #000000 #0c0c0c #ffffff #000000 #0c0c0c
+
+# --- Startup ---
+# exec --no-startup-id xss-lock --transfer-sleep-lock -- i3lock
+exec --no-startup-id picom
+
+# --- Keybindings: Launching ---
+bindsym $mod+Return exec $term
+
+bindsym $mod+d exec --no-startup-id rofi -show drun -show-icons
+bindsym $mod+Shift+d exec --no-startup-id rofi -show run -show-icons
+bindsym $mod+Shift+e exec --no-startup-id rofi -modi "scripts:~/dev/scripts/bash/dmenu-scripts.sh" -show scripts
+
+bindsym $mod+Shift+q kill
+
+# --- Keybindings: Focus ---
+bindsym $mod+h focus left
+bindsym $mod+j focus down
+bindsym $mod+k focus up
+bindsym $mod+l focus right
+
+# --- Keybindings: Move ---
+bindsym $mod+Shift+h move left
+bindsym $mod+Shift+j move down
+bindsym $mod+Shift+k move up
+bindsym $mod+Shift+l move right
+
+# Also use $mod+arrow(s)
+bindsym $mod+Left focus left
+bindsym $mod+Down focus down
+bindsym $mod+Up focus up
+bindsym $mod+Right focus right
+
+bindsym $mod+Shift+Left move left
+bindsym $mod+Shift+Down move down
+bindsym $mod+Shift+Up move up
+bindsym $mod+Shift+Right move right
+
+# --- Keybindings: Split ---
+bindsym $mod+v split v
+bindsym $mod+b split h
+
+# --- Keybindings: Layouts ---
+bindsym $mod+e layout toggle split
+bindsym $mod+f fullscreen toggle
+bindsym $mod+s layout stacking
+bindsym $mod+w layout tabbed
+bindsym $mod+t layout toggle split
+
+# --- Workspaces ---
+set $ws1 "1"
+set $ws2 "2"
+set $ws3 "3"
+set $ws4 "4"
+set $ws5 "5"
+set $ws6 "6"
+set $ws7 "7"
+set $ws8 "8"
+set $ws9 "9"
+set $ws10 "0"
+
+bindsym $mod+1 workspace $ws1
+bindsym $mod+2 workspace $ws2
+bindsym $mod+3 workspace $ws3
+bindsym $mod+4 workspace $ws4
+bindsym $mod+5 workspace $ws5
+bindsym $mod+6 workspace $ws6
+bindsym $mod+7 workspace $ws7
+bindsym $mod+8 workspace $ws8
+bindsym $mod+9 workspace $ws9
+bindsym $mod+0 workspace $ws10
+
+# move focused container to workspace
+bindsym $mod+Shift+1 move container to workspace number $ws1
+bindsym $mod+Shift+2 move container to workspace number $ws2
+bindsym $mod+Shift+3 move container to workspace number $ws3
+bindsym $mod+Shift+4 move container to workspace number $ws4
+bindsym $mod+Shift+5 move container to workspace number $ws5
+bindsym $mod+Shift+6 move container to workspace number $ws6
+bindsym $mod+Shift+7 move container to workspace number $ws7
+bindsym $mod+Shift+8 move container to workspace number $ws8
+bindsym $mod+Shift+9 move container to workspace number $ws9
+bindsym $mod+Shift+0 move container to workspace number $ws10
+
+# --- Floating Rules ---
+bindsym $mod+Shift+space floating toggle
+
+for_window [class="confirmreset"] floating enable
+for_window [class="toolbar"] floating enable
+for_window [class="Arandr"] floating enable
+for_window [class="Gpick"] floating enable
+for_window [class="Kruler"] floating enable
+for_window [class="MessageWin"] floating enable
+for_window [class="Sxiv"] floating enable
+for_window [class="Wpa_gui"] floating enable
+for_window [class="pinentry"] floating enable
+for_window [class="veromix"] floating enable
+for_window [class="xtightvncviewer"] floating enable
+for_window [title="Event Tester"] floating enable
+
+# --- Window Marks ---
+bindsym $mod+m mark mywindow
+bindsym $mod+g [con_mark="mywindow"] focus
+
+# --- Config Reload/Exit ---
+bindsym $mod+Shift+c reload
+bindsym $mod+Shift+r restart
+
+# --- Redshift ---
+bindsym $mod+x exec --no-startup-id redshift -O 4000
+bindsym $mod+Shift+x exec --no-startup-id redshift -x
+
+# --- Power Menu ---
+set $mode_system  \
+      [l(ock)] [e(logout)] [s(uspend)] [h(ibernate)] [r(eboot)] [P(oweroff)]
+
+$lock_script = "~/dev/scripts/bash/lock.sh"
+mode "$mode_system" {
+    bindsym l exec --no-startup-id sh $lock_script, mode "default"
+    bindsym s exec --no-startup-id sh $lock_script --suspend, mode "default"
+    bindsym h exec --no-startup-id sh $lock_script --hibernate, mode "default"
+    bindsym r exec --no-startup-id systemctl reboot, mode "default"
+    bindsym shift+p exec --no-startup-id systemctl poweroff, mode "default"
+    bindsym e exec --no-startup-id i3-nagbar \
+            -f "pango:ShureTechMono Nerd Font Mono Bold 10.5" -t warning \
+            -m 'end session?' -b 'yes' 'i3-msg exit', mode "default"
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
+
+bindsym $mod+BackSpace mode "$mode_system"
+
+# --- COLORS ---
+# class                 border  bground text    indicator child_border
+client.focused          #328E6E #328E6E #FFFFFF #2E9EF4   #328E6E
+client.focused_inactive #333333 #5F676A #FFFFFF #484E50   #5F676A
+client.unfocused        #333333 #222222 #888888 #292D2E   #222222
+client.urgent           #2F343A #900000 #FFFFFF #900000   #900000
+client.placeholder      #000000 #0C0C0C #FFFFFF #000000   #0C0C0C
+
+client.background       #FFFFFF
+
+# --- Status Bar (Bumblebee Status) ---
+# https://bumblebee-status.readthedocs.io/en/main/modules.html
+bar {
+	font pango:Font Awesome, ShureTechMono Nerd Font Bold 10
+	position bottom
+	tray_output none
+	status_command ~/.config/bumblebee-status/bumblebee-status \
+                -m spotify nic disk:root cpu memory load datetime \
+                   pasink pasource caffeine capslock dunst \
+		-a nic \
+		-p root.path=/ time.format="%H:%M CW %V" date.format="%a, %b %d %Y" \
+                   disk.format="{percent:05.02f}%" \
+                   datetime.format=" %a, %d %b %Y |🗓️ {roman_week}|  %H:%M" \
+                   memory.format="{percent:05.02f}%" cpu.format="{:.01f}%" \
+                   spacer.text="🚬 LXIV" disk.warning=85 \
+                   load.warning=90 load.critical=95 \
+		-t iceberg-rainbow 
+  colors {
+    background #000000
+    statusline #328E6E
+    separator  #328E6E
+
+    focused_workspace  #328E6E #328E6E #FFFFFF
+    active_workspace   #333333 #222222 #FFFFFF
+    inactive_workspace #333333 #222222 #888888
+    urgent_workspace   #2F343A #900000 #FFFFFF
+    binding_mode       #2F343A #900000 #FFFFFF
+  }
+}

@@ -1,0 +1,50 @@
+[global]
+transparency = 5
+frame_width = 2
+frame_color = "#328E6E"
+separator_height = 4
+padding = 12
+horizontal_padding = 16
+corner_radius = 8
+font = ShureTechMono Nerd Font 10
+max_icon_size = 64
+
+# Notificaciones múltiples con espacio entre ellas
+line_height = 0     # esto ayuda con el spacing interno
+separator_color = frame
+gap_size = 8       # espacio entre notificaciones
+
+# Posición
+# geometry = "300x5-30+30"
+
+# Tiempo
+timeout = 10
+
+[urgency_low]
+timeout = 6
+background = "#1e1e2e"
+foreground = "#cdd6f4"
+frame_color = "#45475a"
+icon = "~/pictures/icons/xlr8.png"
+
+[urgency_normal]
+timeout = 10
+background = "#1e1e2e"
+foreground = "#f9e2af"
+frame_color = "#fab387"
+icon = "~/pictures/icons/diamond.png"
+
+[urgency_critical]
+timeout = 0
+background = "#1e1e2e"
+foreground = "#f38ba8"
+frame_color = "#f38ba8"
+icon = "~/pictures/icons/four-arms.png"
+
+[kitty]
+appname = "Kitty"
+icon = "~/pictures/icons/ultra-t.png"
+
+[spotify]
+appname = "Spotify"
+frame_color = "#328E6E"

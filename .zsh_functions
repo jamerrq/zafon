@@ -1,0 +1,27 @@
+# play youtube video in terminal
+function ytdl() {
+  youtube-dl -q -o- -f'[height<480]' "$@" --user-agent "Mozilla/5.0 (X11; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0" | timg -V -
+}
+
+# extract tar utility
+extract_tar() {
+  local file="$1"
+
+  if [[ -z "$file" || ! -f "$file" ]]; then
+    echo "[ERROR]: must provide a valid file"
+    return 1
+  fi
+
+  case "$file" in
+    *.tar.bz2)  tar -xvjf "$file" ;;
+    *.tar.gz)   tar -xvzf "$file" ;;
+    *.tar.xz)   tar -xvJf "$file" ;;
+    *.tar.zst)  tar --zstd -xvf "$file" ;; # requiere tar >= 1.30 con zstd
+    *.tar.lz)   tar --lzip -xvf "$file" ;; # opcional, si tienes soporte
+    *.tar)      tar -xvf "$file" ;;
+    *.tgz)      tar -xvzf "$file" ;;
+    *.tbz2)     tar -xvjf "$file" ;;
+    *)          echo "[ERROR]: file's format not recognized: $file"
+                return 2 ;;
+  esac
+}
