@@ -82,15 +82,15 @@ function print_gradient_ascii_chars() {
 }
 
 # mostrar arte ASCII solo al inicio
-function show_ascii() {
+function show_ascii {
     clear
-    # Cambia la función aquí para probar la otra opción
     print_gradient_ascii_lines "$(dirname "$0")/zafon.ascii" | center
     # print_gradient_ascii_chars "$(dirname "$0")/zafon.ascii" | center
-    sleep 2.5
+    local timeout=${1:-2.5}
+    sleep "$timeout"
 }
 
-show_ascii
+show_ascii 2.5
 
 while true; do
   clear
@@ -101,6 +101,7 @@ while true; do
     "instalar paquetes base"
     "instalar paquetes especiales"
     "instalar fuentes nerd-fonts"
+    "mostrar ascii"
     "salir"
   )
 
@@ -119,21 +120,8 @@ while true; do
       bash "$(dirname "$0")/install_nerd_fonts.sh"
       read -rp "[INFO] presiona Enter para continuar..."
       ;;
-    "salir")
-      echo "[INFO] saliendo..."
-      clear
-      exit 0
-      ;;
-    *)
-      echo "[ERROR] opción inválida."
-      exit 1
-      ;;
-  esac
-done
-
-  case "$CHOICE" in
-    "instalar nerd-fonts")
-      bash "$(dirname "$0")/install_nerd_fonts.sh"
+    "mostrar ascii")
+      show_ascii 0
       read -rp "[INFO] presiona Enter para continuar..."
       ;;
     "salir")

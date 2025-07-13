@@ -1,21 +1,8 @@
-<pre>
-<code>
-▒███████▒ ▄▄▄        █████▒▒█████   ███▄    █ 
-▒ ▒ ▒ ▄▀░▒████▄    ▓██   ▒▒██▒  ██▒ ██ ▀█   █ 
-░ ▒ ▄▀▒░ ▒██  ▀█▄  ▒████ ░▒██░  ██▒▓██  ▀█ ██▒
-  ▄▀▒   ░░██▄▄▄▄██ ░▓█▒  ░▒██   ██░▓██▒  ▐▌██▒
-▒███████▒ ▓█   ▓██▒░▒█░   ░ ████▓▒░▒██░   ▓██░
-░▒▒ ▓░▒░▒ ▒▒   ▓▒█░ ▒ ░   ░ ▒░▒░▒░ ░ ▒░   ▒ ▒ 
-░░▒ ▒ ░ ▒  ▒   ▒▒ ░ ░       ░ ▒ ▒░ ░ ░░   ░ ▒░
-░ ░ ░ ░ ░  ░   ▒    ░ ░   ░ ░ ░ ▒     ░   ░ ░ 
-  ░ ░          ░  ░           ░ ░           ░ 
-░                                             
-</code>
-</pre>
+# Zafon
+
+![desktop](./lib/imgs/desktop_8.png)
 
 dotfiles manager by [@jamerrq](https://github.com/jamerrq)
-
-![desktop 1](./lib/imgs/desktop_1.png)
 
 ## config files
 
@@ -27,9 +14,11 @@ dotfiles manager by [@jamerrq](https://github.com/jamerrq)
 - [.config/picom](.config/picom)
 - [.config/dunst](.config/dunst)
 - [.config/kitty](.config/kitty)
-- [.gitconfig](.gitconfig)
 - [.config/flameshot](.config/flameshot)
 - [.config/betterlockscreen](.config/betterlockscreen)
+
+### git config
+- [.gitconfig](.gitconfig)
 
 ### shell files
 
@@ -63,7 +52,7 @@ dotfiles manager by [@jamerrq](https://github.com/jamerrq)
 
 ### zafon scripts
 
-Zafon is managed by yadm, you can find the scripts in [zafon](zafon/).
+Zafon is the dotfiles manager, it is managed by [yadm](https://yadm.io/).
 Executing `zafon` or `./zafon/zafon-launcher.sh` will open a menu with the available options.
 
 ### my desktop
@@ -76,4 +65,4 @@ Executing `zafon` or `./zafon/zafon-launcher.sh` will open a menu with the avail
 
 ![desktop 5](./lib/imgs/desktop_5.png)
 
-![desktop 6](./lib/imgs/desktop_6.png)
+![desktop 7](./lib/imgs/desktop_7.png)

@@ -77,7 +77,7 @@ zstyle ':omz:update' mode auto      # update automatically without asking
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git fzf branch zsh-autosuggestions zsh-syntax-highlighting)
+plugins=(git fzf branch zsh-autosuggestions zsh-syntax-highlighting bgnotify)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -145,4 +145,5 @@ eval "$(zoxide init zsh)"
 # Load functions if file exists
 [[ -f ~/.zsh_functions ]] && source ~/.zsh_functions
 
-# MySQL Server
+export EZA_ICONS_AUTO=true
+export EZA_COLORS_AUTO=true
