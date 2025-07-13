@@ -106,6 +106,24 @@ Esto usa la ruta de la última palabra.
 * Usar `setopt interactivecomments` en Zsh para permitir comentarios en línea.
 
 ---
+### Move to media management
+
+#### Convert images to webp
+
+```bash
+for img in lib/imgs/*; do
+  cwebp -q 80 "$img" -o "${img%.*}.webp"
+done
+```
+
+#### Compress images
+
+```bash
+for img in lib/imgs/*; do
+  convert "$img" -quality 80 "${img%.*}.jpg"
+done
+```
+---
 
 ## Notas finales
 

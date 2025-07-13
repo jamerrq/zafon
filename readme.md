@@ -1,6 +1,6 @@
 # Zafon
 
-![desktop](./lib/imgs/desktop_8.png)
+![desktop](./lib/imgs/desktop_8.webp)
 
 dotfiles manager by [@jamerrq](https://github.com/jamerrq)
 
@@ -57,12 +57,12 @@ Executing `zafon` or `./zafon/zafon-launcher.sh` will open a menu with the avail
 
 ### my desktop
 
-![desktop 2](./lib/imgs/desktop_2.png)
+![desktop 2](./lib/imgs/desktop_2.webp)
 
-![desktop 3](./lib/imgs/desktop_3.png)
+![desktop 3](./lib/imgs/desktop_3.webp)
 
-![desktop 4](./lib/imgs/desktop_4.png)
+![desktop 4](./lib/imgs/desktop_4.webp)
 
-![desktop 5](./lib/imgs/desktop_5.png)
+![desktop 5](./lib/imgs/desktop_5.webp)
 
-![desktop 7](./lib/imgs/desktop_7.png)
+![desktop 7](./lib/imgs/desktop_7.webp)
