@@ -121,3 +121,26 @@ XII. To get the stats of a container:
 ```bash
 docker stats <container_name>
 ```
+
+### Setting up SQL Server
+
+II. Is needed to run the following command to set the permissions:
+
+```bash
+VOLUMENAME=/home/jamerrq/sqlvolumes
+docker run --rm --user root \
+    -v $VOLUMENAME:/data \
+    mcr.microsoft.com/mssql/server:2022-latest \
+    bash -c "chown -R mssql /data"
+```
+
+I. To run a container with SQL Server:
+
+```bash
+docker run -e 'ACCEPT_EULA=Y' -e 'MSSQL_SA_PASSWORD=74l,\3KS;Fci' \
+-p 1433:1433 \
+-v /home/jamerrq/sqlvolumes/data:/var/opt/mssql/data \
+-v /home/jamerrq/sqlvolumes/log:/var/opt/mssql/log \
+-v /home/jamerrq/sqlvolumes/secrets:/var/opt/mssql/secrets \
+-d mcr.microsoft.com/mssql/server:2022-latest
+```

@@ -7,9 +7,12 @@ bindsym F16 exec --no-startup-id playerctl play-pause
 bindsym Shift+F13 kill
 bindsym Shift+F16 exec --no-startup-id playerctl next
 bindsym Control+F16 exec --no-startup-id playerctl previous
+bindsym Shift+F15 exec --no-startup-id rfkill toggle bluetooth
+
+exec --no-startup-id xrandr --output VGA-1 --mode 1920x1080 --rate 60
 
 # --- Default Layout ---
-workspace_layout tabbed
+# workspace_layout
 
 # Default border (to see round corners)
 for_window [all] border pixel 0
@@ -106,7 +109,7 @@ set $mod Mod4
 set $term kitty
 
 # --- Font ---
-font pango:ShureTechMono Nerd Font Mono Bold 10.5
+font pango:ShureTechMono Nerd Font Mono Bold 11
 
 # --- Gaps (i3-gaps) ---
 # gaps inner 10
@@ -122,7 +125,8 @@ client.placeholder      #000000 #0c0c0c #ffffff #000000 #0c0c0c
 
 # --- Startup ---
 # exec --no-startup-id xss-lock --transfer-sleep-lock -- i3lock
-exec --no-startup-id picom
+# exec --no-startup-id picom --backend glx --vsync
+# picom --backend xrender --vsync --no-fading-openclose --no-fading-destroyed --shadow=false --blur-background=false --opacity-rule='100:class_g = "*"' &
 
 # --- Keybindings: Launching ---
 bindsym $mod+Return exec $term
@@ -234,15 +238,15 @@ bindsym $mod+Shift+x exec --no-startup-id redshift -x
 set $mode_system  \
       [l(ock)] [e(logout)] [s(uspend)] [h(ibernate)] [r(eboot)] [P(oweroff)]
 
-$lock_script = "~/dev/scripts/bash/lock.sh"
+set $lock_script bash ~/dev/scripts/bash/lock.sh
 mode "$mode_system" {
-    bindsym l exec --no-startup-id sh $lock_script, mode "default"
-    bindsym s exec --no-startup-id sh $lock_script --suspend, mode "default"
-    bindsym h exec --no-startup-id sh $lock_script --hibernate, mode "default"
-    bindsym r exec --no-startup-id systemctl reboot, mode "default"
-    bindsym shift+p exec --no-startup-id systemctl poweroff, mode "default"
+    bindsym l exec --no-startup-id $lock_script, mode "default"
+    bindsym s exec --no-startup-id $lock_script --suspend, mode "default"
+    bindsym h exec --no-startup-id $lock_script --hibernate, mode "default"
+    bindsym r exec --no-startup-id $lock_script --reboot, mode "default"
+    bindsym shift+p exec --no-startup-id $lock_script --shutdown, mode "default"
     bindsym e exec --no-startup-id i3-nagbar \
-            -f "pango:ShureTechMono Nerd Font Mono Bold 10.5" -t warning \
+            -f "pango:ShureTechMono Nerd Font Mono Bold 11" -t warning \
             -m 'end session?' -b 'yes' 'i3-msg exit', mode "default"
     bindsym Return mode "default"
     bindsym Escape mode "default"
@@ -263,20 +267,20 @@ client.background       #FFFFFF
 # --- Status Bar (Bumblebee Status) ---
 # https://bumblebee-status.readthedocs.io/en/main/modules.html
 bar {
-	font pango:Font Awesome, ShureTechMono Nerd Font Bold 10
+	font pango:Font Awesome, ShureTechMono Nerd Font Bold 10.5
 	position bottom
 	tray_output none
 	status_command ~/.config/bumblebee-status/bumblebee-status \
-                -m spotify nic disk:root cpu memory load datetime \
-                   pasink pasource caffeine capslock dunst \
+                -m disk:root memory load datetime \
+                   pasink pasource capslock \
 		-a nic \
 		-p root.path=/ time.format="%H:%M CW %V" date.format="%a, %b %d %Y" \
                    disk.format="{percent:05.02f}%" \
-                   datetime.format=" %a, %d %b %Y |🗓️ {roman_week}|  %H:%M" \
+                   datetime.format="%a, %d %b %Y [󰨳 {roman_week}]  %H:%M" \
                    memory.format="{percent:05.02f}%" cpu.format="{:.01f}%" \
                    spacer.text="🚬 LXIV" disk.warning=85 \
                    load.warning=90 load.critical=95 \
-		-t iceberg-rainbow 
+		-t iceberg-rainbow
   colors {
     background #000000
     statusline #328E6E

@@ -1,6 +1,6 @@
 # Zafon
 
-![desktop](./lib/imgs/desktop_8.webp)
+![desktop](./lib/imgs/desktop.png)
 
 dotfiles manager by [@jamerrq](https://github.com/jamerrq)
 
@@ -31,10 +31,10 @@ dotfiles manager by [@jamerrq](https://github.com/jamerrq)
 
 ### bumblebee-status modules (modified or added by me)
 
-- [.config/bumblebee-status/bumblebee_status/modules/core/datetime.py](.config/bumblebee-status/bumblebee_status/modules/core/datetime.py)
-- [.config/bumblebee-status/bumblebee_status/modules/contrib/caffeine.py](.config/bumblebee-status/bumblebee_status/modules/contrib/caffeine.py)
-- [.config/bumblebee-status/bumblebee_status/modules/contrib/capslock.py](.config/bumblebee-status/bumblebee_status/modules/contrib/capslock.py)
-- [.config/bumblebee-status/bumblebee_status/modules/contrib/minutes_since.py](.config/bumblebee-status/bumblebee_status/modules/contrib/minutes_since.py)
+- [datetime.py](.config/bumblebee-status/bumblebee_status/modules/core/datetime.py)
+- [caffeine.py](.config/bumblebee-status/bumblebee_status/modules/contrib/caffeine.py)
+- [capslock.py](.config/bumblebee-status/bumblebee_status/modules/contrib/capslock.py)
+- [minutes_since.py](.config/bumblebee-status/bumblebee_status/modules/contrib/minutes_since.py)
 
 ### bumblebee-status themes (modified or added by me)
 
@@ -57,12 +57,6 @@ Executing `zafon` or `./zafon/zafon-launcher.sh` will open a menu with the avail
 
 ### my desktop
 
-![desktop 2](./lib/imgs/desktop_2.webp)
+![desktop 2](./lib/imgs/desktop_1.png)
 
-![desktop 3](./lib/imgs/desktop_3.webp)
-
-![desktop 4](./lib/imgs/desktop_4.webp)
-
-![desktop 5](./lib/imgs/desktop_5.webp)
-
-![desktop 7](./lib/imgs/desktop_7.webp)
+![desktop 3](./lib/imgs/desktop_2.png)

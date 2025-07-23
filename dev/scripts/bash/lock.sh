@@ -7,11 +7,30 @@ ICON="$ICON_DIR/${ICONS[RANDOM % ${#ICONS[@]}]}"
 WALL_DIR=~/pictures/wallpapers
 WALL=$(find "$WALL_DIR" -type f | shuf -n 1)
 
-notify-send -i "$ICON" "locking..." "screen will be locked"
-
-betterlockscreen -u "$WALL" --fx blur,dim
 
 lock_and_then() {
+    case "$1" in
+        suspend)
+            notify-send -i "$ICON" "suspending..."
+            ;;
+        hibernate)
+            notify-send -i "$ICON" "hibernating..."
+            ;;
+        reboot)
+            notify-send -i "$ICON" "rebooting..."
+            ;;
+        shutdown)
+            notify-send -i "$ICON" "shutting down..."
+            ;;
+        "")
+            notify-send -i "$ICON" "locking..."
+            ;;
+        *)
+            notify-send -u critical "⚠️ unknown option: $1"
+            ;;
+    esac
+
+    betterlockscreen -u "$WALL" --fx blur,dim
     betterlockscreen -l &
     sleep 1
     dunstctl close-all
@@ -22,6 +41,12 @@ lock_and_then() {
             ;;
         hibernate)
             systemctl hibernate
+            ;;
+        reboot)
+            systemctl reboot
+            ;;
+        shutdown)
+            systemctl poweroff
             ;;
         "")
             ;;
@@ -39,11 +64,17 @@ case "$1" in
     --hibernate)
         lock_and_then hibernate
         ;;
+    --reboot)
+        lock_and_then reboot
+        ;;
+    --shutdown)
+        lock_and_then shutdown
+        ;;
     "" | --lock)
         lock_and_then
         ;;
     *)
-        echo "Usage: $0 [--lock] [--suspend] [--hibernate]"
+        echo "Usage: $0 [--lock] [--suspend] [--hibernate] [--reboot] [--shutdown]"
         exit 1
         ;;
 esac

@@ -108,21 +108,37 @@ Esto usa la ruta de la última palabra.
 ---
 ### Move to media management
 
-#### Convert images to webp
+#### Convert images to webp and zip them
 
 ```bash
-for img in lib/imgs/*; do
-  cwebp -q 80 "$img" -o "${img%.*}.webp"
+#!/bin/bash
+# jpg, png, jpeg inside wallpapers folder
+mkdir -p webp_wallpapers
+
+for img in wallpapers/*.{jpg,jpeg,png}; do
+  filename=$(basename "$img")
+  name="${filename%.*}"
+  cwebp -q 80 "$img" -o "webp_wallpapers/${name}.webp"
 done
+
+# zip webp wallpapers
+zip -r wallpapers wallpapers
 ```
 
-#### Compress images
+#### Zip while ignoring some files/folders
 
 ```bash
-for img in lib/imgs/*; do
-  convert "$img" -quality 80 "${img%.*}.jpg"
-done
+zip -r LA_MBW_ASANA_ORBIT_INTEGRATION-CHANGES.zip LA_MBW_ASANA_ORBIT_INTEGRATION-CHANGES \
+    -x "LA_MBW_ASANA_ORBIT_INTEGRATION-CHANGES/.git/*" \
+    -x "LA_MBW_ASANA_ORBIT_INTEGRATION-CHANGES/*_venv/*" \
+    -x "LA_MBW_ASANA_ORBIT_INTEGRATION-CHANGES/**/_venv/*" \
+    -x "LA_MBW_ASANA_ORBIT_INTEGRATION-CHANGES/**/__pycache__/*" \
+    -x "LA_MBW_ASANA_ORBIT_INTEGRATION-CHANGES/**/*.pyc" \
+    -x "LA_MBW_ASANA_ORBIT_INTEGRATION-CHANGES/.mypy_cache/*" \
+    -x "LA_MBW_ASANA_ORBIT_INTEGRATION-CHANGES/.idea/*" \
+    -x "LA_MBW_ASANA_ORBIT_INTEGRATION-CHANGES/.vscode/*"
 ```
+
 ---
 
 ## Notas finales

@@ -41,10 +41,6 @@ foreground = "#f38ba8"
 frame_color = "#f38ba8"
 icon = "~/pictures/icons/four-arms.png"
 
-[kitty]
-appname = "kitty"
-icon = "~/pictures/icons/ultra-t.png"
-
 [spotify]
 appname = "Spotify"
 frame_color = "#328E6E"
