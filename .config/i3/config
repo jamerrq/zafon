@@ -14,27 +14,18 @@ exec --no-startup-id xrandr --output VGA-1 --mode 1920x1080 --rate 60
 # --- Default Layout ---
 # workspace_layout
 
+title_align center
+
 # Default border (to see round corners)
 for_window [all] border pixel 0
-gaps inner 9
+gaps inner 15
+gaps outer 5
 
 # load Xmodmap
 exec --no-startup-id xmodmap ~/.Xmodmap
 
 # --- Test notifications ---
 bindsym $mod+F8 exec --no-startup-id sh ~/dev/scripts/bash/test-notifications.sh
-
-# --- Right Ctrl for Right Click (broken mouse) ----
-# exec --no-startup-id xbindkeys
-# exec --no-startup-id xmodmap -e "pointer = 3 2 1"
-# exec --no-startup-id notify-send -u "low" "Right Ctrl" "Right Click"
-
-# --- Autoclicker ---
-# --- Currently replaced by xclicker ---
-# https://github.com/robiot/xclicker
-
-# bindsym $mod+p exec --no-startup-id /home/jamerrq/.config/i3/scripts/auto-clicker.sh
-# bindsym $mod+Shift+p exec --no-startup-id killall auto-clicker.sh
 
 # --- Media Control Keybinds ---
 
@@ -125,7 +116,7 @@ client.placeholder      #000000 #0c0c0c #ffffff #000000 #0c0c0c
 
 # --- Startup ---
 # exec --no-startup-id xss-lock --transfer-sleep-lock -- i3lock
-# exec --no-startup-id picom --backend glx --vsync
+exec --no-startup-id picom --backend glx --vsync # xrender glx
 # picom --backend xrender --vsync --no-fading-openclose --no-fading-destroyed --shadow=false --blur-background=false --opacity-rule='100:class_g = "*"' &
 
 # --- Keybindings: Launching ---
@@ -256,7 +247,7 @@ bindsym $mod+BackSpace mode "$mode_system"
 
 # --- COLORS ---
 # class                 border  bground text    indicator child_border
-client.focused          #328E6E #328E6E #FFFFFF #2E9EF4   #328E6E
+client.focused          #34699A #34699A #FFFFFF #2E9EF4   #328E6E
 client.focused_inactive #333333 #5F676A #FFFFFF #484E50   #5F676A
 client.unfocused        #333333 #222222 #888888 #292D2E   #222222
 client.urgent           #2F343A #900000 #FFFFFF #900000   #900000
@@ -270,23 +261,23 @@ bar {
 	font pango:Font Awesome, ShureTechMono Nerd Font Bold 10.5
 	position bottom
 	tray_output none
-	status_command ~/.config/bumblebee-status/bumblebee-status \
-                -m disk:root memory load datetime \
-                   pasink pasource capslock \
+	status_command ~/.local/bin/bumblebee-wrapper \
+                -m spotify disk:root nic cpu memory load datetime \
+                   pasink pasource capslock caffeine dunstctl \
 		-a nic \
-		-p root.path=/ time.format="%H:%M CW %V" date.format="%a, %b %d %Y" \
+		-p root.path=/ \
                    disk.format="{percent:05.02f}%" \
-                   datetime.format="%a, %d %b %Y [󰨳 {roman_week}]  %H:%M" \
-                   memory.format="{percent:05.02f}%" cpu.format="{:.01f}%" \
-                   spacer.text="🚬 LXIV" disk.warning=85 \
+                   memory.format="{percent:05.02f}%" \
+                   cpu.format="{:.01f}%" \
+                   disk.warning=85 \
                    load.warning=90 load.critical=95 \
-		-t iceberg-rainbow
+		-t nikki
   colors {
     background #000000
-    statusline #328E6E
-    separator  #328E6E
+    statusline #34699A
+    separator  #34699A
 
-    focused_workspace  #328E6E #328E6E #FFFFFF
+    focused_workspace  #34699A #34699A #FFFFFF
     active_workspace   #333333 #222222 #FFFFFF
     inactive_workspace #333333 #222222 #888888
     urgent_workspace   #2F343A #900000 #FFFFFF

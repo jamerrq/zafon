@@ -56,7 +56,6 @@ lock_and_then() {
     esac
 }
 
-# --- Lógica de entrada ---
 case "$1" in
     --suspend)
         lock_and_then suspend

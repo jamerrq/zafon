@@ -1,5 +1,3 @@
-## Configuration file for CAVA. Default values are commented out. Use either ';' or '#' for commenting.
-
 [general]
 
 # Smoothing mode. Can be 'normal', 'scientific' or 'waves'. DEPRECATED as of 0.6.0
@@ -32,8 +30,6 @@ bar_spacing = 1.0
 ; lower_cutoff_freq = 50
 ; higher_cutoff_freq = 10000
 
-
-
 [input]
 
 # Audio capturing method. Possible methods are: 'pulse', 'alsa' or 'fifo'.
@@ -55,8 +51,6 @@ source = auto
 
 ; method = fifo
 ; source = /tmp/mpd.fifo
-
-
 
 [output]
 
@@ -92,7 +86,6 @@ channels = mono
 
 gradient = 1
 
-
 # gradient_color_1 = '#3b3c59'
 # gradient_color_2 = '#4b4464'
 # gradient_color_3 = '#4b4464'
@@ -126,6 +119,11 @@ gradient = 1
 # gradient_color_9 = '#69e882'
 # gradient_color_10 = '#acfa70'
 
+gradient_color_1 = '#8DBCC7'
+gradient_color_2 = '#A4CCD9'
+gradient_color_3 = '#C4E1E6'
+gradient_color_4 = '#EBFFD8'
+
 #292f56
 #1e4572
 #005c8b
@@ -137,16 +135,16 @@ gradient = 1
 #69e882
 #acfa70
 
-gradient_color_1 = '#eb3114'
-gradient_color_2 = '#ee5312'
-gradient_color_3 = '#f06d16'
-gradient_color_4 = '#f18320'
-gradient_color_5 = '#f2982e'
-gradient_color_6 = '#f4ab3e'
-gradient_color_7 = '#f5bd51'
-gradient_color_8 = '#f7cf65'
-gradient_color_9 = '#f9e07b'
-gradient_color_10 = '#fcf092'
+# gradient_color_1 = '#eb3114'
+# gradient_color_2 = '#ee5312'
+# gradient_color_3 = '#f06d16'
+# gradient_color_4 = '#f18320'
+# gradient_color_5 = '#f2982e'
+# gradient_color_6 = '#f4ab3e'
+# gradient_color_7 = '#f5bd51'
+# gradient_color_8 = '#f7cf65'
+# gradient_color_9 = '#f9e07b'
+# gradient_color_10 = '#fcf092'
 
 #eb3114
 #ee5312
@@ -176,7 +174,6 @@ gravity = 100
 
 # In bar height, bars that would have been lower that this will not be drawn.
 ; ignore = 0
-
 
 [eq]
 

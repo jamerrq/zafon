@@ -21,7 +21,7 @@ por defecto, mysql crea un usuario root que solo se puede usar con `sudo`:
 sudo mysql
 ```
 
-si necesitas acceder como root sin sudo (por ejemplo, desde python), 
+si necesitas acceder como root sin sudo (por ejemplo, desde python),
 puedes crear un nuevo usuario y darle permisos:
 
 ```sql
@@ -110,3 +110,19 @@ conn.close()
 esto permite simular una base en local con las mismas estructuras de producción, sin depender del mismo motor exacto si producción usa sql server o similar.
 
 recomendación: mantener los scripts SQL en archivos `.sql` para facilitar su mantenimiento y ejecución desde línea de comandos si es necesario.
+
+
+
+---
+
+pasos para instalar sql server
+
+curl https://packages.microsoft.com/keys/microsoft.asc | sudo apt-key add -
+sudo su
+curl https://packages.microsoft.com/config/ubuntu/22.04/prod.list > /etc/apt/sources.list.d/mssql-release.list
+exit
+sudo apt update
+sudo ACCEPT_EULA=Y apt install msodbcsql18
+sudo ACCEPT_EULA=Y apt install mssql-tools18
+echo 'export PATH="$PATH:/opt/mssql-tools18/bin"' >> ~/.bashrc
+source ~/.bashrc

@@ -1,34 +1,25 @@
-# Set personal aliases, overriding those provided by Oh My Zsh libs,
-# plugins, and themes. Aliases can be placed here, though Oh My Zsh
-# users are encouraged to define aliases within a top-level file in
-# the $ZSH_CUSTOM folder, with .zsh extension. Examples:
-# - $ZSH_CUSTOM/aliases.zsh
-# - $ZSH_CUSTOM/macos.zsh
-# For a full list of active aliases, run `alias`.
-#
-# Example aliases
-# alias zshconfig="mate ~/.zshrc"
-# alias ohmyzsh="mate ~/.oh-my-zsh"
-
 alias zshconfig="vi ~/.zshrc"
 alias omzconfig="vi ~/.oh-my-zsh"
+alias zshaliases="vi ~/.zsh_aliases"
+alias nixconfig="sudo vi /etc/nixos/configuration.nix"
+alias nixrb="sudo nixos-rebuild switch"
 
 alias py3='python3'
 alias py='python'
 
 alias ils='timg --grid=2x1 --upscale=i --center --title --frames=1 '
 
-# GIT ALIASES
+# git & branch aliases
 alias br='branch'
 alias pull='branch pull'
 alias push='branch push'
 alias st='git status -s'
 alias cm='git commit -a -m'
 
-# Zafon
+# zafon
 alias zafon="~/zafon/zafon-launcher.sh"
 
-# YADM ALIASES (loaded from .zsh_yadm_aliases if exists)
+# yadm aliases (loaded from .zsh_yadm_aliases if exists)
 # if not, generate it from git.plugin.zsh
 if [[ -f ~/.zsh_yadm_aliases ]]; then
   source ~/.zsh_yadm_aliases
@@ -46,7 +37,7 @@ for alias_name in ${(ok)aliases}; do
     continue
   fi
 
-  if [[ "$alias_name" == g* || "$alias_name" == git-* ]]; then
+  if [[ "$alias_name" == g* || "$alias_name" == git-* || "$alias_name" == y* ]]; then
     local original_command="${aliases[$alias_name]}"
     unalias "$alias_name"
 
