@@ -63,14 +63,14 @@ class Module(core.module.Module):
         if not shutil.which("notify-send"):
             return
 
-        icon_dir = os.path.expanduser("~/pictures/icons")
+        icon_dir = os.path.expanduser("~/pictures/nikki/icons")
         if self.__active:
-            icon = os.path.join(icon_dir, "beast.png")
+            icon = os.path.join(icon_dir, "nikki_awake.png")
             util.cli.execute(
                 f"notify-send -i '{icon}' '{self.__caffeinated}' "
             )
         else:
-            icon = os.path.join(icon_dir, "ghost.png")
+            icon = os.path.join(icon_dir, "nikki_sleepy.png")
             util.cli.execute(
                 f"notify-send -i '{icon}' '{self.__drowsy}' "
             )

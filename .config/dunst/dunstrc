@@ -1,46 +1,45 @@
 [global]
-transparency = 5
-frame_width = 2
-frame_color = "#328E6E"
+transparency = 8
+frame_width = 4
 separator_height = 4
 padding = 12
 horizontal_padding = 16
 corner_radius = 8
 font = ShureTechMono Nerd Font 10
-max_icon_size = 64
-
-# Notificaciones múltiples con espacio entre ellas
-line_height = 0     # esto ayuda con el spacing interno
+max_icon_size = 72
+line_height = 0
 separator_color = frame
-gap_size = 8       # espacio entre notificaciones
-
-# Posición
-# geometry = "300x5-30+30"
-
-# Tiempo
+gap_size = 8
 timeout = 10
+foreground = "#008585"
+frame_color = "#008585"
+background = "#1e1e2e"
+
+[urgency_normal]
+icon = "/home/jamerrq/pictures/nikki/icons/nikki_awake.png"
+foreground = "#008585"
+frame_color = "#008585"
+
+[spotify]
+appname = "spotify"
+frame_color = "#328E6E"
+foreground = "#328E6E"
+icon = "/home/jamerrq/pictures/nikki/icons/nikki_random.png"
+
+[kitty]
+appname = "kitty"
+frame_color = "#a881ff"
+foreground = "#a881ff"
+icon = "/home/jamerrq/pictures/nikki/icons/nikki_chill.png"
 
 [urgency_low]
 timeout = 6
-background = "#1e1e2e"
-foreground = "#cdd6f4"
-frame_color = "#45475a"
-icon = "~/pictures/icons/xlr8.png"
-
-[urgency_normal]
-timeout = 10
-background = "#1e1e2e"
-foreground = "#f9e2af"
-frame_color = "#fab387"
-icon = "~/pictures/icons/diamond.png"
+foreground = "#b8cdab"
+frame_color = "#b8cdab"
+icon = "/home/jamerrq/pictures/nikki/icons/nikki_random.png"
 
 [urgency_critical]
 timeout = 0
-background = "#1e1e2e"
-foreground = "#f38ba8"
-frame_color = "#f38ba8"
-icon = "~/pictures/icons/four-arms.png"
-
-[spotify]
-appname = "Spotify"
-frame_color = "#328E6E"
+foreground = "#c7522a"
+frame_color = "#c7522a"
+icon = "/home/jamerrq/pictures/nikki/icons/just_nikki.png"

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-ICON_DIR=~/pictures/icons
-ICONS=("stinkfly.png" "cannonball.png" "ripjaws.png")
+ICON_DIR=~/pictures/nikki/icons
+ICONS=("nikki_sleepy.png" "nikki_deep_sleep.png")
 ICON="$ICON_DIR/${ICONS[RANDOM % ${#ICONS[@]}]}"
 
 WALL_DIR=~/pictures/wallpapers

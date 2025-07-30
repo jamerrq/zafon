@@ -1,10 +1,10 @@
 #!/bin/bash
-notify-send -u low "low"
+notify-send -u low "low" -t 0
 sleep 1
-notify-send -u normal "normal"
+notify-send -u normal "normal" -t 0
 sleep 1
-notify-send -u critical "critical"
+notify-send -u critical "critical" -t 0
 sleep 1
-notify-send -i /home/jamerrq/pictures/icons/ultra-t.png "kitty notification" \
-            -h string:frcolor:#D3ECCD -h string:fgcolor:#D3ECCD \
-            -h string:bgcolor:#1B2A34
+notify-send -a "kitty" "kitty" -t 0
+sleep 1
+notify-send -a "spotify" "spotify" -t 0

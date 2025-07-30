@@ -46,11 +46,6 @@ bindsym Print exec --no-startup-id flameshot gui
 bindsym $mod+Print exec --no-startup-id flameshot full -p ~/pictures/flameshot
 bindsym $mod+Shift+Print exec --no-startup-id flameshot full -p ~/pictures/flameshot
 
-# --- Floating windows ---
-
-# for_window [class=kitty] floating enable
-# for_window [class=Spotify] floating enable
-# for_window [class=Minecraft] floating enable
 
 # --- Resizing ---
 
@@ -86,15 +81,6 @@ bindsym $mod+r mode "resize"
 # --- Wallpaper ---
 exec --no-startup-id feh --bg-scale --zoom fill ~/pictures/background.jpg
 
-# # --- Capslock ---
-# mode "\ueeb1 " {
-#     bindsym Caps_Lock mode "default"
-# }
-
-# bindsym Caps_Lock mode "\ueeb1 "
-
-#
-
 # --- Variables ---
 set $mod Mod4
 set $term kitty
@@ -102,22 +88,8 @@ set $term kitty
 # --- Font ---
 font pango:ShureTechMono Nerd Font Mono Bold 11
 
-# --- Gaps (i3-gaps) ---
-# gaps inner 10
-# gaps outer 10
-# smart_borders on
-
-# --- Colors ---
-client.focused          #4c7899 #285577 #ffffff #2e9ef4 #285577
-client.focused_inactive #333333 #5f676a #ffffff #484e50 #5f676a
-client.unfocused        #333333 #222222 #888888 #292d2e #222222
-client.urgent           #2f343a #900000 #ffffff #900000 #900000
-client.placeholder      #000000 #0c0c0c #ffffff #000000 #0c0c0c
-
 # --- Startup ---
-# exec --no-startup-id xss-lock --transfer-sleep-lock -- i3lock
 exec --no-startup-id picom --backend glx --vsync # xrender glx
-# picom --backend xrender --vsync --no-fading-openclose --no-fading-destroyed --shadow=false --blur-background=false --opacity-rule='100:class_g = "*"' &
 
 # --- Keybindings: Launching ---
 bindsym $mod+Return exec $term
@@ -163,16 +135,16 @@ bindsym $mod+w layout tabbed
 bindsym $mod+t layout toggle split
 
 # --- Workspaces ---
-set $ws1 "1"
-set $ws2 "2"
-set $ws3 "3"
-set $ws4 "4"
-set $ws5 "5"
-set $ws6 "6"
-set $ws7 "7"
-set $ws8 "8"
-set $ws9 "9"
-set $ws10 "0"
+set $ws1 " 1 "
+set $ws2 " 2 "
+set $ws3 " 3 "
+set $ws4 " 4 "
+set $ws5 " 5 "
+set $ws6 " 6 "
+set $ws7 " 7 "
+set $ws8 " 8 "
+set $ws9 " 9 "
+set $ws10 " 0 "
 
 bindsym $mod+1 workspace $ws1
 bindsym $mod+2 workspace $ws2
@@ -212,6 +184,7 @@ for_window [class="pinentry"] floating enable
 for_window [class="veromix"] floating enable
 for_window [class="xtightvncviewer"] floating enable
 for_window [title="Event Tester"] floating enable
+for_window [window_role="pop-up"] floating enable
 
 # --- Window Marks ---
 bindsym $mod+m mark mywindow
@@ -236,9 +209,7 @@ mode "$mode_system" {
     bindsym h exec --no-startup-id $lock_script --hibernate, mode "default"
     bindsym r exec --no-startup-id $lock_script --reboot, mode "default"
     bindsym shift+p exec --no-startup-id $lock_script --shutdown, mode "default"
-    bindsym e exec --no-startup-id i3-nagbar \
-            -f "pango:ShureTechMono Nerd Font Mono Bold 11" -t warning \
-            -m 'end session?' -b 'yes' 'i3-msg exit', mode "default"
+    bindsym e exec --no-startup-id i3-msg exit, mode "default"
     bindsym Return mode "default"
     bindsym Escape mode "default"
 }
@@ -247,17 +218,18 @@ bindsym $mod+BackSpace mode "$mode_system"
 
 # --- COLORS ---
 # class                 border  bground text    indicator child_border
-client.focused          #34699A #34699A #FFFFFF #2E9EF4   #328E6E
+client.focused          #555d8e #555d8e #FFFFFF #2E9EF4   #328E6E
 client.focused_inactive #333333 #5F676A #FFFFFF #484E50   #5F676A
 client.unfocused        #333333 #222222 #888888 #292D2E   #222222
-client.urgent           #2F343A #900000 #FFFFFF #900000   #900000
+client.urgent           #FF7A30 #FF7A30 #222222 #FF7A30   #FF7A30
 client.placeholder      #000000 #0C0C0C #FFFFFF #000000   #0C0C0C
 
-client.background       #FFFFFF
+client.background       #FFFFFF00
 
 # --- Status Bar (Bumblebee Status) ---
 # https://bumblebee-status.readthedocs.io/en/main/modules.html
 bar {
+	i3bar_command i3bar -t
 	font pango:Font Awesome, ShureTechMono Nerd Font Bold 10.5
 	position bottom
 	tray_output none
@@ -273,14 +245,14 @@ bar {
                    load.warning=90 load.critical=95 \
 		-t nikki
   colors {
-    background #000000
-    statusline #34699A
-    separator  #34699A
+    background #00000000
+    statusline #34699A00
+    separator  #34699A00
 
     focused_workspace  #34699A #34699A #FFFFFF
     active_workspace   #333333 #222222 #FFFFFF
     inactive_workspace #333333 #222222 #888888
-    urgent_workspace   #2F343A #900000 #FFFFFF
-    binding_mode       #2F343A #900000 #FFFFFF
+    urgent_workspace   #2F343A #FF7A30 #222222
+    binding_mode       #2F343A #FF7A30 #222222
   }
 }
