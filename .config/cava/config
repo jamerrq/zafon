@@ -86,76 +86,16 @@ channels = mono
 
 gradient = 1
 
-# gradient_color_1 = '#3b3c59'
-# gradient_color_2 = '#4b4464'
-# gradient_color_3 = '#4b4464'
-# gradient_color_4 = '#6d5276'
-# gradient_color_5 = '#7f597e'
-# gradient_color_6 = '#926184'
-# gradient_color_7 = '#a4688a'
-# gradient_color_8 = '#b6708e'
-# gradient_color_9 = '#c87990'
-# gradient_color_10 = '#d98292'
-
-#3b3c59
-#4b4464
-#4b4464
-#6d5276
-#7f597e
-#926184
-#a4688a
-#b6708e
-#c87990
-#d98292
-
-# gradient_color_1 = '#292f56'
-# gradient_color_2 = '#1e4572'
-# gradient_color_3 = '#005c8b'
-# gradient_color_4 = '#007498'
-# gradient_color_5 = '#008ba0'
-# gradient_color_6 = '#00a3a4'
-# gradient_color_7 = '#00bca1'
-# gradient_color_8 = '#00d493'
-# gradient_color_9 = '#69e882'
-# gradient_color_10 = '#acfa70'
-
-gradient_color_1 = '#8DBCC7'
-gradient_color_2 = '#A4CCD9'
-gradient_color_3 = '#C4E1E6'
-gradient_color_4 = '#EBFFD8'
-
-#292f56
-#1e4572
-#005c8b
-#007498
-#008ba0
-#00a3a4
-#00bca1
-#00d493
-#69e882
-#acfa70
-
-# gradient_color_1 = '#eb3114'
-# gradient_color_2 = '#ee5312'
-# gradient_color_3 = '#f06d16'
-# gradient_color_4 = '#f18320'
-# gradient_color_5 = '#f2982e'
-# gradient_color_6 = '#f4ab3e'
-# gradient_color_7 = '#f5bd51'
-# gradient_color_8 = '#f7cf65'
-# gradient_color_9 = '#f9e07b'
-# gradient_color_10 = '#fcf092'
-
-#eb3114
-#ee5312
-#f06d16
-#f18320
-#f2982e
-#f4ab3e
-#f5bd51
-#f7cf65
-#f9e07b
-#fcf092
+gradient_color_10 = '#d9ed92'
+gradient_color_9  = '#b5e48c'
+gradient_color_8  = '#99d98c'
+gradient_color_7  = '#76c893'
+gradient_color_6  = '#52b69a'
+gradient_color_5  = '#34a0a4'
+gradient_color_4  = '#168aad'
+gradient_color_3  = '#1a759f'
+gradient_color_2  = '#1e6091'
+gradient_color_1  = '#184e77'
 
 [smoothing]
 

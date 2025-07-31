@@ -1,0 +1,215 @@
+# sway config file
+# $HOME/.config/sway/config
+
+# --- vars ---
+set $mod Mod4
+set $term kitty
+
+# --- font ---
+font pango:ShureTechMono Nerd Font Mono Bold 11
+
+# --- input (keyboard) ---
+input "type:keyboard" {
+    xkb_layout "latam"
+}
+
+# --- output (monitors/wallpaper) ---
+output VGA-1 {
+    mode 1920x1080@60Hz
+    bg ~/pictures/background.jpg fill
+}
+
+# additional monitors are added here
+# output HDMI-A-1 mode 1920x1080 position 1920,0
+
+# --- keybindings (custom function keys) ---
+bindsym F13 exec rofi -show drun -show-icons
+bindsym F14 exec kitty
+bindsym F15 exec brave-browser
+bindsym F16 exec playerctl play-pause
+bindsym Shift+F13 kill
+bindsym Shift+F16 exec playerctl next
+bindsym Control+F16 exec playerctl previous
+bindsym Shift+F15 exec rfkill toggle bluetooth
+
+# --- notifications ---
+bindsym $mod+F8 exec sh ~/dev/scripts/bash/test-notifications.sh
+
+# --- volume keys ---
+bindsym XF86AudioRaiseVolume exec pactl set-sink-volume @DEFAULT_SINK@ +5%
+bindsym XF86AudioLowerVolume exec pactl set-sink-volume @DEFAULT_SINK@ -5%
+bindsym XF86AudioMute exec pactl set-sink-mute @DEFAULT_SINK@ toggle
+bindsym XF86AudioMicMute exec pactl set-source-mute @DEFAULT_SOURCE@ toggle
+
+# --- screenshots (wayland equivalents) ---
+bindsym Print exec grim -g "$(slurp)" - | wl-copy
+bindsym $mod+Print exec grim ~/pictures/screenshot-$(date +%Y%m%d_%H%M%S).png
+bindsym $mod+Shift+Print exec grim -g "$(slurp)" ~/pictures/screenshot-$(date +%Y%m%d_%H%M%S).png
+
+# --- layout and gaps ---
+title_align center
+default_border pixel 0
+gaps inner 15
+gaps outer 5
+
+# --- floating modifier ---
+floating_modifier $mod normal
+
+# --- resize mode ---
+mode "  resize" {
+    bindsym j resize shrink width 10px
+    bindsym k resize grow height 10px
+    bindsym l resize shrink height 10px
+    bindsym ntilde resize grow width 10px
+
+    bindsym Left resize shrink width 10px
+    bindsym Down resize grow height 10px
+    bindsym Up resize shrink height 10px
+    bindsym Right resize grow width 10px
+
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+    bindsym $mod+r mode "default"
+}
+bindsym $mod+r mode "  resize"
+
+# --- keybindings (launching) ---
+bindsym $mod+Return exec $term
+bindsym $mod+d exec rofi -show drun -show-icons
+bindsym $mod+Shift+d exec rofi -show run -show-icons
+bindsym $mod+Shift+e exec rofi -modi "scripts:~/dev/scripts/bash/dmenu-scripts.sh" -show scripts
+bindsym $mod+Shift+q kill
+
+# --- keybindings (focus) ---
+bindsym $mod+h focus left
+bindsym $mod+j focus down
+bindsym $mod+k focus up
+bindsym $mod+l focus right
+
+bindsym $mod+Left focus left
+bindsym $mod+Down focus down
+bindsym $mod+Up focus up
+bindsym $mod+Right focus right
+
+# --- keybindings (move) ---
+bindsym $mod+Shift+h move left
+bindsym $mod+Shift+j move down
+bindsym $mod+Shift+k move up
+bindsym $mod+Shift+l move right
+
+bindsym $mod+Shift+Left move left
+bindsym $mod+Shift+Down move down
+bindsym $mod+Shift+Up move up
+bindsym $mod+Shift+Right move right
+
+# --- keybindings (split) ---
+bindsym $mod+v splith
+bindsym $mod+b splitv
+
+# --- keybindings (layouts) ---
+bindsym $mod+e layout toggle split
+bindsym $mod+f fullscreen toggle
+bindsym $mod+s layout stacking
+bindsym $mod+w layout tabbed
+bindsym $mod+t layout toggle split
+
+# --- workspaces ---
+set $ws0 " 0 "
+set $ws1 " 1 "
+set $ws2 " 2 "
+set $ws3 " 3 "
+set $ws4 " 4 "
+set $ws5 " 5 "
+set $ws6 " 6 "
+set $ws7 " 7 "
+set $ws8 " 8 "
+set $ws9 " 9 "
+
+bindsym $mod+0 workspace $ws0
+bindsym $mod+1 workspace $ws1
+bindsym $mod+2 workspace $ws2
+bindsym $mod+3 workspace $ws3
+bindsym $mod+4 workspace $ws4
+bindsym $mod+5 workspace $ws5
+bindsym $mod+6 workspace $ws6
+bindsym $mod+7 workspace $ws7
+bindsym $mod+8 workspace $ws8
+bindsym $mod+9 workspace $ws9
+
+bindsym $mod+Shift+0 move container to workspace $ws0
+bindsym $mod+Shift+1 move container to workspace $ws1
+bindsym $mod+Shift+2 move container to workspace $ws2
+bindsym $mod+Shift+3 move container to workspace $ws3
+bindsym $mod+Shift+4 move container to workspace $ws4
+bindsym $mod+Shift+5 move container to workspace $ws5
+bindsym $mod+Shift+6 move container to workspace $ws6
+bindsym $mod+Shift+7 move container to workspace $ws7
+bindsym $mod+Shift+8 move container to workspace $ws8
+bindsym $mod+Shift+9 move container to workspace $ws9
+
+# --- floating rules ---
+bindsym $mod+Shift+space floating toggle
+
+for_window [class="confirmreset"] floating enable
+for_window [class="toolbar"] floating enable
+for_window [class="Arandr"] floating enable
+for_window [class="Gpick"] floating enable
+for_window [class="Kruler"] floating enable
+for_window [class="MessageWin"] floating enable
+for_window [class="Sxiv"] floating enable
+for_window [class="Wpa_gui"] floating enable
+for_window [class="pinentry"] floating enable
+for_window [class="veromix"] floating enable
+for_window [class="xtightvncviewer"] floating enable
+for_window [title="Event Tester"] floating enable
+for_window [window_role="pop-up"] floating enable
+for_window [app_id="xdg-desktop-portal-gtk"] floating enable
+
+# prevent teams from floating
+for_window [class="crx_cifhbcnohmdccbgoicgdjpfamggdegmo"] floating disable
+
+# --- window marks ---
+bindsym $mod+m mark mywindow
+bindsym $mod+g [con_mark="mywindow"] focus
+
+# --- config reload/exit ---
+bindsym $mod+Shift+c reload
+bindsym $mod+Shift+r restart
+
+# --- redshift/brightness ---
+bindsym $mod+x exec redshift -O 4000
+bindsym $mod+Shift+x exec redshift -x
+
+# --- power menu ---
+set $mode_system  ⏻  [l(ock)] [e(logout)] [s(uspend)] [h(ibernate)] [r(eboot)] [P(oweroff)]
+
+set $lock_script bash ~/dev/scripts/bash/lock.sh
+mode "$mode_system" {
+    bindsym l exec $lock_script, mode "default"
+    bindsym s exec $lock_script --suspend, mode "default"
+    bindsym h exec $lock_script --hibernate, mode "default"
+    bindsym r exec $lock_script --reboot, mode "default"
+    bindsym shift+p exec $lock_script --shutdown, mode "default"
+    bindsym e exec swaymsg exit, mode "default"
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
+bindsym $mod+BackSpace mode "$mode_system"
+
+# --- status bar ---
+exec waybar &
+exec dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=sway
+
+# --- startup applications ---
+exec --no-startup-id mako                   # notifications
+exec --no-startup-id nm-applet --indicator  # network manager
+exec --no-startup-id blueman-applet         # bluetooth
+
+# --- idle configuration ---
+exec swayidle -w \
+    timeout 600 'swaylock -f' \
+    timeout 900 'swaymsg "output * power off"' resume 'swaymsg "output * power on"' \
+    before-sleep 'swaylock -f'
+
+# --- start workspace ---
+workspace 0

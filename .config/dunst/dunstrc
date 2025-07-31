@@ -20,18 +20,6 @@ icon = "/home/jamerrq/pictures/nikki/icons/nikki_awake.png"
 foreground = "#008585"
 frame_color = "#008585"
 
-[spotify]
-appname = "spotify"
-frame_color = "#328E6E"
-foreground = "#328E6E"
-icon = "/home/jamerrq/pictures/nikki/icons/nikki_random.png"
-
-[kitty]
-appname = "kitty"
-frame_color = "#a881ff"
-foreground = "#a881ff"
-icon = "/home/jamerrq/pictures/nikki/icons/nikki_chill.png"
-
 [urgency_low]
 timeout = 6
 foreground = "#b8cdab"
@@ -43,3 +31,15 @@ timeout = 0
 foreground = "#c7522a"
 frame_color = "#c7522a"
 icon = "/home/jamerrq/pictures/nikki/icons/just_nikki.png"
+
+[spotify]
+appname = "spotify"
+frame_color = "#328E6E"
+foreground = "#328E6E"
+icon = "/home/jamerrq/pictures/nikki/icons/nikki_random.png"
+
+[kitty]
+appname = "kitty"
+frame_color = "#a881ff"
+foreground = "#a881ff"
+icon = "/home/jamerrq/pictures/nikki/icons/nikki_chill.png"

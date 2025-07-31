@@ -1,0 +1,154 @@
+{
+    "layer": "top",
+    "position": "top",
+    "height": 35,
+    "spacing": 4,
+    "margin-top": 5,
+    "margin-bottom": 0,
+    "margin-left": 10,
+    "margin-right": 10,
+
+    "modules-left": [
+        "sway/workspaces",
+        "sway/mode",
+        "sway/scratchpad",
+        "custom/spotify"
+    ],
+    "modules-center": ["sway/window"],
+    "modules-right": [
+        "cpu",
+        "memory",
+        "disk",
+        "tray",
+        "idle_inhibitor",
+        "pulseaudio",
+        "clock"
+    ],
+
+    "sway/workspaces": {
+        "disable-scroll": false,
+        "all-outputs": true,
+        "format": "{icon}",
+        "format-icons": {
+            "0": "",
+            "1": "",
+            "2": "",
+            "3": "",
+            "4": "",
+            "5": "",
+            "6": "",
+            "7": "",
+            "8": "",
+            "9": ""
+        },
+        "persistent_workspaces": {
+            "0": []
+        }
+    },
+
+    "sway/mode": {
+        "format": "<span style=\"italic\">{}</span>"
+    },
+
+    "sway/scratchpad": {
+        "format": "{icon} {count}",
+        "show-empty": false,
+        "format-icons": ["", ""],
+        "tooltip": true,
+        "tooltip-format": "{app}: {title}"
+    },
+
+    "sway/window": {
+        "format": "{}",
+        "rewrite": {
+            "(.*) — Mozilla Firefox": "  $1",
+            "(.*) - Brave": "  $1",
+            "(.*) - Visual Studio Code": "  $1",
+            "(.*) - Windsurf(.*)": "  $1 $2"
+        }
+    },
+
+    "custom/spotify": {
+        "format": " {}",
+        "exec": "playerctl -p spotify metadata --format '{{ artist }} - {{ title }}'",
+        "exec-if": "pgrep spotify",
+        "interval": 1,
+        "on-click": "playerctl -p spotify play-pause"
+    },
+
+    "pulseaudio": {
+        "scroll-step": 5,
+        "format": "{icon} {volume}%",
+        "format-bluetooth": "{icon} {volume}%",
+        "format-bluetooth-muted": " {icon}",
+        "format-muted": " ",
+        "format-source": "{volume}% ",
+        "format-source-muted": "",
+        "format-icons": {
+            "headphone": " ",
+            "hands-free": " ",
+            "headset": " ",
+            "phone": "",
+            "portable": "",
+            "car": "",
+            "default": [" ", " ", "󰕾 ", " "]
+        },
+        "on-click-right": "pavucontrol",
+        "on-click": "pactl set-sink-mute @DEFAULT_SINK@ toggle",
+        "min-length": 7
+    },
+
+    "network": {
+        "format-wifi": "  {signalStrength}%",
+        "format-ethernet": "󰈀 ",
+        "tooltip-format": "{ifname} via {gwaddr}",
+        "format-linked": "{ifname} (no ip)",
+        "format-disconnected": " ",
+        "format-alt": "{ifname}: {ipaddr}/{cidr}",
+        "on-click-right": "nm-connection-editor"
+    },
+
+    "cpu": {
+        "format": "  {usage}%",
+        "tooltip": true,
+        "tooltip-format": "cpu: {usage}%\n{freq}",
+        "interval": 2,
+        "min-length": 6
+    },
+
+    "memory": {
+        "format": "  {percentage}%",
+        "tooltip": true,
+        "tooltip-format": "memory: {used:0.1f}G/{total:0.1f}G\nswap: {swapUsed:0.1f}G/{swapTotal:0.1f}G",
+        "min-length": 6
+    },
+
+    "disk": {
+        "interval": 30,
+        "format": "  {percentage_used}%",
+        "path": "/",
+        "tooltip": true,
+        "tooltip-format": "disk: {used} / total: {total}",
+        "min-length": 6
+    },
+
+    "clock": {
+        "timezone": "America/Bogota",
+        "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>",
+        "format": "󰔟 {:%H:%M}",
+        "format-alt": " {:%Y-%m-%d}"
+    },
+
+    "tray": {
+        "icon-size": 18,
+        "spacing": 10
+    },
+    "idle_inhibitor": {
+        "format": "{icon}",
+        "format-icons": {
+            "activated": "",
+            "deactivated": "󰤄"
+        },
+        "min-length": 3
+    }
+}

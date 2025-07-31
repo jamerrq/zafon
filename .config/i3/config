@@ -218,7 +218,7 @@ bindsym $mod+BackSpace mode "$mode_system"
 
 # --- COLORS ---
 # class                 border  bground text    indicator child_border
-client.focused          #555d8e #555d8e #FFFFFF #2E9EF4   #328E6E
+client.focused          #555D8E #555D8E #FFFFFF #2E9EF4   #328E6E
 client.focused_inactive #333333 #5F676A #FFFFFF #484E50   #5F676A
 client.unfocused        #333333 #222222 #888888 #292D2E   #222222
 client.urgent           #FF7A30 #FF7A30 #222222 #FF7A30   #FF7A30
@@ -230,7 +230,7 @@ client.background       #FFFFFF00
 # https://bumblebee-status.readthedocs.io/en/main/modules.html
 bar {
 	i3bar_command i3bar -t
-	font pango:Font Awesome, ShureTechMono Nerd Font Bold 10.5
+	font pango:Font Awesome, ShureTechMono Nerd Font Bold 11.5
 	position bottom
 	tray_output none
 	status_command ~/.local/bin/bumblebee-wrapper \
@@ -249,9 +249,9 @@ bar {
     statusline #34699A00
     separator  #34699A00
 
-    focused_workspace  #34699A #34699A #FFFFFF
-    active_workspace   #333333 #222222 #FFFFFF
-    inactive_workspace #333333 #222222 #888888
+    focused_workspace  #555D8E88 #555D8E88 #FFFFFF
+    active_workspace   #33333366 #22222266 #FFFFFF66
+    inactive_workspace #33333355 #22222255 #888888
     urgent_workspace   #2F343A #FF7A30 #222222
     binding_mode       #2F343A #FF7A30 #222222
   }
