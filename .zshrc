@@ -145,5 +145,10 @@ eval "$(zoxide init zsh)"
 # Load functions if file exists
 [[ -f ~/.zsh_functions ]] && source ~/.zsh_functions
 
+# eza vars
 export EZA_ICONS_AUTO=true
 export EZA_COLORS_AUTO=true
+
+# cursor vars
+export XCURSOR_THEME=apple_cursor
+export XCURSOR_SIZE=24

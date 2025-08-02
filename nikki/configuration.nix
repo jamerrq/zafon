@@ -12,6 +12,9 @@
   # network
   networking.hostName = "nikki";
   networking.networkmanager.enable = true;
+  networking.extraHosts = ''
+    127.0.1.1    nikki
+  '';
 
   # timezone
   time.timeZone = "America/Bogota";
@@ -45,61 +48,91 @@
   users.users.jamerrq = {
     isNormalUser = true;
     description = "Jamer José";
-    extraGroups = [ "networkmanager" "wheel" "vboxusers" "libvirtd" "docker"];
-    packages = with pkgs; [];
+    extraGroups = [ "networkmanager" "wheel" "libvirtd" "docker"];
+    packages = with pkgs; [
+    ];
     shell = pkgs.zsh;
   };
 
   # system packages
   nixpkgs.config.allowUnfree = true;
   environment.systemPackages = with pkgs; [
-    i3
-    rofi
-    kitty
-    flameshot
-    feh
-    playerctl
-    xorg.xmodmap
-    xorg.xrandr
-    xclip
-    networkmanagerapplet
-    redshift
-    pavucontrol
-    git
-    git-lfs
-    yadm
-    zsh
-    python3
-    dunst
-    windsurf
-    spotify
-    fzf
-    eza
-    vscode
-    brave
-    vim
-    virt-manager
-    qemu
-    docker
-    dbeaver-bin
-    picom
-    zoxide
-    feh
-    betterlockscreen
-    libnotify
-    # virtualbox
+    # utilities
+    cava                 # audio visualization
+    libnotify            # notification system
+    eza                  # ls replacement
+    feh                  # image viewer
+    fzf                  # fuzzy finder
+    libsForQt5.kruler    # ruler
+    neofetch             # system information
+    networkmanagerapplet # network manager applet
+    pavucontrol          # audio control
+    playerctl            # media player controller
+    ranger               # file manager
+    timg                 # image viewer
+    vim                  # text editor
+    xclip                # clipboard manager
+    xorg.xmodmap         # keyboard remapping
+    zoxide               # cd replacement
+
+    # dev
+    dbeaver-bin          # database manager
+    docker               # containerization
+    git                  # version control
+    git-lfs              # git large file storage
+    kitty                # terminal
+    python3              # python
+    vscode               # code editor
+    windsurf             # code editor
+    yadm                 # dotfiles manager
+
+    # vm
+    qemu                  # virtualization
+
+    # daily
+    brave                 # browser
+    spotify               # music
+    apple-cursor          # cursor theme
+
+    # for sway (wayland)
+    gammastep             # screen color temperature
+    grim                  # screenshot functionality
+    mako                  # notification system
+    rofi-wayland          # rofi for wayland
+    slurp                 # screenshot functionality
+    swaybg                # background for sway
+    swayidle              # idle management
+    swaylock              # screenlock for sway
+    waybar                # bar for sway
+    wdisplays             # display management (GUI)
+    wl-clipboard          # copy/paste from stdin / stdout (wl-copy, wl-paste)
+
+    # i3 exclusive
+    # betterlockscreen
+    # bumblebee-status
+    # flameshot
+    # i3-gaps
+    # picom
+    # redshift
+    # rofi
+    # xorg.xrandr
   ];
 
   # vm config
   virtualisation.libvirtd.enable = true;
   programs.virt-manager.enable = true;
-  virtualisation.virtualbox.host.enable = true;
+  virtualisation.spiceUSBRedirection.enable = true;
+  users.groups.libvirtd.members = ["jamerrq"];
 
   # xorg config
-  services.xserver.enable = true;
-  services.xserver.windowManager.i3.enable = true;
-  services.xserver.displayManager.lightdm.enable = true;
-  programs.dconf.enable = true;
+  # services.xserver = {
+  #   enable = false;
+  #   displayManager.lightdm.enable = true;
+  #   windowManager.i3.enable = true;
+  # };
+
+  # dconf config
+  # programs.dconf.enable = true;
 
   # fonts
   fonts.fontconfig.enable = true;
@@ -117,7 +150,27 @@
     };
   };
 
-  # nix config
+  # bluetooth config
+  hardware.bluetooth.enable = true;
+  services.blueman.enable = true;
+
+  # sway config
+  services.gnome.gnome-keyring.enable = true;
+  programs.sway = {
+    enable = true;
+    wrapperFeatures.gtk = true;
+  };
+  programs.waybar = {
+    enable = true;
+  };
+  services.dbus.enable = true;
+  xdg.portal = {
+    enable = true;
+    extraPortals = with pkgs; [ xdg-desktop-portal-wlr ];
+  };
+
+
+  # nix additional config
   nix.settings.extra-experimental-features = [ "nix-command" "flakes" ];
   nix.gc = {
     automatic = true;

@@ -5,6 +5,16 @@
 set $mod Mod4
 set $term kitty
 
+# --- colors ---
+client.focused          #555D8E #555D8E #FFFFFF #2E9EF4   #328E6E
+client.focused_inactive #333333 #5F676A #FFFFFF #484E50   #5F676A
+client.unfocused        #333333 #222222 #888888 #292D2E   #222222
+client.urgent           #FF7A30 #FF7A30 #222222 #FF7A30   #FF7A30
+client.placeholder      #000000 #0C0C0C #FFFFFF #000000   #0C0C0C
+
+# --- cursor ---
+seat * xcursor_theme apple_cursor 24
+
 # --- font ---
 font pango:ShureTechMono Nerd Font Mono Bold 11
 

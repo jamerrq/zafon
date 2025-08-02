@@ -12,6 +12,8 @@
         "sway/workspaces",
         "sway/mode",
         "sway/scratchpad",
+        "custom/spotify-prev",
+        "custom/spotify-next",
         "custom/spotify"
     ],
     "modules-center": ["sway/window"],
@@ -42,7 +44,10 @@
             "9": ""
         },
         "persistent_workspaces": {
-            "0": []
+            "0": [],
+            "1": [],
+            "2": [],
+            "3": []
         }
     },
 
@@ -61,19 +66,43 @@
     "sway/window": {
         "format": "{}",
         "rewrite": {
-            "(.*) — Mozilla Firefox": "  $1",
-            "(.*) - Brave": "  $1",
+            "Microsoft Teams - (.*?)( \\\\| Microsoft Teams)?": "󰊻  $1",
+            "(X - )?(.*?) / X(.*?)": "󰕄  $2",
+            "^X$": "󰕄 ",
+            "YouTube - (.*?)( - YouTube)?": "  $1",
+            "^YouTube$": " ",
+            "(.*) Stream - Watch Live on Kick - Brave": "  $1",
+            "(.*) — Mozilla Firefox": " $1",
+            "(.*) - Brave": "  $1",
             "(.*) - Visual Studio Code": "  $1",
-            "(.*) - Windsurf(.*)": "  $1 $2"
+            "(.*) - Windsurf(.*)": "  $1$2",
+            "vi (.*)": "  $1",
+            "(.*) on QEMU/KVM": "󰢹  $1",
+            "jamerrq@nikki:(.*)": "󰄛  on $1",
+            "Spotify Premium": " "
         }
     },
 
     "custom/spotify": {
-        "format": " {}",
+        "format": "  {}",
         "exec": "playerctl -p spotify metadata --format '{{ artist }} - {{ title }}'",
         "exec-if": "pgrep spotify",
         "interval": 1,
         "on-click": "playerctl -p spotify play-pause"
+    },
+    "custom/spotify-prev": {
+        "format": "󰒮",
+        "exec": "echo -1",
+        "exec-if": "pgrep spotify",
+        "interval": 1,
+        "on-click": "playerctl -p spotify previous"
+    },
+    "custom/spotify-next": {
+        "format": "󰒭",
+        "exec": "echo 1",
+        "exec-if": "pgrep spotify",
+        "interval": 1,
+        "on-click": "playerctl -p spotify next"
     },
 
     "pulseaudio": {
@@ -109,7 +138,7 @@
     },
 
     "cpu": {
-        "format": "  {usage}%",
+        "format": "  {usage}%",
         "tooltip": true,
         "tooltip-format": "cpu: {usage}%\n{freq}",
         "interval": 2,
@@ -136,7 +165,7 @@
         "timezone": "America/Bogota",
         "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>",
         "format": "󰔟 {:%H:%M}",
-        "format-alt": " {:%Y-%m-%d}"
+        "format-alt": "  {:%Y-%m-%d}"
     },
 
     "tray": {
