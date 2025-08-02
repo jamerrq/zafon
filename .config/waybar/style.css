@@ -135,7 +135,7 @@ window#waybar.hidden {
 #custom-spotify-prev,
 #custom-spotify-next {
     background: #141414;
-    color: rgb(30, 215, 96);
+    color: #1ed760;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
     border-bottom: 2px solid rgba(30, 215, 96, 0.8);
 }
