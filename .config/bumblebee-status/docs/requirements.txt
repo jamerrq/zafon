@@ -1,5 +1,0 @@
-docutils
-sphinx
-sphinx-rtd-theme
-commonmark
-recommonmark

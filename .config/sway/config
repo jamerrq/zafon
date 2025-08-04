@@ -12,9 +12,6 @@ client.unfocused        #333333 #222222 #888888 #292D2E   #222222
 client.urgent           #FF7A30 #FF7A30 #222222 #FF7A30   #FF7A30
 client.placeholder      #000000 #0C0C0C #FFFFFF #000000   #0C0C0C
 
-# --- cursor ---
-seat * xcursor_theme apple_cursor 24
-
 # --- font ---
 font pango:ShureTechMono Nerd Font Mono Bold 11
 
@@ -85,7 +82,8 @@ bindsym $mod+r mode "  resize"
 
 # --- keybindings (launching) ---
 bindsym $mod+Return exec $term
-bindsym $mod+d exec rofi -show drun -show-icons
+# bindsym $mod+d exec rofi -show drun -show-icons
+bindsym $mod+d exec sherlock
 bindsym $mod+Shift+d exec rofi -show run -show-icons
 bindsym $mod+Shift+e exec rofi -modi "scripts:~/dev/scripts/bash/dmenu-scripts.sh" -show scripts
 bindsym $mod+Shift+q kill
@@ -124,16 +122,16 @@ bindsym $mod+w layout tabbed
 bindsym $mod+t layout toggle split
 
 # --- workspaces ---
-set $ws0 " 0 "
-set $ws1 " 1 "
-set $ws2 " 2 "
-set $ws3 " 3 "
-set $ws4 " 4 "
-set $ws5 " 5 "
-set $ws6 " 6 "
-set $ws7 " 7 "
-set $ws8 " 8 "
-set $ws9 " 9 "
+set $ws0 "0"
+set $ws1 "1"
+set $ws2 "2"
+set $ws3 "3"
+set $ws4 "4"
+set $ws5 "5"
+set $ws6 "6"
+set $ws7 "7"
+set $ws8 "8"
+set $ws9 "9"
 
 bindsym $mod+0 workspace $ws0
 bindsym $mod+1 workspace $ws1
@@ -191,7 +189,7 @@ bindsym $mod+x exec redshift -O 4000
 bindsym $mod+Shift+x exec redshift -x
 
 # --- power menu ---
-set $mode_system  ⏻  [l(ock)] [e(logout)] [s(uspend)] [h(ibernate)] [r(eboot)] [P(oweroff)]
+set $mode_system  ⏻  [l(ock)] [e(logout)] [s(uspend)] [r(eboot)] [P(oweroff)]
 
 set $lock_script bash ~/dev/scripts/bash/lock.sh
 mode "$mode_system" {
@@ -208,7 +206,8 @@ bindsym $mod+BackSpace mode "$mode_system"
 
 # --- status bar ---
 exec waybar &
-exec dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=sway
+exec dbus-update-activation-environment \
+    --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=sway
 
 # --- startup applications ---
 exec --no-startup-id mako                   # notifications
@@ -217,9 +216,9 @@ exec --no-startup-id blueman-applet         # bluetooth
 
 # --- idle configuration ---
 exec swayidle -w \
-    timeout 600 'swaylock -f' \
-    timeout 900 'swaymsg "output * power off"' resume 'swaymsg "output * power on"' \
-    before-sleep 'swaylock -f'
+    timeout 600 'bash ~/dev/scripts/bash/lock.sh' \
+    timeout 900 'bash ~/dev/scripts/bash/lock.sh --suspend' \
+    before-sleep 'bash ~/dev/scripts/bash/lock.sh'
 
 # --- start workspace ---
 workspace 0

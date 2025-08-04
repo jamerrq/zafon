@@ -5,35 +5,52 @@ ICONS=("nikki_sleepy.png" "nikki_deep_sleep.png")
 ICON="$ICON_DIR/${ICONS[RANDOM % ${#ICONS[@]}]}"
 
 WALL_DIR=~/pictures/wallpapers
-WALL=$(find "$WALL_DIR" -type f | shuf -n 1)
+WALL=/home/jamerrq/pictures/wallpapers/nikki.jpg
 
 
 lock_and_then() {
     case "$1" in
         suspend)
-            notify-send -i "$ICON" "suspending..."
+            notify-send -i "$ICON" "suspending..." -t 3000
             ;;
         hibernate)
-            notify-send -i "$ICON" "hibernating..."
+            notify-send -i "$ICON" "hibernating..." -t 3000
             ;;
         reboot)
-            notify-send -i "$ICON" "rebooting..."
+            notify-send -i "$ICON" "rebooting..." -t 3000
             ;;
         shutdown)
-            notify-send -i "$ICON" "shutting down..."
+            notify-send -i "$ICON" "shutting down..." -t 3000
             ;;
         "")
-            notify-send -i "$ICON" "locking..."
+            notify-send -i "$ICON" "locking..." -t 3000
             ;;
         *)
             notify-send -u critical "⚠️ unknown option: $1"
             ;;
     esac
 
-    betterlockscreen -u "$WALL" --fx blur,dim
-    betterlockscreen -l &
+    # swaylock -f -i "$WALL" -k -l -e -F
+    swaylock \
+        --screenshots \
+        --clock \
+        --indicator \
+        --indicator-radius 100 \
+        --indicator-thickness 7 \
+        --effect-blur 7x5 \
+        --effect-vignette 0.5:0.5 \
+        --ring-color 1F4E5F \
+        --key-hl-color 79A8A9 \
+        --line-color 00000000 \
+        --inside-color 00000088 \
+        --separator-color 00000000 \
+        --grace 2 \
+        --fade-in 0.2swaylock -l --fade-in 5 --screenshot --effect-pixelate 10 --effect-greyscale --clock --indicator \
+        --font "ShureTechMono Nerd Font" \
+        --text-color F4F7F7 &
     sleep 1
-    dunstctl close-all
+    # dunstctl close-all
+    # makoctl dismiss -a
 
     case "$1" in
         suspend)
@@ -73,7 +90,7 @@ case "$1" in
         lock_and_then
         ;;
     *)
-        echo "Usage: $0 [--lock] [--suspend] [--hibernate] [--reboot] [--shutdown]"
+        echo "usage: $0 [--lock] [--suspend] [--hibernate] [--reboot] [--shutdown]"
         exit 1
         ;;
 esac

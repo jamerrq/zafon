@@ -1,14 +1,15 @@
 {
     "layer": "top",
-    "position": "top",
+    "position": "bottom",
     "height": 35,
     "spacing": 4,
-    "margin-top": 5,
-    "margin-bottom": 0,
+    "margin-top": 0,
+    "margin-bottom": 5,
     "margin-left": 10,
     "margin-right": 10,
+    "reload_style_on_change": true,
 
-    "modules-left": [
+    "modules-center": [
         "sway/workspaces",
         "sway/mode",
         "sway/scratchpad",
@@ -16,7 +17,7 @@
         "custom/spotify-next",
         "custom/spotify"
     ],
-    "modules-center": ["sway/window"],
+    "modules-left": ["sway/window"],
     "modules-right": [
         "cpu",
         "memory",
@@ -32,16 +33,16 @@
         "all-outputs": true,
         "format": "{icon}",
         "format-icons": {
-            "0": "",
-            "1": "",
-            "2": "",
-            "3": "",
-            "4": "",
-            "5": "",
-            "6": "",
-            "7": "",
-            "8": "",
-            "9": ""
+            "0": "0",
+            "1": "1",
+            "2": "2",
+            "3": "3",
+            "4": "4",
+            "5": "5",
+            "6": "6",
+            "7": "7",
+            "8": "8",
+            "9": "9"
         },
         "persistent_workspaces": {
             "0": [],
@@ -66,20 +67,35 @@
     "sway/window": {
         "format": "{}",
         "rewrite": {
-            "Microsoft Teams - (.*?)( \\\\| Microsoft Teams)?": "󰊻  $1",
-            "(X - )?(.*?) / X(.*?)": "󰕄  $2",
-            "^X$": "󰕄 ",
+            "Microsoft Teams - (.*?)": "󰊻  $1",
+            "Microsoft Teams - (.*?) \\| Microsoft Teams": "󰊻  $1",
+            "(X - )?(.*?) / X - Brave": "󰕄  $2",
+            "X - (.*?) / X(.*?)": "󰕄  $1",
+            "^X$": " 󰕄 ",
             "YouTube - (.*?)( - YouTube)?": "  $1",
-            "^YouTube$": " ",
+            "(.*) YouTube - Brave": "  $1",
+            "(.*) - YouTube - Brave": "  $1",
             "(.*) Stream - Watch Live on Kick - Brave": "  $1",
             "(.*) — Mozilla Firefox": " $1",
-            "(.*) - Brave": "  $1",
-            "(.*) - Visual Studio Code": "  $1",
-            "(.*) - Windsurf(.*)": "  $1$2",
-            "vi (.*)": "  $1",
+            "(.*) - Google Search - Brave": "  $1",
+            "(.*) - Gmail - Brave": "󰊫  $1",
+            "(.*) - Stack Overflow - Brave": " $1",
+            "(.*)?Instagram - Brave": "  $1 ",
+            "(.*)?Facebook - Brave": "  $1",
+            "^Google - Brave$": "  ",
+            "^GitHub - Brave$": "  ",
+            "(.*) - Visual Studio Code": "󰨞  $1",
             "(.*) on QEMU/KVM": "󰢹  $1",
-            "jamerrq@nikki:(.*)": "󰄛  on $1",
-            "Spotify Premium": " "
+            "jamerrq@nikki:(.*)": "󰄛  on  $1",
+            "Spotify Premium": " ",
+            " BashTOP": " 󰩃 ",
+            "WhatsApp Web - WhatsApp": "  ",
+            "sudo nixos-rebuild switch": "  󱜼 ",
+            "sudo (.*) /etc/nixos/configuration.nix": "  󱁤 ",
+            "^nvim (.*)": "   $1",
+            "^waybar$":"   waybar ",
+            "(.*?) - Brave": "  $1",
+            "Google Keep": "  󰛜 "
         }
     },
 
@@ -88,21 +104,24 @@
         "exec": "playerctl -p spotify metadata --format '{{ artist }} - {{ title }}'",
         "exec-if": "pgrep spotify",
         "interval": 1,
-        "on-click": "playerctl -p spotify play-pause"
+        "on-click": "playerctl -p spotify play-pause",
+        "tooltip": false
     },
     "custom/spotify-prev": {
         "format": "󰒮",
         "exec": "echo -1",
         "exec-if": "pgrep spotify",
         "interval": 1,
-        "on-click": "playerctl -p spotify previous"
+        "on-click": "playerctl -p spotify previous",
+        "tooltip": false
     },
     "custom/spotify-next": {
         "format": "󰒭",
         "exec": "echo 1",
         "exec-if": "pgrep spotify",
         "interval": 1,
-        "on-click": "playerctl -p spotify next"
+        "on-click": "playerctl -p spotify next",
+        "tooltip": false
     },
 
     "pulseaudio": {
@@ -124,7 +143,8 @@
         },
         "on-click-right": "pavucontrol",
         "on-click": "pactl set-sink-mute @DEFAULT_SINK@ toggle",
-        "min-length": 7
+        "min-length": 6,
+        "tooltip": false
     },
 
     "network": {
@@ -146,15 +166,15 @@
     },
 
     "memory": {
-        "format": "  {percentage}%",
+        "format": "  {percentage}%",
         "tooltip": true,
-        "tooltip-format": "memory: {used:0.1f}G/{total:0.1f}G\nswap: {swapUsed:0.1f}G/{swapTotal:0.1f}G",
+        "tooltip-format": "memory: {used:0.1f}G/{total:0.1f}G",
         "min-length": 6
     },
 
     "disk": {
         "interval": 30,
-        "format": "  {percentage_used}%",
+        "format": "󰋊 {percentage_used}%",
         "path": "/",
         "tooltip": true,
         "tooltip-format": "disk: {used} / total: {total}",
@@ -164,7 +184,7 @@
     "clock": {
         "timezone": "America/Bogota",
         "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>",
-        "format": "󰔟 {:%H:%M}",
+        "format": "  {:%H:%M}",
         "format-alt": "  {:%Y-%m-%d}"
     },
 
@@ -172,6 +192,7 @@
         "icon-size": 18,
         "spacing": 10
     },
+
     "idle_inhibitor": {
         "format": "{icon}",
         "format-icons": {

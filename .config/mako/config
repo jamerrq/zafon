@@ -1,14 +1,14 @@
 max-visible=7
 sort=-time
 layer=top
-anchor=bottom-right
+anchor=top-center
 
 font=ShureTechMono Nerd Font 12
 background-color=#1e1e2e
 text-color=#008585
 width=300
 height=100
-margin=10
+margin=5
 padding=5
 border-size=3
 border-color=#008585
@@ -23,7 +23,7 @@ actions=1
 default-timeout=10000
 ignore-timeout=0
 group-by=none
-text-alignment=right
+text-alignment=center
 
 outer-margin=6
 

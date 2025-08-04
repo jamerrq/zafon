@@ -1,5 +1,5 @@
 * {
-    font-family: "ShureTechMono Nerd Font", "Font Awesome";
+    font-family: "Google Sans Code", "Font Awesome";
     font-size: 12px;
     font-weight: bold;
 }
@@ -28,7 +28,7 @@ window#waybar.hidden {
 #workspaces button {
     padding: 0 5px;
     background-color: transparent;
-    color: #ffffff;
+    color: rgba(255, 255, 255, 0.9);
     border: none;
     border-radius: 8px;
     transition: all 0.3s ease;
@@ -37,15 +37,16 @@ window#waybar.hidden {
 }
 
 #workspaces button:hover {
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.1);
     /* box-shadow: inset 0 -3px 0 #ffffff; */
 }
 
 #workspaces button.focused {
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.1);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
     border-bottom: 2px solid rgba(205, 193, 255, 0.8);
-    color: #000;
+    /* color: #fff; */
+    color: #C0C9EE;
 }
 
 #workspaces button.urgent {
@@ -71,7 +72,7 @@ window#waybar.hidden {
 /* Window title */
 #window {
     margin: 5px;
-    padding: 0 10px;
+    padding: 0 5px;
     border-radius: 10px;
     background: rgba(17, 63, 103, 0.5);
     color: #ffffff;
@@ -103,7 +104,7 @@ window#waybar.hidden {
 #tray,
 #idle_inhibitor {
     padding: 0 10px;
-    margin: 2px 2px;
+    margin: 2px 0.25px;
     border-radius: 10px;
     background: rgba(255, 255, 255, 0.1);
     color: #ffffff;
@@ -115,15 +116,9 @@ window#waybar.hidden {
 #custom-spotify:hover,
 #custom-spotify-prev:hover,
 #custom-spotify-next:hover,
-#mpd:hover,
-#pulseaudio:hover,
-#network:hover,
 #cpu:hover,
 #memory:hover,
-#disk:hover,
-#battery:hover,
-#clock:hover,
-#idle_inhibitor:hover {
+#disk:hover {
     background: rgba(255, 255, 255, 0.2);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
     border-bottom: 2px solid rgba(46, 204, 113, 0.8);
@@ -148,13 +143,13 @@ window#waybar.hidden {
 }
 
 #pulseaudio {
-    background: rgba(17, 63, 103, 0.5) /* rgb(85 88 121) */
+    background: rgba(17, 63, 103, 0.0) /* rgb(85 88 121) */
 }
 
 #pulseaudio.muted {
-    background: rgba(255, 173, 173, 0.5);
-    color: #000;
-    border-bottom: 2px solid rgba(255, 173, 173, 0.8);
+    background: rgba(255, 173, 173, 0.0);
+    /* color: #000; */
+    border-bottom: 2px solid rgba(170, 117, 117, 0.8);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
@@ -173,15 +168,15 @@ window#waybar.hidden {
 }
 
 #cpu, #memory, #disk {
-    background: rgba(58, 151, 140, 0.5);
+    background: rgba(58, 151, 140, 0.0);
     /* background: rgba(255, 255, 255, 0.2); */
     border-bottom: 2px solid rgba(46, 204, 113, 0);
-    color: #000;
+    color: #fff;
 }
 
 #cpu:hover, #memory:hover, #disk:hover {
     background: rgba(58, 151, 140, 0.5);
-    color: #18331a;
+    color: #caffbf;
     border-bottom: 2px solid rgba(46, 204, 113, 0.8);
 }
 
@@ -192,17 +187,19 @@ window#waybar.hidden {
 }
 
 #clock {
-    background: rgba(17, 63, 103, 0.5); /* rgb(85 88 121) */
+    background: rgba(17, 63, 103, 0.0); /* rgb(85 88 121) */
     margin-right: 10px;
 }
 
 /* Tray */
 #tray {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.0);
+    border-bottom: 2px solid rgba(85, 88, 121, 0.8);
 }
 
 #tray:hover {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    background: rgba(255, 255, 255, 0.2);
 }
 
 #tray > .passive {
@@ -215,17 +212,33 @@ window#waybar.hidden {
 }
 
 #idle_inhibitor {
-    background: rgba(17, 63, 103, 0.5) /* rgb(85 88 121) */
+    background: rgba(17, 63, 103, 0.0) /* rgb(85 88 121) */
 }
 
 #idle_inhibitor.activated {
-    background: rgba(255, 214, 165, 0.5); /* rgb(255 214 165) */
-    color: #000;
+    border-bottom: 2px solid rgba(134, 114, 90, 0.8); /* rgb(255 214 165) */
+    /* color: #000; */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-    border-bottom: 2px solid rgba(255, 214, 165, 0.8);
+    background: rgba(255, 214, 165, 0.0);
 }
 
 #idle_inhibitor.activated:hover {
     background: rgba(255, 214, 165, 0.2);
     border-bottom: 2px solid rgba(255, 214, 165, 0.8);
+}
+
+#idle_inhibitor,
+#pulseaudio,
+#clock {
+    color: #fff;
+    border-bottom: 2px solid rgba(46, 204, 113, 0);
+}
+
+#idle_inhibitor:hover,
+#pulseaudio:hover,
+#clock:hover {
+    background: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    border-bottom: 2px solid rgba(52, 105, 154, 0.8);
+    color: #e8eef1;
 }

@@ -50,6 +50,23 @@
     description = "Jamer José";
     extraGroups = [ "networkmanager" "wheel" "libvirtd" "docker"];
     packages = with pkgs; [
+      # dev
+      code-cursor          # ai code editor
+      dbeaver-bin          # database manager
+      docker               # containerization
+      git                  # version control
+      git-lfs              # git large file storage
+      kitty                # terminal
+      python3              # python
+      vscode               # code editor
+      yadm                 # dotfiles manager
+
+      # vm
+      qemu                  # virtualization
+
+      # daily
+      brave                 # browser
+      spotify               # music
     ];
     shell = pkgs.zsh;
   };
@@ -61,60 +78,41 @@
     cava                 # audio visualization
     libnotify            # notification system
     eza                  # ls replacement
+    fastfetch            # system information
     feh                  # image viewer
     fzf                  # fuzzy finder
     libsForQt5.kruler    # ruler
-    neofetch             # system information
+    neovim               # text editor
     networkmanagerapplet # network manager applet
     pavucontrol          # audio control
     playerctl            # media player controller
     ranger               # file manager
-    timg                 # image viewer
-    vim                  # text editor
-    xclip                # clipboard manager
+    timg                 # image & video viewer
     xorg.xmodmap         # keyboard remapping
     zoxide               # cd replacement
-
-    # dev
-    dbeaver-bin          # database manager
-    docker               # containerization
-    git                  # version control
-    git-lfs              # git large file storage
-    kitty                # terminal
-    python3              # python
-    vscode               # code editor
-    windsurf             # code editor
-    yadm                 # dotfiles manager
-
-    # vm
-    qemu                  # virtualization
-
-    # daily
-    brave                 # browser
-    spotify               # music
-    apple-cursor          # cursor theme
 
     # for sway (wayland)
     gammastep             # screen color temperature
     grim                  # screenshot functionality
     mako                  # notification system
     rofi-wayland          # rofi for wayland
+    sherlock-launcher     # application launcher
     slurp                 # screenshot functionality
     swaybg                # background for sway
     swayidle              # idle management
-    swaylock              # screenlock for sway
+    swaylock-effects      # effects for swaylock
     waybar                # bar for sway
     wdisplays             # display management (GUI)
     wl-clipboard          # copy/paste from stdin / stdout (wl-copy, wl-paste)
 
-    # i3 exclusive
-    # betterlockscreen
+    # for i3 (xorg)
     # bumblebee-status
     # flameshot
     # i3-gaps
     # picom
     # redshift
     # rofi
+    # xclip
     # xorg.xrandr
   ];
 
@@ -179,3 +177,4 @@
   };
   system.stateVersion = "25.05";
 }
+
