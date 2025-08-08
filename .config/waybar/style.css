@@ -55,7 +55,7 @@ window#waybar.hidden {
 }
 
 #workspaces button.persistent {
-    border-top: 2px solid rgba(52, 105, 154, 0.8);
+    /* border-top: 2px solid rgba(52, 105, 154, 0.8); */
 }
 
 /* Mode */
@@ -80,6 +80,12 @@ window#waybar.hidden {
     border-bottom: 2px solid transparent;
     font-size: 12px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+window#waybar.empty #window {
+    background: transparent;
+    box-shadow: none;
+    color: transparent;
 }
 
 #window:hover {

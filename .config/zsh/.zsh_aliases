@@ -1,11 +1,16 @@
-alias editor="nvim"
+# $HOME/.config/zsh/.zsh_aliases
+
+# config files
 alias zshconfig="editor $HOME/.zshrc"
 alias omzconfig="editor $HOME/.oh-my-zsh"
+alias nixconfig="sudoedit /etc/nixos/configuration.nix"
 alias zshaliases="editor $HOME/.zsh_aliases"
-alias nixconfig="sudo nvim /etc/nixos/configuration.nix"
-alias nixrb="sudo nixos-rebuild switch"
 alias i3config="editor $HOME/.config/i3/config"
-alias vimconfig="editor $HOME/.vimrc" 
+alias vimconfig="editor $HOME/.vimrc"
+
+# for nix
+alias nixrb="sudo nixos-rebuild switch"
+alias nixrbu="sudo nixos-rebuild switch --upgrade"
 
 alias py3='python3'
 alias py='python'

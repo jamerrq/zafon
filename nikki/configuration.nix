@@ -50,6 +50,10 @@
     description = "Jamer José";
     extraGroups = [ "networkmanager" "wheel" "libvirtd" "docker"];
     packages = with pkgs; [
+      # daily
+      brave                 # browser
+      spotify               # music
+
       # dev
       code-cursor          # ai code editor
       dbeaver-bin          # database manager
@@ -63,10 +67,6 @@
 
       # vm
       qemu                  # virtualization
-
-      # daily
-      brave                 # browser
-      spotify               # music
     ];
     shell = pkgs.zsh;
   };
@@ -76,11 +76,13 @@
   environment.systemPackages = with pkgs; [
     # utilities
     cava                 # audio visualization
-    libnotify            # notification system
     eza                  # ls replacement
     fastfetch            # system information
     feh                  # image viewer
     fzf                  # fuzzy finder
+    imagemagick          # image manipulation
+    keyd                 # keyboard mapper
+    libnotify            # notification system
     libsForQt5.kruler    # ruler
     neovim               # text editor
     networkmanagerapplet # network manager applet
@@ -88,32 +90,23 @@
     playerctl            # media player controller
     ranger               # file manager
     timg                 # image & video viewer
-    xorg.xmodmap         # keyboard remapping
+    unzip                # unzip files
     zoxide               # cd replacement
 
     # for sway (wayland)
-    gammastep             # screen color temperature
-    grim                  # screenshot functionality
-    mako                  # notification system
-    rofi-wayland          # rofi for wayland
-    sherlock-launcher     # application launcher
-    slurp                 # screenshot functionality
-    swaybg                # background for sway
-    swayidle              # idle management
-    swaylock-effects      # effects for swaylock
-    waybar                # bar for sway
-    wdisplays             # display management (GUI)
-    wl-clipboard          # copy/paste from stdin / stdout (wl-copy, wl-paste)
-
-    # for i3 (xorg)
-    # bumblebee-status
-    # flameshot
-    # i3-gaps
-    # picom
-    # redshift
-    # rofi
-    # xclip
-    # xorg.xrandr
+    gammastep              # screen color temperature
+    grim                   # screenshot functionality
+    mako                   # notification system
+    rofi-wayland           # rofi for wayland
+    sherlock-launcher      # application launcher
+    slurp                  # screenshot functionality
+    swaybg                 # background for sway
+    swayidle               # idle management
+    swaylock-effects       # swaylock with effects
+    swaynotificationcenter # notification center for sway
+    waybar                 # bar for sway
+    wdisplays              # display management (GUI)
+    wl-clipboard           # copy/paste from stdin / stdout (wl-copy, wl-paste)
   ];
 
   # vm config
@@ -121,16 +114,6 @@
   programs.virt-manager.enable = true;
   virtualisation.spiceUSBRedirection.enable = true;
   users.groups.libvirtd.members = ["jamerrq"];
-
-  # xorg config
-  # services.xserver = {
-  #   enable = false;
-  #   displayManager.lightdm.enable = true;
-  #   windowManager.i3.enable = true;
-  # };
-
-  # dconf config
-  # programs.dconf.enable = true;
 
   # fonts
   fonts.fontconfig.enable = true;
@@ -166,7 +149,6 @@
     enable = true;
     extraPortals = with pkgs; [ xdg-desktop-portal-wlr ];
   };
-
 
   # nix additional config
   nix.settings.extra-experimental-features = [ "nix-command" "flakes" ];

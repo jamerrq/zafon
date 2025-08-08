@@ -44,7 +44,7 @@
             "8": "8",
             "9": "9"
         },
-        "persistent_workspaces": {
+        "persistent-workspaces": {
             "0": [],
             "1": [],
             "2": [],
@@ -85,6 +85,7 @@
             "^Google - Brave$": "  ",
             "^GitHub - Brave$": "  ",
             "(.*) - Visual Studio Code": "󰨞  $1",
+            "(.*) - Cursor": "  $1",
             "(.*) on QEMU/KVM": "󰢹  $1",
             "jamerrq@nikki:(.*)": "󰄛  on  $1",
             "Spotify Premium": " ",
@@ -95,7 +96,7 @@
             "^nvim (.*)": "   $1",
             "^waybar$":"   waybar ",
             "(.*?) - Brave": "  $1",
-            "Google Keep": "  󰛜 "
+            "Google Keep": "   󰛜  "
         }
     },
 

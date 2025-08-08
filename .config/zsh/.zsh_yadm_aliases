@@ -1,6 +1,7 @@
-alias yrt='cd "$(yadm rev-parse --show-toplevel || echo .)"'
-alias ygpur='ggu'
-alias y='git'
+# yadm aliases
+# generated from git.plugin.zsh
+# warning: not all aliases work for yadm
+alias y='yadm'
 alias ya='yadm add'
 alias yaa='yadm add --all'
 alias yapa='yadm add --patch'
