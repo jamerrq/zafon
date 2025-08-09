@@ -96,7 +96,8 @@
             "^nvim (.*)": "   $1",
             "^waybar$":"   waybar ",
             "(.*?) - Brave": "  $1",
-            "Google Keep": "   󰛜  "
+            "Google Keep": "   󰛜  ",
+            "DBeaver 25.0.4 -(.*)": " $1"
         }
     },
 

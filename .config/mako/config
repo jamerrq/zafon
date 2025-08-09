@@ -1,17 +1,17 @@
 max-visible=7
 sort=-time
 layer=top
-anchor=top-center
+anchor=top-right
 
 font=ShureTechMono Nerd Font 12
-background-color=#1e1e2e
-text-color=#008585
+background-color=#1D1616EE
+text-color=#C0C9EE
 width=300
 height=100
 margin=5
 padding=5
 border-size=3
-border-color=#008585
+border-color=#C0C9EE
 border-radius=5
 progress-color=over #5588AAF0
 icons=1
@@ -23,7 +23,7 @@ actions=1
 default-timeout=10000
 ignore-timeout=0
 group-by=none
-text-alignment=center
+text-alignment=right
 
 outer-margin=6
 
@@ -32,17 +32,19 @@ text-color=#b8cdab
 border-color=#b8cdab
 
 [urgency="critical"]
-text-color=#c7522a
-border-color=#c7522a
+text-color=#DA6C6C
+border-color=#DA6C6C
 
 [app-name="Spotify"]
 width=400
-background-color=#141414
-text-color=#1ed760
-border-color=#1ed760
+text-color=#A3DC9A
+border-color=#A3DC9A
+anchor=top-center
+text-alignment=center
 
 [app-name="kitty"]
 width=400
-background-color=#141414
 text-color=#a881ff
 border-color=#a881ff
+anchor=top-center
+text-alignment=center

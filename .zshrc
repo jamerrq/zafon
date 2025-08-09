@@ -6,7 +6,7 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
 fi
 
 # oh-my-zsh
-export ZSH="$HOME/.oh-my-zsh"
+export ZSH="$HOME/.config/zsh/.oh-my-zsh"
 
 # Set name of the theme to load --- if set to "random", it will load a random
 # theme each time Oh My Zsh is loaded, in which case, to know which specific one
@@ -62,7 +62,7 @@ zstyle ':omz:update' mode auto      # update automatically without asking
 # details. HIST_STAMPS="mm/dd/yyyy"
 
 # Would you like to use another custom folder than $ZSH/custom?
-# ZSH_CUSTOM=/path/to/new-custom-folder
+ZSH_CUSTOM=$HOME/.config/zsh/.oh-my-zsh/custom
 
 # Which plugins would you like to load? Standard plugins can be found in
 # $ZSH/plugins/ Custom plugins may be added to $ZSH_CUSTOM/plugins/ Example
@@ -81,7 +81,7 @@ source $ZSH_CUSTOM/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
 source $ZSH_CUSTOM/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 # p10k
-source ~/.p10k.zsh
+source $HOME/.config/zsh/.p10k.zsh
 
 # User configuration
 

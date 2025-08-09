@@ -1,145 +1,105 @@
 {
-  "logo": {
-      "type": "kitty",
-      "source": "~/pictures/logos/nixos3.png",
-      "width": 40,
-      "height": 40,
-      "padding": {
-        "top": 2,
-        "left": 2,
-        "right": 2
-      }
+    "logo": {
+        "type": "auto",        // Logo type: auto, builtin, small, file, etc.
+        "width": 65,           // Width in characters (for image logos)
+        "height": 35,          // Height in characters (for image logos)
+        "padding": {
+            "top": 0,          // Top padding
+            "left": 2,         // Left padding
+            "right": 2,         // Right padding
+            "bottom": 4          // Bottom padding
+        },
+        "color": {             // Override logo colors
+            "1": "#D6DAC8",
+            "2": "#9CAFAA"
+        }
+    },
+    "display": {
+        "separator": "  ",
+        "color": {
+            "keys": "#9CAFAA",    // Key color
+            "title": "#D6DAC8"     // Title color
+        },
+        "bar": {
+            "width": 10,       // Width of percentage bars
+            "charElapsed": "■", // Character for elapsed portion
+            "charTotal": "-"   // Character for total portion
+        },
+        "percent": {
+            "type": 3,         // 1=number, 2=bar, 3=both, 9=colored number
+            "color": {
+                "green": "#9CAFAA",
+                "yellow": "light_yellow",
+                "red": "light_red"
+            }
+        }
     },
     "modules": [
         "break",
         {
-            "type": "custom",
-            "format": "\u001b[90m┌──────────────────────Hardware──────────────────────┐"
-        },
-        {
             "type": "host",
-            "key": " PC",
-            "keyColor": "green"
+            "key": "󰒋"
         },
         {
             "type": "cpu",
-            "key": "│ ├",
-            "keyColor": "green"
+            "key": "│ "
         },
         {
             "type": "gpu",
-            "key": "│ ├󰍛",
-            "keyColor": "green"
+            "key": "│ ",
+            "format": "GPU {driver} @ {frequency}"
         },
         {
             "type": "memory",
-            "key": "│ ├󰍛",
-            "keyColor": "green"
+            "key": "│ "
         },
         {
             "type": "disk",
-            "key": "└ └",
-            "keyColor": "green"
-        },
-        {
-            "type": "custom",
-            "format": "\u001b[90m└────────────────────────────────────────────────────┘"
+            "key": "│ 󰋊"
         },
         "break",
         {
-            "type": "custom",
-            "format": "\u001b[90m┌──────────────────────Software──────────────────────┐"
-        },
-        {
             "type": "os",
-            "key": " OS",
-            "keyColor": "yellow"
+            "key": ""
         },
         {
             "type": "kernel",
-            "key": "│ ├",
-            "keyColor": "yellow"
+            "key": "│ "
         },
         {
             "type": "bios",
-            "key": "│ ├",
-            "keyColor": "yellow"
+            "key": "│ "
         },
         {
             "type": "packages",
-            "key": "│ ├󰏖",
-            "keyColor": "yellow"
+            "key": "│ 󰏖"
         },
         {
             "type": "shell",
-            "key": "└ └",
-            "keyColor": "yellow"
+            "key": "│ "
         },
         "break",
         {
             "type": "de",
-            "key": " DE",
-            "keyColor": "blue"
-        },
-        {
-            "type": "lm",
-            "key": "│ ├",
-            "keyColor": "blue"
+            "key": " DE"
         },
         {
             "type": "wm",
-            "key": "│ ├",
-            "keyColor": "blue"
+            "key": "│ "
         },
         {
             "type": "wmtheme",
-            "key": "│ ├󰉼",
-            "keyColor": "blue"
+            "key": "│ 󰉼"
         },
         {
             "type": "terminal",
-            "key": "└ └",
-            "keyColor": "blue"
-        },
-        {
-            "type": "custom",
-            "format": "\u001b[90m└────────────────────────────────────────────────────┘"
+            "key": "└ "
         },
         "break",
-        {
-            "type": "custom",
-            "format": "\u001b[90m┌────────────────────Uptime / Age / DT────────────────────┐"
-        },
-        {
-            "type": "command",
-            "key": "  OS Age ",
-            "keyColor": "magenta",
-            "text": "birth_install=$(stat -c %W /); current=$(date +%s); time_progression=$((current - birth_install)); days_difference=$((time_progression / 86400)); echo $days_difference days"
-        },
-        {
-            "type": "uptime",
-            "key": "  Uptime ",
-            "keyColor": "magenta"
-        },
-        {
-            "type": "datetime",
-            "key": "  DateTime ",
-            "keyColor": "magenta"
-        },
-        {
-            "type": "custom",
-            "format": "\u001b[90m└─────────────────────────────────────────────────────────┘"
-        },
-
-//        {
-//            "type": "colors"
-//        },
-
         {
             "type": "colors",
             "paddingLeft": 2,
             "symbol": "circle"
         }
-
     ]
 }

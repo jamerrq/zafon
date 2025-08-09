@@ -50,8 +50,9 @@ bindsym XF86AudioMicMute exec pactl set-source-mute @DEFAULT_SOURCE@ toggle
 
 # --- screenshots (wayland equivalents) ---
 bindsym Print exec grim -g "$(slurp)" - | wl-copy
-bindsym $mod+Print exec grim ~/pictures/screenshot-$(date +%Y%m%d_%H%M%S).png
-bindsym $mod+Shift+Print exec grim -g "$(slurp)" ~/pictures/screenshot-$(date +%Y%m%d_%H%M%S).png
+bindsym $mod+Print exec grim ~/pictures/screenshots/screenshot-$(date +%Y%m%d_%H%M%S).png
+# bindsym $mod+Shift+Print exec grim -g "$(slurp)" ~/pictures/screenshots/screenshot-$(date +%Y%m%d_%H%M%S).png
+bindsym $mod+Shift+Print exec /dev/scripts/bash/screenshot-delay.sh
 
 # --- layout and gaps ---
 title_align center

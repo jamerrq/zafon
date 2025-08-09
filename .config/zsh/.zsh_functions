@@ -25,3 +25,40 @@ extract_tar() {
                 return 2 ;;
   esac
 }
+
+convert_imgs() {
+  local input_dir="${1:-.}"
+  local output_dir="{$2:-.}"
+  local quality="${3:-85}"  # Calidad por defecto 85 si no se proporciona
+
+  if [[ -z "$input_dir" || -z "$output_dir" ]]; then
+    echo "[ERROR]: must provide input and output directories"
+    return 1
+  fi
+
+  if [[ ! -d "$input_dir" ]]; then
+    echo "[ERROR]: input directory does not exist: $input_dir"
+    return 2
+  fi
+
+  mkdir -p "$output_dir"
+  local converted_count=0
+  local failed_count=0
+
+  for img in "$input_dir"/*.{jpg,jpeg,png}; do
+    [[ -e "$img" ]] || { echo "[WARNING]: no images found in $input_dir"; return 3; }
+    local base_name
+    base_name=$(basename "$img")
+    local output_file="$output_dir/${base_name%.*}.webp"
+    cwebp -q "$quality" "$img" -o "$output_file" && echo "[INFO]: converted $img to $output_file"
+    if [[ $? -eq 0 ]]; then
+      ((converted_count++))
+    else
+      echo "[ERROR]: failed to convert $img"
+      ((failed_count++))
+    fi
+  done
+
+  echo "[INFO]: conversion completed: $converted_count succeeded, $failed_count failed."
+  return 0
+}

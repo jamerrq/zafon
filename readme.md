@@ -1,37 +1,24 @@
 # Nikki (NixOS)
 
-![desktop](./lib/imgs/desktop.png)
+![desktop](.config/lib/imgs/desktop.webp)
 
-NixOS configuration by [@jamerrq](https://github.com/jamerrq)
+NixOS dotfiles by [@jamerrq](https://github.com/jamerrq)
 
 ### config files
 
-- [i3](.config/i3)
 - [cava](.config/cava)
-- [neofetch](.config/neofetch)
-- [picom](.config/picom)
-- [dunst](.config/dunst)
+- [fastfetch](.config/fastfetch)
 - [kitty](.config/kitty)
-- [flameshot](.config/flameshot)
-- [betterlockscreen](.config/betterlockscreen)
-
-### git config
-- [.gitconfig](.gitconfig)
-
-### zsh config files
-
-- [.zshrc](.zshrc)
-- [.p10k.zsh](.p10k.zsh)
-- [.zsh_aliases](.zsh_aliases)
-- [.zsh_functions](.zsh_functions)
+- [mako](.config/mako)
+- [neovim](.config/nvim)
+- [sherlock launcher](.config/sherlock)
+- [sway](.config/sway)
+- [waybar](.config/waybar)
+- [zsh](.config/zsh)
 
 ### utility bash scripts
 
-- [dev/scripts/bash/](dev/scripts/bash/)
-
-### bumblebee-status fork
-
-- [./bumblebee-status](.config/bumblebee-status)
+- [dev/scripts/bash](dev/scripts/bash/)
 
 ### wallpapers
 
@@ -40,19 +27,19 @@ NixOS configuration by [@jamerrq](https://github.com/jamerrq)
 
 ### icons
 
-- [pictures/icons](pictures/icons)
+- [pictures/nikki/icons](pictures/nikki/icons)
 
-### nikki files
+### nixos files
 
 - [configuration.nix](nikki/configuration.nix)
 - [hardware-configuration.nix](nikki/hardware-configuration.nix)
 
 ### screenshots
 
-![desktop 2](./lib/imgs/desktop_1.png)
+![desktop 2](.config/lib/imgs/desktop_1.webp)
 
-![desktop 3](./lib/imgs/desktop_2.png)
+![desktop 3](.config/lib/imgs/desktop_2.webp)
 
-![desktop 4](./lib/imgs/desktop_3.png)
+![desktop 4](.config/lib/imgs/desktop_3.webp)
 
-![desktop 5](./lib/imgs/desktop_4.png)
+![desktop 5](.config//lib/imgs/desktop_4.webp)
