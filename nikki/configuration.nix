@@ -61,6 +61,7 @@
       git                  # version control
       git-lfs              # git large file storage
       kitty                # terminal
+      postman              # http petitions
       python3              # python
       vscode               # code editor
       yadm                 # dotfiles manager
@@ -84,6 +85,7 @@
     keyd                 # keyboard mapper
     libnotify            # notification system
     libsForQt5.kruler    # ruler
+    libwebp              # webp image manipulation
     neovim               # text editor
     networkmanagerapplet # network manager applet
     pavucontrol          # audio control
@@ -94,7 +96,7 @@
     zoxide               # cd replacement
 
     # for sway (wayland)
-    gammastep              # screen color temperature
+    wlsunset               # light temperature
     grim                   # screenshot functionality
     mako                   # notification system
     rofi-wayland           # rofi for wayland
@@ -159,4 +161,3 @@
   };
   system.stateVersion = "25.05";
 }
-
