@@ -5,8 +5,7 @@ ICONS=("nikki_sleepy.png" "nikki_deep_sleep.png")
 ICON="$ICON_DIR/${ICONS[RANDOM % ${#ICONS[@]}]}"
 
 WALL_DIR=~/pictures/wallpapers
-WALL=/home/jamerrq/pictures/wallpapers/nikki.jpg
-
+WALL=/home/jamerrq/pictures/wallpapers/cat_at_play.png
 
 lock_and_then() {
     case "$1" in
@@ -48,7 +47,7 @@ lock_and_then() {
         --fade-in 0.2swaylock -l --fade-in 5 --screenshot --effect-pixelate 10 --effect-greyscale --clock --indicator \
         --font "ShureTechMono Nerd Font" \
         --text-color F4F7F7 &
-    sleep 1
+    sleep 3
     # dunstctl close-all
     # makoctl dismiss -a
 

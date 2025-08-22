@@ -1,6 +1,6 @@
 # Nikki (NixOS)
 
-![desktop](.config/lib/imgs/desktop.webp)
+![desktop](.config/lib/imgs/desktop_0.webp)
 
 NixOS dotfiles by [@jamerrq](https://github.com/jamerrq)
 
@@ -42,4 +42,6 @@ NixOS dotfiles by [@jamerrq](https://github.com/jamerrq)
 
 ![desktop 4](.config/lib/imgs/desktop_3.webp)
 
-![desktop 5](.config//lib/imgs/desktop_4.webp)
+![desktop 5](.config/lib/imgs/desktop_4.webp)
+
+![desktop 7](.config/lib/imgs/desktop_6.webp)

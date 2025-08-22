@@ -28,8 +28,8 @@ extract_tar() {
 
 convert_imgs() {
   local input_dir="${1:-.}"
-  local output_dir="{$2:-.}"
-  local quality="${3:-85}"  # Calidad por defecto 85 si no se proporciona
+  local output_dir="${2:-.}"
+  local quality="${3:-85}"
 
   if [[ -z "$input_dir" || -z "$output_dir" ]]; then
     echo "[ERROR]: must provide input and output directories"
@@ -45,19 +45,30 @@ convert_imgs() {
   local converted_count=0
   local failed_count=0
 
-  for img in "$input_dir"/*.{jpg,jpeg,png}; do
-    [[ -e "$img" ]] || { echo "[WARNING]: no images found in $input_dir"; return 3; }
+  local found_images=false
+
+  for img in "$input_dir"/*.png; do
+    [[ -e "$img" ]] || continue
+    found_images=true
+
     local base_name
     base_name=$(basename "$img")
     local output_file="$output_dir/${base_name%.*}.webp"
-    cwebp -q "$quality" "$img" -o "$output_file" && echo "[INFO]: converted $img to $output_file"
-    if [[ $? -eq 0 ]]; then
+
+    if cwebp -q "$quality" "$img" -o "$output_file"; then
+      echo "[INFO]: converted $img to $output_file"
       ((converted_count++))
     else
       echo "[ERROR]: failed to convert $img"
       ((failed_count++))
     fi
   done
+
+  # verify if any images were found
+  if [[ "$found_images" == false ]]; then
+    echo "[WARNING]: no images found in $input_dir"
+    return 3
+  fi
 
   echo "[INFO]: conversion completed: $converted_count succeeded, $failed_count failed."
   return 0

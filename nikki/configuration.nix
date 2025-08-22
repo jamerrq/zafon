@@ -51,8 +51,8 @@
     extraGroups = [ "networkmanager" "wheel" "libvirtd" "docker"];
     packages = with pkgs; [
       # daily
-      brave                 # browser
-      spotify               # music
+      brave                # browser
+      spotify              # music
 
       # dev
       code-cursor          # ai code editor
@@ -61,13 +61,12 @@
       git                  # version control
       git-lfs              # git large file storage
       kitty                # terminal
-      postman              # http petitions
       python3              # python
       vscode               # code editor
       yadm                 # dotfiles manager
 
       # vm
-      qemu                  # virtualization
+      qemu                 # virtualization
     ];
     shell = pkgs.zsh;
   };
@@ -76,27 +75,28 @@
   nixpkgs.config.allowUnfree = true;
   environment.systemPackages = with pkgs; [
     # utilities
-    cava                 # audio visualization
-    eza                  # ls replacement
-    fastfetch            # system information
-    feh                  # image viewer
-    fzf                  # fuzzy finder
-    imagemagick          # image manipulation
-    keyd                 # keyboard mapper
-    libnotify            # notification system
-    libsForQt5.kruler    # ruler
-    libwebp              # webp image manipulation
-    neovim               # text editor
-    networkmanagerapplet # network manager applet
-    pavucontrol          # audio control
-    playerctl            # media player controller
-    ranger               # file manager
-    timg                 # image & video viewer
-    unzip                # unzip files
-    zoxide               # cd replacement
+    cava                   # audio visualization
+    eza                    # ls replacement
+    fastfetch              # system information
+    feh                    # image viewer
+    fzf                    # fuzzy finder
+    imagemagick            # image manipulation
+    keyd                   # keyboard mapper
+    libnotify              # notification system
+    libsForQt5.kruler      # ruler
+    libwebp                # webp image manipulation
+    lxde.lxsession         # classic lxde session manager
+    neovim                 # text editor
+    networkmanagerapplet   # network manager applet
+    pavucontrol            # audio control
+    playerctl              # media player controller
+    ranger                 # file manager
+    ripgrep                # search tool
+    timg                   # image & video viewer
+    unzip                  # unzip files
+    zoxide                 # cd replacement
 
     # for sway (wayland)
-    wlsunset               # light temperature
     grim                   # screenshot functionality
     mako                   # notification system
     rofi-wayland           # rofi for wayland
@@ -109,6 +109,8 @@
     waybar                 # bar for sway
     wdisplays              # display management (GUI)
     wl-clipboard           # copy/paste from stdin / stdout (wl-copy, wl-paste)
+    wlogout                # logout menu for sway
+    wlsunset               # screen color temperature
   ];
 
   # vm config
