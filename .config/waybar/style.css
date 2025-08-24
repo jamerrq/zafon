@@ -1,247 +1,91 @@
+@import "../omarchy/current/theme/waybar.css";
+
 * {
-    font-family: "Google Sans Code", "Font Awesome";
-    font-size: 12px;
-    font-weight: bold;
+  background-color: @background;
+  color: @foreground;
+
+  border: none;
+  border-radius: 0;
+  min-height: 0;
+  font-family: FiraCode Nerd Font;
+  font-size: 12px;
 }
 
-window#waybar {
-    background-color: rgba(0, 0, 0, 0);
-    color: #ffffff;
-    border-radius: 15px;
-    transition-property: background-color;
-    transition-duration: 0.5s;
-    /* margin-right: 10px; */
-    /* margin: 3px; */
+.modules-left {
+  margin-left: 8px;
 }
 
-window#waybar.hidden {
-    opacity: 0.2;
-}
-
-/* Workspaces */
-#workspaces {
-    border-radius: 10px;
-    margin: 5px;
-    padding: 0px 5px;
+.modules-right {
+  margin-right: 8px;
 }
 
 #workspaces button {
-    padding: 0 5px;
-    background-color: transparent;
-    color: rgba(255, 255, 255, 0.9);
-    border: none;
-    border-radius: 8px;
-    transition: all 0.3s ease;
-    border-bottom: 2px solid transparent;
-    margin-right: 3px;
+  all: initial;
+  padding: 0 6px;
+  margin: 0 1.5px;
+  min-width: 9px;
 }
 
-#workspaces button:hover {
-    background: rgba(255, 255, 255, 0.1);
-    /* box-shadow: inset 0 -3px 0 #ffffff; */
+#workspaces button.empty {
+  opacity: 0.5;
 }
 
-#workspaces button.focused {
-    /* background: rgba(255, 255, 255, 0.1); */
-    background: rgba(243, 226, 212, 0.5);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-    border-bottom: 2px solid rgba(205, 193, 255, 0.8);
-    /* color: #fff; */
-    color: #1A2A80;
-}
-
-#workspaces button.urgent {
-    background-color: #ff7a30;
-    color: #222222;
-}
-
-/* Mode */
-#mode {
-    background-color: #ff7a30;
-    color: #222222;
-    border-radius: 10px;
-    margin: 5px;
-    padding: 0 10px;
-    font-style: normal;
-    font-weight: bold;
-}
-
-/* Window title */
-#window {
-    margin: 5px;
-    padding: 0 5px;
-    border-radius: 10px;
-    background: rgba(17, 63, 103, 0.5);
-    color: #ffffff;
-    transition: all 0.3s ease;
-    border-bottom: 2px solid transparent;
-    font-size: 12px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-}
-
-window#waybar.empty #window {
-    background: transparent;
-    box-shadow: none;
-    color: transparent;
-}
-
-#window:hover {
-    background: rgba(255, 255, 255, 0.2);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-    border-bottom: 2px solid rgba(52, 105, 154, 0.8);
-    color: #000;
-}
-
-/* Right modules styling */
-#custom-spotify,
-#custom-spotify-prev,
-#custom-spotify-next,
-#mpd,
-#pulseaudio,
-#network,
-#cpu,
-#memory,
-#disk,
-#battery,
-#clock,
 #tray,
-#idle_inhibitor {
-    padding: 0 10px;
-    margin: 2px 0.25px;
-    border-radius: 10px;
-    background: rgba(255, 255, 255, 0.1);
-    color: #ffffff;
-    transition: all 0.3s ease;
-    font-weight: bold;
-    font-size: 13px;
-}
-
-#custom-spotify:hover,
-#custom-spotify-prev:hover,
-#custom-spotify-next:hover,
-#cpu:hover,
-#memory:hover,
-#disk:hover {
-    background: rgba(255, 255, 255, 0.2);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-    border-bottom: 2px solid rgba(46, 204, 113, 0.8);
-    color: #000;
-}
-
-/* Specific module colors */
-#custom-spotify,
-#custom-spotify-prev,
-#custom-spotify-next {
-    background: #141414;
-    color: #1ed760;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-    border-bottom: 2px solid rgba(30, 215, 96, 0.8);
-}
-
-#custom-spotify-prev:hover,
-#custom-spotify-next:hover {
-    background: rgba(255, 255, 255, 0.2);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-    color: #000;
-}
-
-#pulseaudio {
-    background: rgba(17, 63, 103, 0.0) /* rgb(85 88 121) */
-}
-
-#pulseaudio.muted {
-    background: rgba(255, 173, 173, 0.0);
-    /* color: #000; */
-    border-bottom: 2px solid rgba(170, 117, 117, 0.8);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-}
-
-#pulseaudio.muted:hover {
-    background: rgba(255, 173, 173, 0.2);
-    border-bottom: 2px solid rgba(236, 72, 108, 0.8);
-}
-
-#network {
-    background: rgba(46, 204, 113, 0.3);
-}
-
-#network:disabled {
-    background: rgba(255, 173, 173, 0.8);
-    color: #3f3134;
-}
-
-#cpu, #memory, #disk {
-    background: rgba(58, 151, 140, 0.0);
-    /* background: rgba(255, 255, 255, 0.2); */
-    border-bottom: 2px solid rgba(46, 204, 113, 0);
-    color: #fff;
-}
-
-#cpu:hover, #memory:hover, #disk:hover {
-    background: rgba(58, 151, 140, 0.5);
-    color: #caffbf;
-    border-bottom: 2px solid rgba(46, 204, 113, 0.8);
-}
-
-@keyframes blink {
-    to {
-        background-color: rgba(231, 76, 60, 1);
-    }
-}
-
-#clock {
-    background: rgba(17, 63, 103, 0.0); /* rgb(85 88 121) */
-    margin-right: 10px;
-}
-
-/* Tray */
-#tray {
-    background: rgba(255, 255, 255, 0.0);
-    border-bottom: 2px solid rgba(85, 88, 121, 0.8);
-}
-
-#tray:hover {
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-    background: rgba(255, 255, 255, 0.2);
-}
-
-#tray > .passive {
-    -gtk-icon-effect: dim;
-}
-
-#tray > .needs-attention {
-    -gtk-icon-effect: highlight;
-    background-color: #ff7a30;
-}
-
-#idle_inhibitor {
-    background: rgba(17, 63, 103, 0.0) /* rgb(85 88 121) */
-}
-
-#idle_inhibitor.activated {
-    border-bottom: 2px solid rgba(134, 114, 90, 0.8); /* rgb(255 214 165) */
-    /* color: #000; */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-    background: rgba(255, 214, 165, 0.0);
-}
-
-#idle_inhibitor.activated:hover {
-    background: rgba(255, 214, 165, 0.2);
-    border-bottom: 2px solid rgba(255, 214, 165, 0.8);
-}
-
-#idle_inhibitor,
+#cpu,
+#battery,
+#network,
+#bluetooth,
 #pulseaudio,
-#clock {
-    color: #fff;
-    border-bottom: 2px solid rgba(46, 204, 113, 0);
+#clock,
+#custom-omarchy {
+  min-width: 12px;
+  margin: 0 7.5px;
 }
 
-#idle_inhibitor:hover,
-#pulseaudio:hover,
-#clock:hover {
-    background: rgba(255, 255, 255, 0.2);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-    border-bottom: 2px solid rgba(52, 105, 154, 0.8);
-    color: #e8eef1;
+#custom-expand-icon {
+  margin-right: 7px;
+}
+
+tooltip {
+  padding: 2px;
+}
+
+#spotify {
+  background-color: #1db954; /* Verde de Spotify */
+  color: #ffffff;
+  border-radius: 8px;
+  padding: 0 12px;
+  margin: 0 4px;
+  font-weight: 500;
+  min-width: 250px; /* Ancho fijo para mantener consistencia */
+}
+
+#spotify.playing {
+  background-color: #1db954;
+  animation: spotify-pulse 2s infinite;
+}
+
+#spotify.paused {
+  background-color: #535353;
+  color: #b3b3b3;
+}
+
+#spotify.stopped {
+  background-color: #2a2a2a;
+  color: #666666;
+}
+
+/* Controles de Spotify */
+#spotify-prev, #spotify-next {
+  background-color: #1db954;
+  color: #ffffff;
+  border-radius: 6px;
+  padding: 0 8px;
+  margin: 0 2px;
+  font-size: 14px;
+}
+
+#spotify-prev:hover, #spotify-next:hover {
+  background-color: #1ed760;
+  transition: all 0.2s ease;
 }
