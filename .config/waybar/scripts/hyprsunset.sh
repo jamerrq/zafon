@@ -33,10 +33,10 @@ CURRENT_TEMP=$(hyprctl hyprsunset temperature 2>/dev/null | grep -oE '[0-9]+' ||
 
 # determine icon based on temperature
 if [[ "$CURRENT_TEMP" == "$ON_TEMP" ]]; then
-  ICON=""
+  ICON="󰽧"
   CLASS="nightlight-on"
 elif [[ "$CURRENT_TEMP" == "$OFF_TEMP" ]]; then
-  ICON=""
+  ICON="󰖙"
   CLASS="nightlight-off"
 else
   ICON=""

@@ -16,6 +16,7 @@
     "pulseaudio",
     "cpu",
     "battery",
+    "custom/hypridle",
     "custom/hyprsunset",
     "custom/makoctl"
   ],
@@ -54,6 +55,14 @@
     "on-click": "alacritty --class Omarchy --title Omarchy -e omarchy-update",
     "tooltip-format": "Omarchy update available",
     "interval": 3600
+  },
+  "custom/hypridle": {
+    "format": " {} ",
+    "exec": "~/.config/waybar/scripts/hypridle.sh",
+    "return-type": "json",
+    "on-click": "~/.config/waybar/scripts/hypridle.sh toggle",
+    "interval": 5,
+    // "exec-if": "pgrep -x hypridle"
   },
   "custom/hyprsunset": {
     "format": " {text} ",

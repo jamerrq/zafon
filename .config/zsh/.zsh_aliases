@@ -1,12 +1,15 @@
 # $HOME/.config/zsh/.zsh_aliases
 
+# reload zsh config
+alias zshreload="source $HOME/.zshrc"
+
 # config files
 alias zshconfig="$EDITOR $HOME/.zshrc"
 alias omzconfig="$EDITOR $HOME/.config/zsh/.oh-my-zsh"
 alias nixconfig="sudoedit /etc/nixos/configuration.nix"
 alias zshaliases="$EDITOR $HOME/.config/zsh/.zsh_aliases"
-alias i3config="$EDITOR $HOME/.config/i3/config"
 alias nvimconfig="$EDITOR $HOME/.config/nvim/init.lua"
+alias waybarconfig="$EDITOR $HOME/.config/waybar/config.jsonc"
 
 # for nix
 alias nixrb="sudo nixos-rebuild switch"
