@@ -1,9 +1,8 @@
 #!/bin/bash
 
-# File: ~/.config/waybar/mako.sh
-# Make sure it's executable: chmod +x ~/.config/waybar/mako.sh
+# ~/.config/waybar/mako.sh
 
-# Handle click events from Waybar
+# handle click events from waybar
 if [[ "$1" == "toggle" ]]; then
   makoctl mode -t do-not-disturb
   if makoctl mode | grep -q 'do-not-disturb'; then
@@ -13,10 +12,10 @@ if [[ "$1" == "toggle" ]]; then
   fi
 fi
 
-# Get current mode (take only the last line to avoid multiple modes)
+# get current mode (take only the last line to avoid multiple modes)
 CURRENT_MODE=$(makoctl mode | tail -n 1)
 
-# Determine icon and class based on mode
+# determine icon and class based on mode
 if [[ "$CURRENT_MODE" == "do-not-disturb" ]]; then
   ICON=""
   CLASS="notifications-silenced"
@@ -25,5 +24,5 @@ else
   CLASS="notifications-enabled"
 fi
 
-# Output JSON for Waybar
+# output (JSON)
 echo "{\"text\": \"$ICON\", \"class\": \"$CLASS\", \"tooltip\": \"Notifications: $CURRENT_MODE\"}"

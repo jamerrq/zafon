@@ -4,14 +4,8 @@
   "position": "top",
   "spacing": 0,
   "height": 26,
-  "modules-left": [
-    "custom/omarchy",
-    "hyprland/workspaces"
-  ],
-  "modules-center": [
-    "clock",
-    "custom/update"
-  ],
+  "modules-left": ["custom/omarchy", "hyprland/workspaces"],
+  "modules-center": ["clock", "custom/update"],
   "modules-right": [
     "custom/spotify",
     "custom/spotify-prev",
@@ -47,9 +41,7 @@
       "3": [],
       "4": [],
       "5": []
-    },
-    "on-scroll-up": "hyprctl dispatch workspace e+1",
-    "on-scroll-down": "hyprctl dispatch workspace e-1"
+    }
   },
   "custom/omarchy": {
     "format": "󰣇",
@@ -68,14 +60,16 @@
     "exec": "~/.config/waybar/scripts/hyprsunset.sh",
     "return-type": "json",
     "on-click": "~/.config/waybar/scripts/hyprsunset.sh toggle",
-    "interval": 5
+    "interval": 5,
+    "tooltip": false
   },
   "custom/makoctl": {
-    "format": " {} ",
+    "format": " {text} ",
     "exec": "~/.config/waybar/scripts/mako.sh",
     "return-type": "json",
     "on-click": "~/.config/waybar/scripts/mako.sh toggle",
-    "interval": 5
+    "interval": 5,
+    "tooltip": false
   },
   "custom/spotify": {
       "format": "   {} ",
@@ -113,11 +107,11 @@
     "on-click-right": "omarchy-cmd-tzupdate"
   },
   "network": {
-    "format-icons": ["󰤯","󰤟","󰤢","󰤥","󰤨"],
-    "format" : "{icon}",
-    "format-wifi" : "{icon}",
-    "format-ethernet" : "󰀂",
-    "format-disconnected" : "󰖪",
+    "format-icons": ["󰤯", "󰤟", "󰤢", "󰤥", "󰤨"],
+    "format": "{icon}",
+    "format-wifi": "{icon}",
+    "format-ethernet": "󰀂",
+    "format-disconnected": "󰖪",
     "tooltip-format-wifi": "{essid} ({frequency} GHz)\n⇣{bandwidthDownBytes}  ⇡{bandwidthUpBytes}",
     "tooltip-format-ethernet": "⇣{bandwidthDownBytes}  ⇡{bandwidthUpBytes}",
     "tooltip-format-disconnected": "Disconnected",
@@ -128,15 +122,11 @@
   "battery": {
     "format": "{capacity}% {icon}",
     "format-discharging": "{icon}",
-    "format-charging":    "{icon}",
-    "format-plugged":     "",
+    "format-charging": "{icon}",
+    "format-plugged": "",
     "format-icons": {
-      "charging": [
-        "󰢜", "󰂆", "󰂇", "󰂈", "󰢝", "󰂉", "󰢞", "󰂊", "󰂋", "󰂅"
-      ],
-      "default": [
-        "󰁺", "󰁻", "󰁼", "󰁽", "󰁾", "󰁿", "󰂀", "󰂁", "󰂂", "󰁹"
-      ]
+      "charging": ["󰢜", "󰂆", "󰂇", "󰂈", "󰢝", "󰂉", "󰢞", "󰂊", "󰂋", "󰂅"],
+      "default": ["󰁺", "󰁻", "󰁼", "󰁽", "󰁾", "󰁿", "󰂀", "󰂁", "󰂂", "󰁹"]
     },
     "format-full": "󰂅",
     "tooltip-format-discharging": "{power:>1.0f}W↓ {capacity}%",
@@ -171,10 +161,7 @@
       "transition-duration": 600,
       "children-class": "tray-group-item"
     },
-    "modules": [
-      "custom/expand-icon",
-    "tray"
-    ]
+    "modules": ["custom/expand-icon", "tray"]
   },
   "custom/expand-icon": {
     "format": " ",
