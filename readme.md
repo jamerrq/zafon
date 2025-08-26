@@ -2,7 +2,7 @@
 
 found my home, thanks dhh
 
-## My omarchy customizations
+## My [omarchy](https://omarchy.org/) customizations
 
 - [zsh](.config/zsh/)
 - [lazyvim](.config/nvim/)
@@ -22,3 +22,10 @@ found my home, thanks dhh
 ![desktop3](.config/lib/imgs/desktop_3.webp)
 
 ![desktop4](./.config/lib/imgs/desktop_4.webp)
+
+![desktop5](./.config/lib/imgs/desktop_5.webp)
+
+More info:
+
+- [omarchy.org](https://omarchy.org/)
+- [Source code on GitHub](https://github.com/basecamp/omarchy)
