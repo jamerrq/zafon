@@ -6,12 +6,6 @@
 ON_TEMP=4000
 OFF_TEMP=6000
 
-# ensure hyprsunset is running
-if ! pgrep -x hyprsunset >/dev/null; then
-  setsid uwsm app -- hyprsunset &
-  sleep 1 # give it time to register
-fi
-
 # handle click events from waybar
 if [[ "$1" == "toggle" ]]; then
   CURRENT_TEMP=$(hyprctl hyprsunset temperature 2>/dev/null | grep -oE '[0-9]+')
@@ -21,10 +15,6 @@ if [[ "$1" == "toggle" ]]; then
   else
     hyprctl hyprsunset temperature $OFF_TEMP
     notify-send "  Daylight screen temperature"
-  fi
-  # restart waybar if necessary
-  if grep -q "custom/nightlight" ~/.config/waybar/config.jsonc; then
-    omarchy-restart-waybar
   fi
 fi
 
