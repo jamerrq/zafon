@@ -1,2 +1,5 @@
 -- bootstrap lazy.nvim, LazyVim and your plugins
 require("config.lazy")
+
+-- nikki customizations
+vim.opt.clipboard = "unnamedplus" -- sync vim clipboard with the system's one
