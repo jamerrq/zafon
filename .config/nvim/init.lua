@@ -3,3 +3,4 @@ require("config.lazy")
 
 -- nikki customizations
 vim.opt.clipboard = "unnamedplus" -- sync vim clipboard with the system's one
+vim.opt.colorcolumn = "80" -- ruler
