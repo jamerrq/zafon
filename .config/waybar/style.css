@@ -42,6 +42,13 @@
   margin: 0 7.5px;
 }
 
+
+#custom-hypridle,
+#custom-hyprsunset,
+#custom-makoctl {
+  margin: 0 3px;
+}
+
 #custom-expand-icon {
   margin-right: 7px;
 }

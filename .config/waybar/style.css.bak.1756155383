@@ -1,0 +1,91 @@
+@import "../omarchy/current/theme/waybar.css";
+
+* {
+  background-color: @background;
+  color: @foreground;
+
+  border: none;
+  border-radius: 0;
+  min-height: 0;
+  font-family: FiraCode Nerd Font;
+  font-size: 12px;
+}
+
+.modules-left {
+  margin-left: 8px;
+}
+
+.modules-right {
+  margin-right: 8px;
+}
+
+#workspaces button {
+  all: initial;
+  padding: 0 6px;
+  margin: 0 1.5px;
+  min-width: 9px;
+}
+
+#workspaces button.empty {
+  opacity: 0.5;
+}
+
+#tray,
+#cpu,
+#battery,
+#network,
+#bluetooth,
+#pulseaudio,
+#clock,
+#custom-omarchy {
+  min-width: 12px;
+  margin: 0 7.5px;
+}
+
+#custom-expand-icon {
+  margin-right: 7px;
+}
+
+tooltip {
+  padding: 2px;
+}
+
+#spotify {
+  background-color: #1db954; /* Verde de Spotify */
+  color: #ffffff;
+  border-radius: 8px;
+  padding: 0 12px;
+  margin: 0 4px;
+  font-weight: 500;
+  min-width: 250px; /* Ancho fijo para mantener consistencia */
+}
+
+#spotify.playing {
+  background-color: #1db954;
+  animation: spotify-pulse 2s infinite;
+}
+
+#spotify.paused {
+  background-color: #535353;
+  color: #b3b3b3;
+}
+
+#spotify.stopped {
+  background-color: #2a2a2a;
+  color: #666666;
+}
+
+/* Controles de Spotify */
+#spotify-prev, #spotify-next {
+  background-color: #1db954;
+  color: #ffffff;
+  border-radius: 6px;
+  padding: 0 8px;
+  margin: 0 2px;
+  font-size: 14px;
+}
+
+#spotify-prev:hover, #spotify-next:hover {
+  background-color: #1ed760;
+  transition: all 0.2s ease;
+}
