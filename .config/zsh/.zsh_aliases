@@ -9,7 +9,7 @@ alias grubmkconfig="sudo grub-mkconfig -o /boot/grub/grub.cfg"
 alias zshconfig="$EDITOR $HOME/.zshrc"
 alias omzconfig="$EDITOR $HOME/.config/zsh/.oh-my-zsh"
 alias nixconfig="sudoedit /etc/nixos/configuration.nix"
-alias zshaliases="$EDITOR $HOME/.config/zsh/.zsh_aliases"
+alias zshaliases="nvim $HOME/.config/zsh/.zsh_aliases"
 alias nvimconfig="$EDITOR $HOME/.config/nvim/init.lua"
 alias waybarconfig="$EDITOR $HOME/.config/waybar/config.jsonc"
 alias grubconfig="sudoedit /etc/default/grub"
@@ -26,12 +26,15 @@ alias ezala="eza -la"
 # python
 alias py3='python3'
 alias py='python'
+alias pysrc='source ./*_venv/bin/activate'
 
 # some programs
 alias ils='timg --grid=2x1 --upscale=i --center --title --frames=1 '
 alias bashtop='$HOME/dev/github/bashtop/bashtop'
+alias neofetch='fastfetch -c neofetch'
 alias durfetch='$HOME/dev/github/durdraw/durfetch'
 alias youtube-dl-fix='youtube-dl --user-agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"'
+alias bun="$HOME/.bun/bin/bun"
 
 # git & branch aliases
 alias br='branch'
@@ -39,7 +42,8 @@ alias pull='branch pull'
 alias push='branch push'
 alias st='git status -s'
 alias cm='git commit -a -m'
-alias gfu="git fetch upstream"
+alias grau='git remote add upstream'
+alias gfu='git fetch upstream'
 
 # yadm aliases (loaded from .zsh_yadm_aliases if exists)
 # if not, generate it from git.plugin.zsh
