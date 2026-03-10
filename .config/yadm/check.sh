@@ -76,6 +76,7 @@ omarchy-theme-refresh >/dev/null 2>&1
 echo -e "${GREEN}OK${NC}: Theme templates refreshed"
 
 echo "Checks complete. Reloading services..."
-omarchy-restart-waybar >/dev/null 2>&1
 makoctl reload >/dev/null 2>&1
-echo -e "${GREEN}OK${NC}: Services reloaded successfully!"
+
+notify-send -t 3000 "Omarchy Sync" "Applied capablanca customizations over omarchy successfully"
+echo -e "${GREEN}OK${NC}: Services reloaded and customizations applied successfully!"
