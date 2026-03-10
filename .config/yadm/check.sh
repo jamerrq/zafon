@@ -62,15 +62,15 @@ if [[ -f "$waybar_config" ]]; then
     fi
 fi
 
-# Replace Jetbrains/Default font with FiraCode Nerd Font in Waybar style
-waybar_style="$HOME/.config/waybar/style.css"
-if [[ -f "$waybar_style" ]]; then
-    if grep -q "font-family: FiraCode Nerd Font" "$waybar_style"; then
-        echo -e "${GREEN}OK${NC}: FiraCode font in waybar"
-    else
-        echo -e "${YELLOW}Setting Waybar font to FiraCode Nerd Font${NC}"
-        sed -i 's/font-family: '\''JetBrainsMono Nerd Font'\'';/font-family: FiraCode Nerd Font;/' "$waybar_style"
-    fi
+# Ensure FiraCode Nerd Font is set system-wide
+current_font=$(omarchy-font-current 2>/dev/null)
+if [[ "$current_font" != *"FiraCode"* ]]; then
+    echo -e "${YELLOW}Setting system font to FiraCode Nerd Font${NC}"
+    omarchy-font-set "FiraCode Nerd Font" >/dev/null 2>&1
+else
+    echo -e "${GREEN}OK${NC}: FiraCode font is set system-wide"
 fi
 
-echo "Checks complete."
+echo "Checks complete. Reloading services..."
+makoctl reload >/dev/null 2>&1
+echo -e "${GREEN}OK${NC}: Services reloaded successfully!"
