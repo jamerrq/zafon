@@ -7,6 +7,11 @@ YELLOW='\e[33m'
 RED='\e[31m'
 NC='\e[0m' # No Color
 
+echo "Refreshing Omarchy configurations to their latest defaults..."
+omarchy-refresh-hyprland >/dev/null 2>&1
+omarchy-refresh-waybar >/dev/null 2>&1
+echo -e "${GREEN}OK${NC}: Latest Omarchy defaults loaded"
+
 # Check Hyprland core
 hyprland_conf="$HOME/.config/hypr/hyprland.conf"
 target_line="source = ~/.config/hypr/nikki.conf"
