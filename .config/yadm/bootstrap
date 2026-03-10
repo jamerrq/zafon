@@ -1,0 +1,22 @@
+#!/bin/bash
+
+# Yadm Bootstrap Script
+# This script runs automatically after cloning the yadm repository.
+
+echo "Running Yadm Bootstrap for Omarchy Customizations..."
+
+# Make sure our check script is executable and run it
+CHECK_SCRIPT="$HOME/.config/yadm/check.sh"
+
+if [[ -f "$CHECK_SCRIPT" ]]; then
+    chmod +x "$CHECK_SCRIPT"
+    "$CHECK_SCRIPT"
+    
+    # Reload Waybar to apply any font/logo changes immediately
+    echo "Restarting Waybar..."
+    omarchy-restart-waybar >/dev/null 2>&1
+    
+    echo "Bootstrap completed successfully!"
+else
+    echo "Error: Could not find $CHECK_SCRIPT"
+fi
