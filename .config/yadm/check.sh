@@ -71,6 +71,11 @@ else
     echo -e "${GREEN}OK${NC}: FiraCode font is set system-wide"
 fi
 
+echo "Compiling Omarchy templates..."
+omarchy-theme-refresh >/dev/null 2>&1
+echo -e "${GREEN}OK${NC}: Theme templates refreshed"
+
 echo "Checks complete. Reloading services..."
+omarchy-restart-waybar >/dev/null 2>&1
 makoctl reload >/dev/null 2>&1
 echo -e "${GREEN}OK${NC}: Services reloaded successfully!"
