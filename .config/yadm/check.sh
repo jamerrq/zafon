@@ -19,7 +19,7 @@ target_line="source = ~/.config/hypr/nikki.conf"
 if [[ ! -f "$hyprland_conf" ]]; then
     echo -e "${RED}Warning: $hyprland_conf does not exist.${NC}"
 else
-    if ! grep -q -x "$target_line" "$hyprland_conf"; then
+    if ! grep -q "$target_line" "$hyprland_conf"; then
         echo -e "${YELLOW}Adding '$target_line' to $hyprland_conf${NC}"
         echo "" >> "$hyprland_conf"
         echo "$target_line" >> "$hyprland_conf"
@@ -27,6 +27,7 @@ else
         echo -e "${GREEN}OK${NC}: hyprland customizations (nikki.conf)"
     fi
 fi
+
 
 # Check Omarchy Templates
 check_template() {
