@@ -71,9 +71,21 @@ else
     echo -e "${GREEN}OK${NC}: FiraCode font is set system-wide"
 fi
 
+# Capture current wallpaper before Omarchy resets it
+current_bg=$(readlink -f "$HOME/.config/omarchy/current/background" 2>/dev/null)
+
 echo "Compiling Omarchy templates..."
 omarchy-theme-refresh >/dev/null 2>&1
 echo -e "${GREEN}OK${NC}: Theme templates refreshed"
+
+# Restore or initialize custom YADM tracked wallpaper
+if [[ "$current_bg" == *"/home/jamerrq/.config/lib/imgs/"* ]]; then
+    omarchy-theme-bg-set "$current_bg" >/dev/null 2>&1
+    echo -e "${GREEN}OK${NC}: Custom wallpaper preserved"
+elif [[ -f "$HOME/.config/lib/imgs/desktop.webp" ]]; then
+    omarchy-theme-bg-set "$HOME/.config/lib/imgs/desktop.webp" >/dev/null 2>&1
+    echo -e "${GREEN}OK${NC}: Custom wallpaper applied for the first time"
+fi
 
 echo "Checks complete. Reloading services..."
 makoctl reload >/dev/null 2>&1
