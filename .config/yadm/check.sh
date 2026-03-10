@@ -71,23 +71,28 @@ else
     echo -e "${GREEN}OK${NC}: FiraCode font is set system-wide"
 fi
 
-echo "Compiling Omarchy templates..."
-omarchy-theme-refresh >/dev/null 2>&1
-echo -e "${GREEN}OK${NC}: Theme templates refreshed"
-
-# Integrate custom wallpapers into current theme's background folder
+# Integrate custom wallpapers into current theme's background folder before refresh
 THEME_NAME=$(cat "$HOME/.config/omarchy/current/theme.name" 2>/dev/null)
 if [[ -n "$THEME_NAME" && -d "$HOME/.config/yadm/wallpapers/" ]]; then
     echo "Syncing custom YADM wallpapers into theme: $THEME_NAME"
     mkdir -p "$HOME/.config/omarchy/backgrounds/$THEME_NAME/"
     cp -u "$HOME/.config/yadm/wallpapers/"* "$HOME/.config/omarchy/backgrounds/$THEME_NAME/" 2>/dev/null
-    
-    # Reload walker to ensure the new images appear in the wallpaper menu
-    omarchy-restart-walker >/dev/null 2>&1
     echo -e "${GREEN}OK${NC}: Custom wallpapers integrated successfully"
 fi
 
+echo "Compiling Omarchy templates..."
+omarchy-theme-refresh >/dev/null 2>&1
+echo -e "${GREEN}OK${NC}: Theme templates refreshed"
+
+# Set the beloved tux wallpaper as default if available
+tux_wallpaper="$HOME/.config/omarchy/backgrounds/$THEME_NAME/gruvbox_tux.png"
+if [[ -n "$THEME_NAME" && -f "$tux_wallpaper" ]]; then
+    omarchy-theme-bg-set "$tux_wallpaper" >/dev/null 2>&1
+    echo -e "${GREEN}OK${NC}: Set tux wallpaper"
+fi
+
 echo "Checks complete. Reloading services..."
+omarchy-restart-walker >/dev/null 2>&1
 makoctl reload >/dev/null 2>&1
 
 notify-send -t 3000 "Omarchy Sync" "Applied capablanca customizations over omarchy successfully"
