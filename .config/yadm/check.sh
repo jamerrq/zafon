@@ -71,20 +71,20 @@ else
     echo -e "${GREEN}OK${NC}: FiraCode font is set system-wide"
 fi
 
-# Capture current wallpaper before Omarchy resets it
-current_bg=$(readlink -f "$HOME/.config/omarchy/current/background" 2>/dev/null)
-
 echo "Compiling Omarchy templates..."
 omarchy-theme-refresh >/dev/null 2>&1
 echo -e "${GREEN}OK${NC}: Theme templates refreshed"
 
-# Restore or initialize custom YADM tracked wallpaper
-if [[ "$current_bg" == *"/home/jamerrq/.config/lib/imgs/"* ]]; then
-    omarchy-theme-bg-set "$current_bg" >/dev/null 2>&1
-    echo -e "${GREEN}OK${NC}: Custom wallpaper preserved"
-elif [[ -f "$HOME/.config/lib/imgs/desktop.webp" ]]; then
-    omarchy-theme-bg-set "$HOME/.config/lib/imgs/desktop.webp" >/dev/null 2>&1
-    echo -e "${GREEN}OK${NC}: Custom wallpaper applied for the first time"
+# Integrate custom wallpapers into current theme's background folder
+THEME_NAME=$(cat "$HOME/.config/omarchy/current/theme.name" 2>/dev/null)
+if [[ -n "$THEME_NAME" && -d "$HOME/.config/yadm/wallpapers/" ]]; then
+    echo "Syncing custom YADM wallpapers into theme: $THEME_NAME"
+    mkdir -p "$HOME/.config/omarchy/backgrounds/$THEME_NAME/"
+    cp -u "$HOME/.config/yadm/wallpapers/"* "$HOME/.config/omarchy/backgrounds/$THEME_NAME/" 2>/dev/null
+    
+    # Reload walker to ensure the new images appear in the wallpaper menu
+    omarchy-restart-walker >/dev/null 2>&1
+    echo -e "${GREEN}OK${NC}: Custom wallpapers integrated successfully"
 fi
 
 echo "Checks complete. Reloading services..."
