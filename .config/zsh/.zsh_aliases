@@ -1,0 +1,93 @@
+# $HOME/.config/zsh/.zsh_aliases
+
+# reload zsh config
+# NOTE: use omz reload instead
+alias omzr="omz reload"
+alias zshreload="source $HOME/.zshrc"
+# regenerate grub config
+alias grubmkconfig="sudo grub-mkconfig -o /boot/grub/grub.cfg"
+
+# tree
+alias t1="tree -L 1"
+alias t2="tree -L 2"
+alias t3="tree -L 3"
+
+# gtime
+alias gtime="/usr/bin/time -v"
+
+# config files
+alias zshconfig="$EDITOR $HOME/.zshrc"
+alias zshaliases="nvim $HOME/.config/zsh/.zsh_aliases"
+alias nvimconfig="$EDITOR $HOME/.config/nvim/init.lua"
+alias waybarconfig="$EDITOR $HOME/.config/waybar/config.jsonc"
+alias nikkiconf="$EDITOR $HOME/.config/hypr/nikki.conf"
+alias sshconfig="$EDITOR $HOME/.ssh/config"
+alias hyprconfig="$EDITOR $HOME/.config/hypr/hyprland.conf"
+alias makoconfig="$EDITOR $HOME/.config/mako/config"
+
+# for nix
+alias nixrb="sudo nixos-rebuild switch"
+alias nixrbu="sudo nixos-rebuild switch --upgrade"
+alias nixcu="sudo nix-channel --update"
+
+# eza
+alias ezaa="eza -a"
+alias ezala="eza -la"
+
+# python
+alias py3='python3'
+alias py='python'
+alias pysrc='source ./*_venv/bin/activate'
+alias pyv='python --version'
+
+# uv
+alias uvU='uv pip install --upgrade pip'
+alias uvI='uv pip install -r ./requirements.txt'
+alias uvIu='uv pip install --upgrade -r ./requirements.txt'
+
+# some programs
+alias ils='timg --grid=2x1 --upscale=i --center --title --frames=1 '
+# alias durfetch='$HOME/dev/github/durdraw/durfetch'
+alias youtube-dl-fix='youtube-dl --user-agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"'
+# alias bun="$HOME/.bun/bin/bun"
+
+# git & branch aliases
+alias br='branch'
+alias pull='branch pull'
+alias push='branch push'
+alias st='git status -s'
+alias cm='git commit -a -m'
+alias grau='git remote add upstream'
+alias gfu='git fetch upstream'
+
+# yadm aliases (loaded from .zsh_yadm_aliases if exists)
+# if not, generate it from git.plugin.zsh
+if [[ -f ~/.config/zsh/.zsh_yadm_aliases ]]; then
+  source ~/.config/zsh/.zsh_yadm_aliases
+else
+  grep '^alias ' ~/.oh-my-zsh/plugins/git/git.plugin.zsh | \
+  sed 's/git /yadm /g; s/alias g/alias y/' > ~/.config/zsh/.zsh_yadm_aliases
+  source ~/.config/zsh/.zsh_yadm_aliases
+fi
+
+# info para aliases
+local -a exclude_aliases=(
+  'cat' 'ls' 'll' 'la' 'l' 'ils' 'md' 'history'
+  'which-command' 'pull' 'push' 'py' 'py3' 'rd' 'st' 'zafon', 'grep'
+)
+
+for alias_name in ${(ok)aliases}; do
+  if (( ${exclude_aliases[(Ie)$alias_name]} )); then
+    continue
+  fi
+
+  if [[ "$alias_name" == g* || "$alias_name" == git-* || "$alias_name" == y* ]]; then
+    local original_command="${aliases[$alias_name]}"
+    unalias "$alias_name"
+
+    functions[$alias_name]="
+      print -P \"\n%F{yellow}\ueeed %F{green}${(q)original_command}%f\n\"
+      command ${(z)original_command} \"\$@\"
+    "
+  fi
+done
