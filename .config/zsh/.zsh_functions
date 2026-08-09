@@ -1,0 +1,75 @@
+# play youtube video in terminal
+function ytdl() {
+  youtube-dl -q -o- -f'[height<480]' "$@" --user-agent "Mozilla/5.0 (X11; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0" | timg -V -
+}
+
+# extract tar utility
+extract_tar() {
+  local file="$1"
+
+  if [[ -z "$file" || ! -f "$file" ]]; then
+    echo "[ERROR]: must provide a valid file"
+    return 1
+  fi
+
+  case "$file" in
+    *.tar.bz2)  tar -xvjf "$file" ;;
+    *.tar.gz)   tar -xvzf "$file" ;;
+    *.tar.xz)   tar -xvJf "$file" ;;
+    *.tar.zst)  tar --zstd -xvf "$file" ;; # requiere tar >= 1.30 con zstd
+    *.tar.lz)   tar --lzip -xvf "$file" ;; # opcional, si tienes soporte
+    *.tar)      tar -xvf "$file" ;;
+    *.tgz)      tar -xvzf "$file" ;;
+    *.tbz2)     tar -xvjf "$file" ;;
+    *)          echo "[ERROR]: file's format not recognized: $file"
+                return 2 ;;
+  esac
+}
+
+convert_imgs() {
+  local input_dir="${1:-.}"
+  local output_dir="${2:-.}"
+  local quality="${3:-85}"
+
+  if [[ -z "$input_dir" || -z "$output_dir" ]]; then
+    echo "[ERROR]: must provide input and output directories"
+    return 1
+  fi
+
+  if [[ ! -d "$input_dir" ]]; then
+    echo "[ERROR]: input directory does not exist: $input_dir"
+    return 2
+  fi
+
+  mkdir -p "$output_dir"
+  local converted_count=0
+  local failed_count=0
+
+  local found_images=false
+
+  for img in "$input_dir"/*.png; do
+    [[ -e "$img" ]] || continue
+    found_images=true
+
+    local base_name
+    base_name=$(basename "$img")
+    local output_file="$output_dir/${base_name%.*}.webp"
+
+    if cwebp -q "$quality" "$img" -o "$output_file"; then
+      echo "[INFO]: converted $img to $output_file"
+      ((converted_count++))
+    else
+      echo "[ERROR]: failed to convert $img"
+      ((failed_count++))
+    fi
+  done
+
+  # verify if any images were found
+  if [[ "$found_images" == false ]]; then
+    echo "[WARNING]: no images found in $input_dir"
+    return 3
+  fi
+
+  echo "[INFO]: conversion completed: $converted_count succeeded, $failed_count failed."
+  return 0
+}

@@ -70,10 +70,9 @@ else
   source ~/.config/zsh/.zsh_yadm_aliases
 fi
 
-# info para aliases
+# detailed info for git aliases
 local -a exclude_aliases=(
-  'cat' 'ls' 'll' 'la' 'l' 'ils' 'md' 'history'
-  'which-command' 'pull' 'push' 'py' 'py3' 'rd' 'st' 'zafon', 'grep'
+  'grep'
 )
 
 for alias_name in ${(ok)aliases}; do
