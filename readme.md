@@ -62,3 +62,24 @@ More info:
 
 - [omarchy.org](https://omarchy.org/)
 - [Source code on GitHub](https://github.com/basecamp/omarchy)
+
+## Missing
+
+- M1. zsh + omz setup
+- M2. include some packages (scrcpy, yadm)
+- M3. spanish readme
+- M4. grok and antigravity on walker (contrib)
+- M5. antigravity + vscode settings
+- M6. update waybar config to date (aug 2026)
+- M7. expand readme (include yadm)
+- M8. fix broken waybar step
+- M9. update yadm
+
+## Ideas for the script (zafon)
+
+- I1. ascii art
+- I2. some optional steps
+- I3. flags (--silent, --verbose, etc.)
+- I4. interactive menu like gum
+- I5. preferible to use bash, if not possible, then python
+- I6. let's use progress bars along
