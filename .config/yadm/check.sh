@@ -9,7 +9,10 @@ NC='\e[0m' # No Color
 
 echo "Refreshing Omarchy configurations to their latest defaults..."
 omarchy-refresh-hyprland >/dev/null 2>&1
-omarchy-refresh-waybar >/dev/null 2>&1
+# NOTE: omarchy-refresh-waybar is deliberately NOT called here. It copies
+# ~/.local/share/omarchy/config/waybar/* over ~/.config/waybar/*, which wiped
+# the spotify/nightlight modules, the Arch logo and the FiraCode font on every
+# run. The waybar config is tracked in yadm instead and is the source of truth.
 echo -e "${GREEN}OK${NC}: Latest Omarchy defaults loaded"
 
 # Check Hyprland core
@@ -51,14 +54,23 @@ check_template() {
 check_template "~/.config/omarchy/themed/mako.ini.tpl" "border-radius=10" "mako"
 check_template "~/.config/omarchy/themed/walker.css.tpl" "border-radius: 10px;" "walker"
 
-# Replace Omarchy logo with Arch Linux logo in Waybar
+# Verify the Waybar config carries our customizations. This is a read-only
+# check now: the config is tracked in yadm, so rewriting it here would only
+# create drift against the repo. If this warns, restore with `yadm checkout`.
 waybar_config="$HOME/.config/waybar/config.jsonc"
-if [[ -f "$waybar_config" ]]; then
+if [[ ! -f "$waybar_config" ]]; then
+    echo -e "${RED}Error: $waybar_config is missing. Pull it from YADM.${NC}"
+else
     if grep -q "󰣇" "$waybar_config"; then
         echo -e "${GREEN}OK${NC}: arch logo in waybar"
     else
-        echo -e "${YELLOW}Replacing Omarchy logo with Arch logo in $waybar_config${NC}"
-        sed -i 's/"format": "<span font='\''omarchy'\''>\\ue900<\/span>"/"format": "󰣇"/' "$waybar_config"
+        echo -e "${YELLOW}Warning: $waybar_config lost the Arch logo. Run: yadm checkout -- $waybar_config${NC}"
+    fi
+
+    if grep -q "custom/nightlight" "$waybar_config"; then
+        echo -e "${GREEN}OK${NC}: nightlight module in waybar"
+    else
+        echo -e "${YELLOW}Warning: $waybar_config lost the nightlight module. Run: yadm checkout -- $waybar_config${NC}"
     fi
 fi
 
