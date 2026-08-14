@@ -35,12 +35,12 @@ check_template() {
     local required_content="$2"
     local template_name="$3"
     local expanded_path="${filepath/#\~/$HOME}"
-    
+
     if [[ ! -f "$expanded_path" ]]; then
         echo -e "${RED}Error: Template $expanded_path is missing. Make sure to pull it from YADM.${NC}"
         return
     fi
-    
+
     if ! grep -qF "$required_content" "$expanded_path"; then
         echo -e "${YELLOW}Warning: $expanded_path is missing expected customization: $required_content${NC}"
     else
@@ -84,7 +84,7 @@ echo "Compiling Omarchy templates..."
 omarchy-theme-refresh >/dev/null 2>&1
 echo -e "${GREEN}OK${NC}: Theme templates refreshed"
 
-# Set the beloved tux wallpaper as default if available
+# Set the tux wallpaper as default if available
 tux_wallpaper="$HOME/.config/omarchy/backgrounds/$THEME_NAME/gruvbox_tux.png"
 if [[ -n "$THEME_NAME" && -f "$tux_wallpaper" ]]; then
     omarchy-theme-bg-set "$tux_wallpaper" >/dev/null 2>&1
