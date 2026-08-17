@@ -1,0 +1,134 @@
+#!/bin/bash
+
+# omarchy:summary=Adjust brightness on the most likely display device.
+# omarchy:args=<+N%|N%-|N%|off|on>
+# omarchy:examples=omarchy brightness display +5% | omarchy brightness display 5%- | omarchy brightness display 50% | omarchy brightness display off | omarchy brightness display on
+
+# Local override of the Omarchy default, tracked in yadm and installed to
+# ~/.local/bin so it shadows ~/.local/share/omarchy/bin on PATH.
+#
+# Difference from upstream: falls back to ddcutil on desktops that have no
+# native /sys/class/backlight device.
+
+echo "$(date) running brightness $1" >> /tmp/brightness.log
+
+step="${1:-+5%}"
+
+# Screen blanking. omarchy-system-lock calls us with "off" and omarchy-system-wake
+# with "on", so these must be handled before the numeric parsing below -- otherwise
+# they fall through to the invalid-step branch and the display never blanks on lock.
+if [[ $step == "off" ]]; then
+  hyprctl dispatch dpms off >/dev/null 2>&1
+  exit 0
+elif [[ $step == "on" ]]; then
+  hyprctl dispatch dpms on >/dev/null 2>&1
+  exit 0
+fi
+
+# Normalize step into operator and numeric value early so both branches behave the same
+# Accepts formats like "+5%", "-5%", "5%-", or absolute values like "100%" or "100".
+absolute=false
+if [[ "$step" == "+"* ]]; then
+  op="+"
+  val="${step//[!0-9]/}"
+elif [[ "$step" == "-"* ]]; then
+  op="-"
+  val="${step//[!0-9]/}"
+elif [[ "$step" == *"-" ]]; then
+  # trailing dash e.g. 5%-
+  op="-"
+  val="${step//[!0-9]/}"
+elif [[ "$step" =~ ^[0-9]+%?$ ]]; then
+  # absolute value like 100 or 100%
+  absolute=true
+  op="="
+  val="${step//[!0-9]/}"
+else
+  echo "$(date) brightness: invalid step '$step'" >> /tmp/brightness.log
+  exit 1
+fi
+
+# Build a normalized step string for brightnessctl (e.g. +5%, -5%, or 100%)
+if [[ "$absolute" == true ]]; then
+  normalized_step="${val}%"
+else
+  normalized_step="${op}${val}%"
+fi
+
+# Determine if we have internal hardware backlight devices
+has_backlight=false
+for candidate in /sys/class/backlight/*; do
+  if [[ -e "$candidate" ]]; then
+    has_backlight=true
+    break
+  fi
+done
+
+if [[ "$has_backlight" == "true" ]]; then
+  # Start with the first possible output, then refine to the most likely given an order heuristic.
+  device="$(ls -1 /sys/class/backlight 2>/dev/null | head -n1)"
+  for candidate in amdgpu_bl* intel_backlight acpi_video*; do
+    if [[ -e /sys/class/backlight/$candidate ]]; then
+      device="$candidate"
+      break
+    fi
+  done
+
+  # Set the actual brightness of the display device using normalized step.
+  brightnessctl -d "$device" set "$normalized_step" >/dev/null
+
+  # Use SwayOSD to display the new brightness setting.
+  omarchy-swayosd-brightness "$(brightnessctl -d "$device" -m | cut -d',' -f4 | tr -d '%')"
+else
+  # Desktop / External monitor logic using ddcutil
+  CACHE_FILE="/tmp/ddcutil_brightness_omarchy"
+
+    # Use the already-determined `absolute`, `op`, and `val` from above.
+    # `absolute=true` means set to an absolute value (e.g. 100%).
+
+  if [[ ! -f "$CACHE_FILE" ]]; then
+    current=$(ddcutil getvcp 10 --display 1 --brief 2>/dev/null | awk '{print $4}')
+    [[ -z "$current" ]] && current=50
+    echo "$current" > "$CACHE_FILE"
+  fi
+
+  current=$(cat "$CACHE_FILE")
+
+  # Ensure current and val are purely numeric
+  current_num="${current//[!0-9]/}"
+  val_num="${val//[!0-9]/}"
+
+  if [[ -z "$current_num" ]]; then
+    current_num=50
+  fi
+
+  if [[ "$absolute" == true ]]; then
+    new_val=$((val_num))
+    echo "$(date) brightness: absolute set val=$val_num" >> /tmp/brightness.log
+  else
+    if [[ "$op" == "+" ]]; then
+      new_val=$((current_num + val_num))
+    else
+      new_val=$((current_num - val_num))
+    fi
+    echo "$(date) brightness: op=$op val=$val_num current=$current_num new=$new_val" >> /tmp/brightness.log
+  fi
+
+  if (( new_val > 100 )); then
+    new_val=100
+  elif (( new_val < 0 )); then
+    new_val=0
+  fi
+
+  echo "$new_val" > "$CACHE_FILE"
+
+  # Instantly trigger the SwayOSD
+  omarchy-swayosd-brightness "$new_val"
+
+  # Apply via ddcutil in the background for common display numbers
+  (
+    ddcutil --display 1 setvcp 10 "$new_val" 2>>/tmp/brightness.log || true
+    ddcutil --display 2 setvcp 10 "$new_val" 2>>/tmp/brightness.log || true
+    ddcutil --display 3 setvcp 10 "$new_val" 2>>/tmp/brightness.log || true
+  ) &
+fi
