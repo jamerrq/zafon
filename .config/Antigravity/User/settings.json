@@ -1,0 +1,9 @@
+{
+    "python.languageServer": "Default",
+    "editor.rulers": [
+        80
+    ],
+    "editor.renderWhitespace": "all",
+    "markdown-pdf.displayHeaderFooter": false,
+    "editor.wordWrap": "wordWrapColumn"
+}

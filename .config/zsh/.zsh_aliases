@@ -62,12 +62,23 @@ alias gfu='git fetch upstream'
 
 # yadm aliases (loaded from .zsh_yadm_aliases if exists)
 # if not, generate it from git.plugin.zsh
+#
+# NOTE: derive the plugin path from $ZSH. Oh My Zsh lives at
+# ~/.config/zsh/.oh-my-zsh here, not the default ~/.oh-my-zsh -- hardcoding the
+# latter made this grep silently produce an empty file on a fresh machine,
+# leaving every y* alias undefined.
 if [[ -f ~/.config/zsh/.zsh_yadm_aliases ]]; then
   source ~/.config/zsh/.zsh_yadm_aliases
 else
-  grep '^alias ' ~/.oh-my-zsh/plugins/git/git.plugin.zsh | \
-  sed 's/git /yadm /g; s/alias g/alias y/' > ~/.config/zsh/.zsh_yadm_aliases
-  source ~/.config/zsh/.zsh_yadm_aliases
+  git_plugin="${ZSH:-$HOME/.config/zsh/.oh-my-zsh}/plugins/git/git.plugin.zsh"
+  if [[ -f $git_plugin ]]; then
+    grep '^alias ' "$git_plugin" | \
+    sed 's/git /yadm /g; s/alias g/alias y/' > ~/.config/zsh/.zsh_yadm_aliases
+    source ~/.config/zsh/.zsh_yadm_aliases
+  else
+    print -u2 "warning: $git_plugin not found; yadm aliases not generated"
+  fi
+  unset git_plugin
 fi
 
 # detailed info for git aliases
