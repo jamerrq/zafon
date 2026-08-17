@@ -1,0 +1,19 @@
+{ "workbench.colorTheme": "Retro '82",
+    "editor.fontFamily": "'FiraCode Nerd Font', 'Droid Sans Mono', monospace",
+    "files.autoSave": "afterDelay",
+    "editor.wordWrap": "bounded",
+    "editor.rulers": [
+        80, 120
+    ],
+    "editor.wordWrap": "wordWrapColumn",
+    "editor.wordWrapColumn": 80,
+    "editor.renderWhitespace": "all",
+    "chat.viewSessions.orientation": "stacked",
+    "files.trimFinalNewlines": true,
+    "files.trimTrailingWhitespace": true,
+    "terminal.integrated.enableMultiLinePasteWarning": "never",
+    "[markdown]": {
+        "editor.wordWrap": "wordWrapColumn"
+    },
+    "claudeCode.preferredLocation": "panel"
+}
