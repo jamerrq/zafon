@@ -1,0 +1,11 @@
+[Unit]
+Description=Disable spurious ACPI wakeup sources
+ConditionPathExists=/proc/acpi/wakeup
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/local/bin/disable-acpi-wakeup
+
+[Install]
+WantedBy=multi-user.target

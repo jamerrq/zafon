@@ -1,0 +1,40 @@
+#!/bin/bash
+
+# Disable spurious ACPI wakeup sources.
+#
+# /proc/acpi/wakeup is runtime state: it resets to the firmware defaults on
+# every boot, which is why this has to run each time rather than once.
+#
+# Writing a device name to that file TOGGLES its state, so an unguarded write
+# would re-enable a device that was already disabled. The *enabled check below
+# is what makes this idempotent -- keep it.
+
+set -uo pipefail
+
+WAKEUP=/proc/acpi/wakeup
+
+# Devices that spuriously wake this machine from suspend.
+DEVICES=(XHCI RP09 RP10 RP05 AWAC)
+
+if [[ ! -e $WAKEUP ]]; then
+  echo "$WAKEUP does not exist; nothing to do." >&2
+  exit 0
+fi
+
+if [[ ! -w $WAKEUP ]]; then
+  echo "$WAKEUP is not writable -- run as root." >&2
+  exit 1
+fi
+
+changed=0
+for dev in "${DEVICES[@]}"; do
+  if grep -q "^${dev}[[:space:]].*\*enabled" "$WAKEUP"; then
+    echo "$dev" >"$WAKEUP"
+    echo "disabled wakeup: $dev"
+    ((changed++))
+  fi
+done
+
+if ((changed == 0)); then
+  echo "All target wakeup sources were already disabled."
+fi
