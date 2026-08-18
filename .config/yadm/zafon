@@ -387,8 +387,9 @@ zafon $VERSION -- apply capablanca customizations over Omarchy
 Usage: zafon [command] [flags]
 
 Commands:
-  check           Report drift, change nothing (default)
   apply           Walk each module needing work and confirm before applying
+                  (default when no command is given)
+  check           Report drift, change nothing
   list            List available modules
 
 Flags:
@@ -433,7 +434,8 @@ done
 setup_colors
 discover
 
-case ${COMMAND:-check} in
+# Bare `zafon` applies (with a prompt per module) rather than only reporting.
+case ${COMMAND:-apply} in
   check) cmd_check ;;
   apply) cmd_apply ;;
   list)  cmd_list ;;

@@ -41,8 +41,8 @@ is a module in `~/.config/yadm/zafon.d/`; `check` is strictly read-only, so it
 is safe to run any time — including before an `omarchy-update`.
 
 ```
+zafon                       # default: walk each problem and confirm before fixing
 zafon check                 # report drift, change nothing
-zafon apply                 # interactive menu of what needs fixing
 zafon apply --yes           # unattended; skips optional (sudo) modules
 zafon check --only waybar   # scope to one module
 zafon list                  # show all modules
