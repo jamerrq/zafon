@@ -1,0 +1,331 @@
+#!/bin/bash
+
+# zafon -- apply and verify the capablanca customizations over Omarchy.
+#
+# Each customization is a self-contained module in zafon.d/ exposing two verbs:
+#
+#   check   report state, change nothing.  0 = ok, 1 = drift, 2 = missing, 3 = error
+#   apply   bring it into the desired state
+#
+# Modules are separate executables rather than sourced functions so that one
+# broken module cannot take down the whole run, and so each can be tested alone.
+
+set -uo pipefail
+
+VERSION="0.1.0"
+MODULE_DIR="${ZAFON_MODULE_DIR:-$HOME/.config/yadm/zafon.d}"
+
+VERBOSE=false
+SILENT=false
+ASSUME_YES=false
+ONLY=""
+USE_COLOR=true
+
+# ---------------------------------------------------------------------------
+# output
+
+setup_colors() {
+  if [[ $USE_COLOR == true && -t 1 ]]; then
+    RED=$'\e[31m'; GREEN=$'\e[32m'; YELLOW=$'\e[33m'; BLUE=$'\e[34m'
+    DIM=$'\e[2m'; BOLD=$'\e[1m'; NC=$'\e[0m'
+  else
+    RED=""; GREEN=""; YELLOW=""; BLUE=""; DIM=""; BOLD=""; NC=""
+  fi
+}
+
+say() { [[ $SILENT == true ]] || printf '%s\n' "$*"; }
+err() { printf '%s\n' "$*" >&2; }
+detail() { [[ $VERBOSE == true && $SILENT != true ]] && printf '%s\n' "$*"; }
+
+banner() {
+  [[ $SILENT == true ]] && return
+  printf '%s' "$BLUE"
+  cat <<'ART'
+ ███████╗ █████╗ ███████╗ ██████╗ ███╗   ██╗
+ ╚══███╔╝██╔══██╗██╔════╝██╔═══██╗████╗  ██║
+   ███╔╝ ███████║█████╗  ██║   ██║██╔██╗ ██║
+  ███╔╝  ██╔══██║██╔══╝  ██║   ██║██║╚██╗██║
+ ███████╗██║  ██║██║     ╚██████╔╝██║ ╚████║
+ ╚══════╝╚═╝  ╚═╝╚═╝      ╚═════╝ ╚═╝  ╚═══╝
+ART
+  printf '%s' "$NC"
+  printf '%s  capablanca over omarchy%s  %sv%s%s\n\n' "$DIM" "$NC" "$DIM" "$VERSION" "$NC"
+}
+
+progress() {
+  # progress <done> <total> <label>
+  # Redraws in place with \r, which only works on a terminal -- when piped or
+  # captured, fall back to one plain line per completed step.
+  [[ $SILENT == true ]] && return
+  if [[ ! -t 1 ]]; then
+    (($1 > 0)) && printf '  [%d/%d] %s\n' "$1" "$2" "${3:-}"
+    return
+  fi
+  local done=$1 total=$2 label=${3:-}
+  local width=24
+  local filled=$((total > 0 ? done * width / total : 0))
+  local pct=$((total > 0 ? done * 100 / total : 0))
+  local bar=""
+  local i
+  for ((i = 0; i < width; i++)); do
+    if ((i < filled)); then bar+="█"; else bar+="░"; fi
+  done
+  printf '\r  %s%s%s %3d%%  %-28s' "$BLUE" "$bar" "$NC" "$pct" "$label"
+  ((done >= total)) && printf '\n'
+}
+
+# ---------------------------------------------------------------------------
+# modules
+
+MOD_PATHS=(); MOD_SLUGS=(); MOD_NAMES=(); MOD_DESCS=(); MOD_OPTIONAL=()
+
+meta() {
+  # meta <file> <key> -- read a `# zafon:key=value` header comment
+  sed -n "s/^# zafon:$2=//p" "$1" | head -n1
+}
+
+discover() {
+  local f slug
+  [[ -d $MODULE_DIR ]] || { err "module directory not found: $MODULE_DIR"; exit 3; }
+  for f in "$MODULE_DIR"/*.sh; do
+    [[ -f $f ]] || continue
+    slug=$(basename "$f" .sh); slug=${slug#*-}
+    if [[ -n $ONLY && ",$ONLY," != *",$slug,"* ]]; then continue; fi
+    [[ -x $f ]] || chmod +x "$f" 2>/dev/null
+    MOD_PATHS+=("$f")
+    MOD_SLUGS+=("$slug")
+    MOD_NAMES+=("$(meta "$f" name)")
+    MOD_DESCS+=("$(meta "$f" desc)")
+    MOD_OPTIONAL+=("$(meta "$f" optional)")
+  done
+  ((${#MOD_PATHS[@]})) || { err "no modules matched${ONLY:+ --only $ONLY}"; exit 3; }
+}
+
+status_label() {
+  case $1 in
+    0) printf '%sOK%s     ' "$GREEN" "$NC" ;;
+    1) printf '%sDRIFT%s  ' "$YELLOW" "$NC" ;;
+    2) printf '%sMISSING%s' "$RED" "$NC" ;;
+    *) printf '%sERROR%s  ' "$RED" "$NC" ;;
+  esac
+}
+
+# Populated by run_checks
+declare -a RESULTS=() OUTPUTS=()
+
+run_checks() {
+  local i out rc
+  for i in "${!MOD_PATHS[@]}"; do
+    out=$("${MOD_PATHS[$i]}" check 2>&1); rc=$?
+    RESULTS[i]=$rc
+    OUTPUTS[i]=$out
+  done
+}
+
+report() {
+  local i rc
+  for i in "${!MOD_PATHS[@]}"; do
+    rc=${RESULTS[$i]}
+    [[ $SILENT == true && $rc -eq 0 ]] && continue
+    printf '  %s  %s%-22s%s' "$(status_label "$rc")" "$BOLD" "${MOD_NAMES[$i]}" "$NC"
+    if [[ $rc -eq 0 ]]; then
+      printf '%s%s%s\n' "$DIM" "${OUTPUTS[$i]}" "$NC"
+    else
+      printf '\n'
+      while IFS= read -r line; do
+        [[ -n $line ]] && printf '      %s- %s%s\n' "$DIM" "$line" "$NC"
+      done <<<"${OUTPUTS[$i]}"
+    fi
+  done
+}
+
+needs_work() {
+  # echo indices of modules that are not OK
+  local i
+  for i in "${!MOD_PATHS[@]}"; do
+    [[ ${RESULTS[$i]} -ne 0 ]] && printf '%s\n' "$i"
+  done
+}
+
+# ---------------------------------------------------------------------------
+# commands
+
+cmd_check() {
+  banner
+  say "${BOLD}Checking customizations...${NC}"
+  say ""
+  run_checks
+  report
+  say ""
+
+  local failed=0 i
+  for i in "${!MOD_PATHS[@]}"; do [[ ${RESULTS[$i]} -ne 0 ]] && ((failed++)); done
+
+  if ((failed == 0)); then
+    say "  ${GREEN}Everything is in place.${NC}"
+    return 0
+  fi
+  say "  ${YELLOW}$failed module(s) need attention.${NC} Run ${BOLD}zafon apply${NC} to fix."
+  return 1
+}
+
+select_modules() {
+  # Print the indices to apply, one per line, on stdout.
+  local -a candidates=()
+  mapfile -t candidates < <(needs_work)
+  ((${#candidates[@]})) || return 0
+
+  if [[ $ASSUME_YES == true ]]; then
+    # Optional modules (sudo, network) stay out of unattended runs.
+    local i
+    for i in "${candidates[@]}"; do
+      [[ ${MOD_OPTIONAL[$i]} == true ]] && continue
+      printf '%s\n' "$i"
+    done
+    return 0
+  fi
+
+  if ! command -v gum >/dev/null 2>&1; then
+    # Plain-bash fallback so zafon still works on a machine without gum.
+    local i reply
+    for i in "${candidates[@]}"; do
+      read -r -p "  apply ${MOD_NAMES[$i]}? [y/N] " reply </dev/tty
+      [[ $reply == [yY]* ]] && printf '%s\n' "$i"
+    done
+    return 0
+  fi
+
+  local -a labels=() preselect=()
+  local i label
+  for i in "${candidates[@]}"; do
+    label="${MOD_NAMES[$i]}"
+    [[ ${MOD_OPTIONAL[$i]} == true ]] && label+="  (optional, needs sudo)"
+    labels+=("$label")
+    [[ ${MOD_OPTIONAL[$i]} != true ]] && preselect+=("$label")
+  done
+
+  local chosen
+  chosen=$(printf '%s\n' "${labels[@]}" | gum choose \
+    --no-limit \
+    --header "Select what to apply  (space toggles, enter confirms)" \
+    --selected "$(IFS=,; echo "${preselect[*]}")" 2>/dev/null) || return 0
+
+  [[ -z $chosen ]] && return 0
+
+  local c
+  while IFS= read -r c; do
+    for i in "${candidates[@]}"; do
+      label="${MOD_NAMES[$i]}"
+      [[ ${MOD_OPTIONAL[$i]} == true ]] && label+="  (optional, needs sudo)"
+      [[ $c == "$label" ]] && printf '%s\n' "$i"
+    done
+  done <<<"$chosen"
+}
+
+cmd_apply() {
+  banner
+  say "${BOLD}Checking customizations...${NC}"
+  say ""
+  run_checks
+  report
+  say ""
+
+  local -a todo=()
+  mapfile -t todo < <(select_modules)
+
+  if ((${#todo[@]} == 0)); then
+    say "  ${GREEN}Nothing to apply.${NC}"
+    return 0
+  fi
+
+  say "  ${BOLD}Applying ${#todo[@]} module(s)...${NC}"
+  say ""
+
+  local done=0 i out rc failed=0
+  for i in "${todo[@]}"; do
+    [[ -t 1 ]] && progress "$done" "${#todo[@]}" "${MOD_NAMES[$i]}"
+    out=$("${MOD_PATHS[$i]}" apply 2>&1); rc=$?
+    ((done++))
+    progress "$done" "${#todo[@]}" "${MOD_NAMES[$i]}"
+    if ((rc != 0)); then
+      ((failed++))
+      err "  ${RED}failed:${NC} ${MOD_NAMES[$i]}"
+      err "$out"
+    else
+      detail "$(printf '  %s%s:%s\n%s' "$DIM" "${MOD_NAMES[$i]}" "$NC" "$out")"
+    fi
+  done
+
+  say ""
+  if ((failed)); then
+    say "  ${RED}$failed module(s) failed.${NC}"
+    return 1
+  fi
+  say "  ${GREEN}Done.${NC} Re-run ${BOLD}zafon check${NC} to confirm."
+  command -v notify-send >/dev/null 2>&1 &&
+    notify-send -t 3000 "zafon" "Applied ${#todo[@]} customization(s)" 2>/dev/null
+  return 0
+}
+
+cmd_list() {
+  banner
+  local i
+  for i in "${!MOD_PATHS[@]}"; do
+    printf '  %s%-12s%s %-24s %s%s%s\n' \
+      "$BOLD" "${MOD_SLUGS[$i]}" "$NC" "${MOD_NAMES[$i]}" "$DIM" "${MOD_DESCS[$i]}" "$NC"
+  done
+}
+
+usage() {
+  cat <<USAGE
+zafon $VERSION -- apply capablanca customizations over Omarchy
+
+Usage: zafon [command] [flags]
+
+Commands:
+  check           Report drift, change nothing (default)
+  apply           Apply customizations, interactive unless --yes
+  list            List available modules
+
+Flags:
+  -y, --yes       Non-interactive; apply everything needed except optional modules
+  -o, --only M    Comma-separated module slugs (see \`zafon list\`)
+  -v, --verbose   Show per-module output while applying
+  -s, --silent    Only report problems
+      --no-color  Disable colored output
+  -h, --help      This message
+
+Exit codes:
+  0  everything in place / applied cleanly
+  1  drift remains (check) or a module failed (apply)
+  3  usage or discovery error
+USAGE
+}
+
+# ---------------------------------------------------------------------------
+# main
+
+COMMAND=""
+while (($#)); do
+  case $1 in
+    check|apply|list) COMMAND=$1 ;;
+    -y|--yes) ASSUME_YES=true ;;
+    -v|--verbose) VERBOSE=true ;;
+    -s|--silent) SILENT=true ;;
+    --no-color) USE_COLOR=false ;;
+    -o|--only) shift; ONLY=${1:-} ;;
+    --only=*) ONLY=${1#*=} ;;
+    -h|--help) setup_colors; usage; exit 0 ;;
+    *) err "unknown argument: $1"; err "try: zafon --help"; exit 3 ;;
+  esac
+  shift
+done
+
+setup_colors
+discover
+
+case ${COMMAND:-check} in
+  check) cmd_check ;;
+  apply) cmd_apply ;;
+  list)  cmd_list ;;
+esac
