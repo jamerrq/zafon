@@ -78,6 +78,22 @@ Do not run `omarchy-refresh-waybar`. It copies Omarchy's defaults over
 logo and the FiraCode font. The config is tracked in yadm instead;
 `zafon apply --only waybar` restores it from the repo.
 
+### ACPI wakeup
+
+Some devices (`XHCI`, `RP09`, `RP10`, `RP05`, `AWAC`) spuriously wake this
+machine from suspend. `/proc/acpi/wakeup` is runtime state that resets to the
+firmware defaults on every boot, so the fix has to be re-applied each time; a
+oneshot systemd unit does that at startup.
+
+```bash
+~/.config/yadm/system/install.sh    # needs sudo, also run by `zafon apply`
+systemctl status disable-acpi-wakeup
+```
+
+Writing a device name to `/proc/acpi/wakeup` *toggles* it, so the script guards
+on `*enabled` before each write — without that guard, re-running it would
+re-arm everything it just disabled.
+
 ## Requirements
 
 Beyond a working Omarchy install:
