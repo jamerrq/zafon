@@ -96,12 +96,9 @@ echo "Compiling Omarchy templates..."
 omarchy-theme-refresh >/dev/null 2>&1
 echo -e "${GREEN}OK${NC}: Theme templates refreshed"
 
-# Set the tux wallpaper as default if available
-tux_wallpaper="$HOME/.config/omarchy/backgrounds/$THEME_NAME/gruvbox_tux.png"
-if [[ -n "$THEME_NAME" && -f "$tux_wallpaper" ]]; then
-    omarchy-theme-bg-set "$tux_wallpaper" >/dev/null 2>&1
-    echo -e "${GREEN}OK${NC}: Set tux wallpaper"
-fi
+# NOTE: the wallpaper is deliberately not forced here any more. Overwriting it
+# on every run silently undid whatever you had chosen. `zafon` offers the tux
+# wallpaper as an optional last step instead -- see zafon.d/70-wallpaper.sh.
 
 echo "Checks complete. Reloading services..."
 omarchy-restart-walker >/dev/null 2>&1

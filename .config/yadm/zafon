@@ -37,9 +37,10 @@ say() { [[ $SILENT == true ]] || printf '%s\n' "$*"; }
 err() { printf '%s\n' "$*" >&2; }
 detail() { [[ $VERBOSE == true && $SILENT != true ]] && printf '%s\n' "$*"; }
 
-# Endpoints of the banner gradient, as R,G,B. Override to retheme.
-ZAFON_GRADIENT_FROM="${ZAFON_GRADIENT_FROM:-0,229,255}"
-ZAFON_GRADIENT_TO="${ZAFON_GRADIENT_TO:-255,47,185}"
+# Banner gradient. Colors are read from the cava config so the two stay in
+# visual sync; ZAFON_GRADIENT_STOPS overrides with a comma-separated hex list.
+ZAFON_CAVA_CONFIG="${ZAFON_CAVA_CONFIG:-$HOME/.config/cava/config}"
+ZAFON_GRADIENT_STOPS="${ZAFON_GRADIENT_STOPS:-}"
 
 truecolor_ok() {
   # 24-bit escapes come out as garbage on terminals that do not support them,
@@ -58,22 +59,60 @@ truecolor_ok() {
   return 1
 }
 
+gradient_stops() {
+  # Emit the gradient stops as "RRGGBB" lines, in order.
+  if [[ -n $ZAFON_GRADIENT_STOPS ]]; then
+    printf '%s\n' "${ZAFON_GRADIENT_STOPS//,/$'\n'}" | tr -d " #'\"" | grep -v '^$'
+    return
+  fi
+
+  if [[ -r $ZAFON_CAVA_CONFIG ]]; then
+    # cava numbers its stops from 1, and the file lists them in descending
+    # order, so sort numerically on the trailing index before stripping it.
+    local stops
+    stops=$(sed -n "s/^[[:space:]]*\(horizontal_\)\?gradient_color_\([0-9]\+\)[[:space:]]*=[[:space:]]*['\"]\?#\?\([0-9a-fA-F]\{6\}\).*/\2 \3/p" \
+      "$ZAFON_CAVA_CONFIG" | sort -n -k1,1 | awk '{print $2}')
+    if [[ -n $stops ]]; then
+      printf '%s\n' "$stops"
+      return
+    fi
+  fi
+
+  # Fallback if cava is not installed or defines no gradient.
+  printf '%s\n' 00E5FF FF2FB9
+}
+
 gradient_line() {
-  # Paint one line left-to-right between the two endpoint colors.
+  # Paint one line left-to-right across all gradient stops.
   local line=$1
   local -i len=${#line}
   ((len)) || { printf '\n'; return; }
 
-  local -i r1 g1 b1 r2 g2 b2
-  IFS=, read -r r1 g1 b1 <<<"$ZAFON_GRADIENT_FROM"
-  IFS=, read -r r2 g2 b2 <<<"$ZAFON_GRADIENT_TO"
+  local -a stops=()
+  mapfile -t stops < <(gradient_stops)
+  local -i n=${#stops[@]}
+  ((n)) || { printf '%s\n' "$line"; return; }
+  if ((n == 1)); then stops+=("${stops[0]}"); n=2; fi
 
-  local -i i r g b span=$((len > 1 ? len - 1 : 1))
+  local -i i seg r g b r1 g1 b1 r2 g2 b2 pos segspan
+  local -i span=$((len > 1 ? len - 1 : 1))
+  local -i segs=$((n - 1))
   local out=""
+
   for ((i = 0; i < len; i++)); do
-    r=$((r1 + (r2 - r1) * i / span))
-    g=$((g1 + (g2 - g1) * i / span))
-    b=$((b1 + (b2 - b1) * i / span))
+    # Which segment this column falls in, and how far along it.
+    pos=$((i * segs * 1000 / span))
+    seg=$((pos / 1000))
+    ((seg >= segs)) && seg=$((segs - 1))
+    segspan=$((pos - seg * 1000))
+
+    r1=$((16#${stops[seg]:0:2})); g1=$((16#${stops[seg]:2:2})); b1=$((16#${stops[seg]:4:2}))
+    r2=$((16#${stops[seg+1]:0:2})); g2=$((16#${stops[seg+1]:2:2})); b2=$((16#${stops[seg+1]:4:2}))
+
+    r=$((r1 + (r2 - r1) * segspan / 1000))
+    g=$((g1 + (g2 - g1) * segspan / 1000))
+    b=$((b1 + (b2 - b1) * segspan / 1000))
+
     # ${line:i:1} is character-wise, not byte-wise, in a UTF-8 locale -- which
     # matters because the art is drawn with multibyte block characters.
     out+=$'\e['"38;2;$r;$g;${b}m${line:i:1}"
@@ -380,6 +419,18 @@ cmd_list() {
   done
 }
 
+cmd_tree() {
+  banner
+  if ! command -v tree >/dev/null 2>&1; then
+    err "tree is not installed (yay -S tree)"
+    return 3
+  fi
+  # tree's --fromfile cannot read stdin reliably (broken for "-" in 2.3.x), so
+  # feed it a real path via process substitution.
+  tree -a --noreport --fromfile <(yadm list -a | sort) 2>/dev/null |
+    sed "1s|.*|${BOLD}~${NC} ${DIM}(yadm tracked)${NC}|"
+}
+
 usage() {
   cat <<USAGE
 zafon $VERSION -- apply capablanca customizations over Omarchy
@@ -391,6 +442,7 @@ Commands:
                   (default when no command is given)
   check           Report drift, change nothing
   list            List available modules
+  tree            Show every yadm-tracked file as a tree
 
 Flags:
   -y, --yes       Skip the per-module prompts; apply everything except optional
@@ -418,7 +470,7 @@ USAGE
 COMMAND=""
 while (($#)); do
   case $1 in
-    check|apply|list) COMMAND=$1 ;;
+    check|apply|list|tree) COMMAND=$1 ;;
     -y|--yes|--no-confirm) ASSUME_YES=true ;;
     -v|--verbose) VERBOSE=true ;;
     -s|--silent) SILENT=true ;;
@@ -439,4 +491,5 @@ case ${COMMAND:-apply} in
   check) cmd_check ;;
   apply) cmd_apply ;;
   list)  cmd_list ;;
+  tree)  cmd_tree ;;
 esac

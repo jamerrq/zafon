@@ -71,10 +71,8 @@ apply() {
 
   omarchy-theme-refresh >/dev/null 2>&1 && echo "recompiled theme templates"
 
-  local tux="$HOME/.config/omarchy/backgrounds/$theme/gruvbox_tux.png"
-  if [[ -n $theme && -f $tux ]]; then
-    omarchy-theme-bg-set "$tux" >/dev/null 2>&1 && echo "set tux wallpaper"
-  fi
+  # Choosing the wallpaper is deliberately not done here -- see 70-wallpaper.sh,
+  # which asks rather than overriding whatever is currently set.
 
   makoctl reload >/dev/null 2>&1
   omarchy-restart-walker >/dev/null 2>&1
