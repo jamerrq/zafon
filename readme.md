@@ -46,6 +46,7 @@ zafon check                 # report drift, change nothing
 zafon apply --yes           # unattended; skips optional (sudo) modules
 zafon check --only waybar   # scope to one module
 zafon list                  # show all modules
+zafon tree                  # every tracked file as a tree
 ```
 
 Exit codes: `0` all good, `1` drift remains or a module failed, `3` usage error.
@@ -58,6 +59,7 @@ Exit codes: `0` all good, `1` drift remains or a module failed, `3` usage error.
 | `zsh` | omz, powerlevel10k and custom plugins (cloned, not tracked) |
 | `theme` | rounded mako/walker templates, FiraCode, custom wallpapers |
 | `system` | root-owned units (ACPI wakeup fix) — optional, needs sudo |
+| `wallpaper` | offers the tux wallpaper as a last step — optional, declining keeps yours |
 
 ### How the Omarchy overrides work
 

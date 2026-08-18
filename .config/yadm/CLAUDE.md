@@ -21,6 +21,7 @@ Personal dotfiles tracked with [yadm](https://yadm.io/). The work tree is
 ├── check.sh               # legacy linear check; being superseded by zafon
 ├── zafon                  # the CLI (symlinked -> ~/.local/bin/zafon)
 ├── zafon.art              # banner art -- hand-edited, do not regenerate
+│                          #   (gradient colors come from ~/.config/cava/config)
 ├── zafon.d/               # one module per customization, each a `check`/`apply` script
 ├── omarchy/bin/           # patched Omarchy scripts (symlinked -> ~/.local/bin/)
 ├── system/                # root-owned files + install.sh (needs sudo)
