@@ -1,22 +1,30 @@
 #!/bin/bash
 
-# Yadm Bootstrap Script
-# This script runs automatically after cloning the yadm repository.
+# Yadm bootstrap. Runs automatically after `yadm clone`, and is safe to re-run.
 
-echo "Running Yadm Bootstrap for Omarchy Customizations..."
+set -uo pipefail
 
-# Make sure our check script is executable and run it
-CHECK_SCRIPT="$HOME/.config/yadm/check.sh"
+ZAFON="$HOME/.config/yadm/zafon"
 
-if [[ -f "$CHECK_SCRIPT" ]]; then
-    chmod +x "$CHECK_SCRIPT"
-    "$CHECK_SCRIPT"
-    
-    # Reload Waybar to apply any font/logo changes immediately
-    echo "Restarting Waybar..."
-    omarchy-restart-waybar >/dev/null 2>&1
-    
-    echo "Bootstrap completed successfully!"
-else
-    echo "Error: Could not find $CHECK_SCRIPT"
+echo "Bootstrapping capablanca customizations..."
+
+if [[ ! -f $ZAFON ]]; then
+  echo "Error: $ZAFON not found. Is the yadm clone complete?" >&2
+  exit 1
 fi
+chmod +x "$ZAFON" "$HOME/.config/yadm/zafon.d"/*.sh 2>/dev/null
+
+# Make zafon available on PATH for later interactive use. ~/.local/bin precedes
+# Omarchy's bin via .config/environment.d/10-zafon-path.conf.
+mkdir -p "$HOME/.local/bin"
+ln -sfn "$ZAFON" "$HOME/.local/bin/zafon"
+
+# Non-interactive: apply everything except modules flagged optional (those need
+# sudo or make system-wide changes, so they stay an explicit choice).
+"$ZAFON" apply --yes
+
+echo
+echo "Bootstrap complete."
+echo "  - run 'zafon check' to verify"
+echo "  - run 'zafon apply' to pick up the optional steps (ACPI wakeup fix)"
+echo "  - log out and back in so ~/.local/bin takes effect for Hyprland"
