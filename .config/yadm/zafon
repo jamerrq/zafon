@@ -37,10 +37,54 @@ say() { [[ $SILENT == true ]] || printf '%s\n' "$*"; }
 err() { printf '%s\n' "$*" >&2; }
 detail() { [[ $VERBOSE == true && $SILENT != true ]] && printf '%s\n' "$*"; }
 
+# Endpoints of the banner gradient, as R,G,B. Override to retheme.
+ZAFON_GRADIENT_FROM="${ZAFON_GRADIENT_FROM:-0,229,255}"
+ZAFON_GRADIENT_TO="${ZAFON_GRADIENT_TO:-255,47,185}"
+
+truecolor_ok() {
+  # 24-bit escapes come out as garbage on terminals that do not support them,
+  # so this errs toward the flat fallback. ZAFON_GRADIENT=always|never wins.
+  case ${ZAFON_GRADIENT:-auto} in
+    always) return 0 ;;
+    never) return 1 ;;
+  esac
+  [[ $USE_COLOR == true && -t 1 ]] || return 1
+  [[ ${COLORTERM:-} == truecolor || ${COLORTERM:-} == 24bit ]] && return 0
+  # COLORTERM is not always exported, so fall back to recognising terminals
+  # that are known to handle truecolor.
+  case ${TERM:-} in
+    *alacritty*|*kitty*|*ghostty*|*foot*|*wezterm*|*contour*) return 0 ;;
+  esac
+  return 1
+}
+
+gradient_line() {
+  # Paint one line left-to-right between the two endpoint colors.
+  local line=$1
+  local -i len=${#line}
+  ((len)) || { printf '\n'; return; }
+
+  local -i r1 g1 b1 r2 g2 b2
+  IFS=, read -r r1 g1 b1 <<<"$ZAFON_GRADIENT_FROM"
+  IFS=, read -r r2 g2 b2 <<<"$ZAFON_GRADIENT_TO"
+
+  local -i i r g b span=$((len > 1 ? len - 1 : 1))
+  local out=""
+  for ((i = 0; i < len; i++)); do
+    r=$((r1 + (r2 - r1) * i / span))
+    g=$((g1 + (g2 - g1) * i / span))
+    b=$((b1 + (b2 - b1) * i / span))
+    # ${line:i:1} is character-wise, not byte-wise, in a UTF-8 locale -- which
+    # matters because the art is drawn with multibyte block characters.
+    out+=$'\e['"38;2;$r;$g;${b}m${line:i:1}"
+  done
+  printf '%s\e[0m\n' "$out"
+}
+
 banner() {
   [[ $SILENT == true ]] && return
-  printf '%s' "$BLUE"
-  cat <<'ART'
+  local art line
+  art=$(cat <<'ART'
  ███████╗ █████╗ ███████╗ ██████╗ ███╗   ██╗
  ╚══███╔╝██╔══██╗██╔════╝██╔═══██╗████╗  ██║
    ███╔╝ ███████║█████╗  ██║   ██║██╔██╗ ██║
@@ -48,7 +92,12 @@ banner() {
  ███████╗██║  ██║██║     ╚██████╔╝██║ ╚████║
  ╚══════╝╚═╝  ╚═╝╚═╝      ╚═════╝ ╚═╝  ╚═══╝
 ART
-  printf '%s' "$NC"
+)
+  if truecolor_ok; then
+    while IFS= read -r line; do gradient_line "$line"; done <<<"$art"
+  else
+    printf '%s%s%s\n' "$BLUE" "$art" "$NC"
+  fi
   printf '%s  capablanca over omarchy%s  %sv%s%s\n\n' "$DIM" "$NC" "$DIM" "$VERSION" "$NC"
 }
 
@@ -169,57 +218,66 @@ cmd_check() {
   return 1
 }
 
-select_modules() {
-  # Print the indices to apply, one per line, on stdout.
-  local -a candidates=()
-  mapfile -t candidates < <(needs_work)
-  ((${#candidates[@]})) || return 0
+have_tty() {
+  # A controlling terminal we can actually read from. Without this check the
+  # prompt below would block forever under cron, a pipe, or a systemd unit.
+  [[ -t 0 ]] && return 0
+  { : </dev/tty; } 2>/dev/null
+}
+
+confirm() {
+  # confirm <prompt> -- yes by default, since we only ask about modules that
+  # already reported a problem.
+  local prompt=$1
+  have_tty || return 1
+
+  if command -v gum >/dev/null 2>&1; then
+    gum confirm --default=yes "$prompt"
+    return $?
+  fi
+
+  local reply
+  if [[ -t 0 ]]; then
+    read -r -p "$prompt [Y/n] " reply || return 1
+  else
+    read -r -p "$prompt [Y/n] " reply </dev/tty || return 1
+  fi
+  [[ -z $reply || $reply == [yY]* ]]
+}
+
+apply_one() {
+  # apply_one <index> -- returns 0 applied, 1 failed, 2 skipped
+  local i=$1 out rc
+
+  if [[ $ASSUME_YES != true ]]; then
+    say ""
+    printf '  %s%s%s\n' "$BOLD" "${MOD_NAMES[$i]}" "$NC"
+    while IFS= read -r line; do
+      [[ -n $line ]] && printf '      %s- %s%s\n' "$DIM" "$line" "$NC"
+    done <<<"${OUTPUTS[$i]}"
+
+    if [[ ${MOD_OPTIONAL[$i]} == true ]]; then
+      printf '      %s(optional -- needs sudo)%s\n' "$YELLOW" "$NC"
+    fi
+
+    confirm "  Apply ${MOD_NAMES[$i]}?" || { say "  ${DIM}skipped${NC}"; return 2; }
+  fi
+
+  out=$("${MOD_PATHS[$i]}" apply 2>&1); rc=$?
+  if ((rc != 0)); then
+    err "  ${RED}failed:${NC} ${MOD_NAMES[$i]}"
+    err "$out"
+    return 1
+  fi
 
   if [[ $ASSUME_YES == true ]]; then
-    # Optional modules (sudo, network) stay out of unattended runs.
-    local i
-    for i in "${candidates[@]}"; do
-      [[ ${MOD_OPTIONAL[$i]} == true ]] && continue
-      printf '%s\n' "$i"
-    done
-    return 0
+    detail "$(printf '  %s%s:%s\n%s' "$DIM" "${MOD_NAMES[$i]}" "$NC" "$out")"
+  else
+    while IFS= read -r line; do
+      [[ -n $line ]] && printf '      %s%s%s\n' "$GREEN" "$line" "$NC"
+    done <<<"$out"
   fi
-
-  if ! command -v gum >/dev/null 2>&1; then
-    # Plain-bash fallback so zafon still works on a machine without gum.
-    local i reply
-    for i in "${candidates[@]}"; do
-      read -r -p "  apply ${MOD_NAMES[$i]}? [y/N] " reply </dev/tty
-      [[ $reply == [yY]* ]] && printf '%s\n' "$i"
-    done
-    return 0
-  fi
-
-  local -a labels=() preselect=()
-  local i label
-  for i in "${candidates[@]}"; do
-    label="${MOD_NAMES[$i]}"
-    [[ ${MOD_OPTIONAL[$i]} == true ]] && label+="  (optional, needs sudo)"
-    labels+=("$label")
-    [[ ${MOD_OPTIONAL[$i]} != true ]] && preselect+=("$label")
-  done
-
-  local chosen
-  chosen=$(printf '%s\n' "${labels[@]}" | gum choose \
-    --no-limit \
-    --header "Select what to apply  (space toggles, enter confirms)" \
-    --selected "$(IFS=,; echo "${preselect[*]}")" 2>/dev/null) || return 0
-
-  [[ -z $chosen ]] && return 0
-
-  local c
-  while IFS= read -r c; do
-    for i in "${candidates[@]}"; do
-      label="${MOD_NAMES[$i]}"
-      [[ ${MOD_OPTIONAL[$i]} == true ]] && label+="  (optional, needs sudo)"
-      [[ $c == "$label" ]] && printf '%s\n' "$i"
-    done
-  done <<<"$chosen"
+  return 0
 }
 
 cmd_apply() {
@@ -230,40 +288,63 @@ cmd_apply() {
   report
   say ""
 
-  local -a todo=()
-  mapfile -t todo < <(select_modules)
+  local -a candidates=()
+  mapfile -t candidates < <(needs_work)
 
-  if ((${#todo[@]} == 0)); then
+  if ((${#candidates[@]} == 0)); then
     say "  ${GREEN}Nothing to apply.${NC}"
     return 0
   fi
 
-  say "  ${BOLD}Applying ${#todo[@]} module(s)...${NC}"
-  say ""
-
-  local done=0 i out rc failed=0
-  for i in "${todo[@]}"; do
-    [[ -t 1 ]] && progress "$done" "${#todo[@]}" "${MOD_NAMES[$i]}"
-    out=$("${MOD_PATHS[$i]}" apply 2>&1); rc=$?
-    ((done++))
-    progress "$done" "${#todo[@]}" "${MOD_NAMES[$i]}"
-    if ((rc != 0)); then
-      ((failed++))
-      err "  ${RED}failed:${NC} ${MOD_NAMES[$i]}"
-      err "$out"
-    else
-      detail "$(printf '  %s%s:%s\n%s' "$DIM" "${MOD_NAMES[$i]}" "$NC" "$out")"
+  # Unattended runs never escalate: modules marked optional need sudo or make
+  # system-wide changes, so they stay an explicit choice.
+  if [[ $ASSUME_YES == true ]]; then
+    local -a filtered=()
+    local i
+    for i in "${candidates[@]}"; do
+      [[ ${MOD_OPTIONAL[$i]} == true ]] && continue
+      filtered+=("$i")
+    done
+    candidates=("${filtered[@]:-}")
+    [[ -z ${candidates[0]:-} ]] && candidates=()
+    if ((${#candidates[@]} == 0)); then
+      say "  ${GREEN}Nothing to apply${NC} (only optional modules need attention; run without --yes)."
+      return 0
     fi
+  fi
+
+  if [[ $ASSUME_YES != true ]] && ! have_tty; then
+    err "zafon apply needs a terminal to confirm each module."
+    err "Run it interactively, or pass --yes to apply without prompting."
+    return 3
+  fi
+
+  say "  ${BOLD}${#candidates[@]} module(s) need attention.${NC}"
+
+  local -i done=0 applied=0 skipped=0 failed=0
+  local i rc
+  for i in "${candidates[@]}"; do
+    [[ $ASSUME_YES == true && -t 1 ]] && progress "$done" "${#candidates[@]}" "${MOD_NAMES[$i]}"
+    apply_one "$i"; rc=$?
+    ((done++))
+    case $rc in
+      0) ((applied++)) ;;
+      1) ((failed++)) ;;
+      2) ((skipped++)) ;;
+    esac
+    [[ $ASSUME_YES == true ]] && progress "$done" "${#candidates[@]}" "${MOD_NAMES[$i]}"
   done
 
   say ""
+  say "  ${GREEN}$applied applied${NC}, ${DIM}$skipped skipped${NC}, ${RED}$failed failed${NC}"
   if ((failed)); then
-    say "  ${RED}$failed module(s) failed.${NC}"
     return 1
   fi
-  say "  ${GREEN}Done.${NC} Re-run ${BOLD}zafon check${NC} to confirm."
-  command -v notify-send >/dev/null 2>&1 &&
-    notify-send -t 3000 "zafon" "Applied ${#todo[@]} customization(s)" 2>/dev/null
+  if ((applied)); then
+    say "  Re-run ${BOLD}zafon check${NC} to confirm."
+    command -v notify-send >/dev/null 2>&1 &&
+      notify-send -t 3000 "zafon" "Applied $applied customization(s)" 2>/dev/null
+  fi
   return 0
 }
 
@@ -284,16 +365,21 @@ Usage: zafon [command] [flags]
 
 Commands:
   check           Report drift, change nothing (default)
-  apply           Apply customizations, interactive unless --yes
+  apply           Walk each module needing work and confirm before applying
   list            List available modules
 
 Flags:
-  -y, --yes       Non-interactive; apply everything needed except optional modules
+  -y, --yes       Skip the per-module prompts; apply everything except optional
+      --no-confirm  Same as --yes
   -o, --only M    Comma-separated module slugs (see \`zafon list\`)
   -v, --verbose   Show per-module output while applying
   -s, --silent    Only report problems
       --no-color  Disable colored output
   -h, --help      This message
+
+Environment:
+  ZAFON_GRADIENT    always|never|auto (default auto) -- banner gradient
+  ZAFON_MODULE_DIR  override the module directory
 
 Exit codes:
   0  everything in place / applied cleanly
@@ -309,7 +395,7 @@ COMMAND=""
 while (($#)); do
   case $1 in
     check|apply|list) COMMAND=$1 ;;
-    -y|--yes) ASSUME_YES=true ;;
+    -y|--yes|--no-confirm) ASSUME_YES=true ;;
     -v|--verbose) VERBOSE=true ;;
     -s|--silent) SILENT=true ;;
     --no-color) USE_COLOR=false ;;
