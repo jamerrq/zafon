@@ -83,20 +83,17 @@ gradient_line() {
 
 banner() {
   [[ $SILENT == true ]] && return
+  # The art lives in its own file so it can be edited freely without touching
+  # this script. ZAFON_ART points somewhere else if you want a different one.
+  local art_file="${ZAFON_ART:-$HOME/.config/yadm/zafon.art}"
   local art line
-  art=$(cat <<'ART'
- ███████╗ █████╗ ███████╗ ██████╗ ███╗   ██╗
- ╚══███╔╝██╔══██╗██╔════╝██╔═══██╗████╗  ██║
-   ███╔╝ ███████║█████╗  ██║   ██║██╔██╗ ██║
-  ███╔╝  ██╔══██║██╔══╝  ██║   ██║██║╚██╗██║
- ███████╗██║  ██║██║     ╚██████╔╝██║ ╚████║
- ╚══════╝╚═╝  ╚═╝╚═╝      ╚═════╝ ╚═╝  ╚═══╝
-ART
-)
-  if truecolor_ok; then
-    while IFS= read -r line; do gradient_line "$line"; done <<<"$art"
-  else
-    printf '%s%s%s\n' "$BLUE" "$art" "$NC"
+  if [[ -r $art_file ]]; then
+    art=$(<"$art_file")
+    if truecolor_ok; then
+      while IFS= read -r line; do gradient_line "$line"; done <<<"$art"
+    else
+      printf '%s%s%s\n' "$BLUE" "$art" "$NC"
+    fi
   fi
   printf '%s  capablanca over omarchy%s  %sv%s%s\n\n' "$DIM" "$NC" "$DIM" "$VERSION" "$NC"
 }
@@ -280,6 +277,33 @@ apply_one() {
   return 0
 }
 
+notify_result() {
+  # notify_result <applied> <skipped> <failed> -- always fires, so an unattended
+  # run still surfaces its outcome on the desktop.
+  local -i applied=$1 skipped=$2 failed=$3
+  command -v notify-send >/dev/null 2>&1 || return 0
+
+  local urgency=low icon summary body
+  body="$applied applied, $skipped skipped, $failed failed"
+
+  if ((failed)); then
+    urgency=critical; icon=dialog-error
+    summary="zafon: $failed module(s) failed"
+  elif ((applied)); then
+    icon=emblem-ok
+    summary="zafon: $applied module(s) applied"
+  elif ((skipped)); then
+    icon=dialog-information
+    summary="zafon: nothing applied"
+  else
+    icon=emblem-ok
+    summary="zafon: everything already in place"
+    body="no changes were needed"
+  fi
+
+  notify-send -u "$urgency" -i "$icon" -t 4000 "$summary" "$body" 2>/dev/null || true
+}
+
 cmd_apply() {
   banner
   say "${BOLD}Checking customizations...${NC}"
@@ -293,6 +317,7 @@ cmd_apply() {
 
   if ((${#candidates[@]} == 0)); then
     say "  ${GREEN}Nothing to apply.${NC}"
+    notify_result 0 0 0
     return 0
   fi
 
@@ -309,6 +334,7 @@ cmd_apply() {
     [[ -z ${candidates[0]:-} ]] && candidates=()
     if ((${#candidates[@]} == 0)); then
       say "  ${GREEN}Nothing to apply${NC} (only optional modules need attention; run without --yes)."
+      notify_result 0 "${#candidates[@]}" 0
       return 0
     fi
   fi
@@ -337,14 +363,11 @@ cmd_apply() {
 
   say ""
   say "  ${GREEN}$applied applied${NC}, ${DIM}$skipped skipped${NC}, ${RED}$failed failed${NC}"
-  if ((failed)); then
-    return 1
-  fi
-  if ((applied)); then
-    say "  Re-run ${BOLD}zafon check${NC} to confirm."
-    command -v notify-send >/dev/null 2>&1 &&
-      notify-send -t 3000 "zafon" "Applied $applied customization(s)" 2>/dev/null
-  fi
+
+  notify_result "$applied" "$skipped" "$failed"
+
+  ((failed)) && return 1
+  ((applied)) && say "  Re-run ${BOLD}zafon check${NC} to confirm."
   return 0
 }
 
