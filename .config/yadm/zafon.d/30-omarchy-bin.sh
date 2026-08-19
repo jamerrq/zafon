@@ -8,6 +8,7 @@ SRC_DIR="$HOME/.config/yadm/omarchy/bin"
 DEST_DIR="$HOME/.local/bin"
 OMARCHY_BIN="$HOME/.local/share/omarchy/bin"
 ENV_DROPIN="$HOME/.config/environment.d/10-zafon-path.conf"
+UWSM_ENV="$HOME/.config/uwsm/env"
 
 SCRIPTS=(omarchy-brightness-display omarchy-toggle-nightlight omarchy-audio-output-switch)
 
@@ -27,6 +28,14 @@ check() {
 
   [[ -f $ENV_DROPIN ]] || problems+=("environment.d PATH drop-in is missing")
 
+  # uwsm is what actually decides the session PATH under Omarchy: it sources
+  # this file and pushes the result into the systemd user manager after the
+  # environment.d generators have run, overwriting their PATH entirely.
+  if [[ -f $UWSM_ENV ]]; then
+    grep -q 'PATH=$HOME/.local/bin' "$UWSM_ENV" ||
+      problems+=("$UWSM_ENV does not prepend ~/.local/bin (it overrides environment.d)")
+  fi
+
   # The systemd user manager reads environment.d only at session start, so the
   # running session can be correct on disk yet still resolve the wrong binary.
   # The systemd user manager reads environment.d only at session start, so the
@@ -43,7 +52,7 @@ check() {
     done < <(printf '%s' "$live_path" | tr ':' '\n')
 
     if ((ours < 0)); then
-      problems+=("~/.local/bin not on the session PATH yet -- re-login required")
+      problems+=("~/.local/bin not on the session PATH yet -- relaunch Hyprland to pick it up")
     elif ((theirs >= 0 && ours > theirs)); then
       problems+=("~/.local/bin is on the session PATH but after omarchy's bin")
     fi
@@ -79,7 +88,7 @@ apply() {
   # Nothing here can affect already-running processes: environment.d is read
   # once, when the systemd user manager starts.
   if ! systemctl --user show-environment 2>/dev/null | grep -q "^PATH=.*$DEST_DIR"; then
-    echo "note: log out and back in for Hyprland-launched processes to pick this up"
+    echo "note: relaunch Hyprland for its child processes to pick this up"
   fi
   return 0
 }
