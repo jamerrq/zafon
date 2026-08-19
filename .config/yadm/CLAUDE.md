@@ -19,6 +19,7 @@ Personal dotfiles tracked with [yadm](https://yadm.io/). The work tree is
 .config/yadm/
 ├── bootstrap              # runs on `yadm bootstrap` after clone
 ├── check.sh               # legacy linear check; being superseded by zafon
+├── ../uwsm/env            # session PATH ordering (uwsm, not environment.d)
 ├── zafon                  # the CLI (symlinked -> ~/.local/bin/zafon)
 ├── zafon.art              # banner art -- hand-edited, do not regenerate
 │                          #   (gradient colors come from ~/.config/cava/config)
@@ -37,6 +38,11 @@ git checkout of `basecamp/omarchy`; `omarchy-update` pulls there and will
 clobber local edits. Patched copies live in `.config/yadm/omarchy/bin/` and are
 symlinked into `~/.local/bin`, which `.config/environment.d/10-zafon-path.conf`
 places ahead of Omarchy's `bin` on the systemd user PATH.
+
+PATH ordering is set in `~/.config/uwsm/env`, **not** `~/.config/environment.d/`.
+Omarchy launches Hyprland through uwsm, which sources that file and pushes the
+result into the systemd user manager after the environment.d generators run,
+overwriting their PATH. Changes there need a Hyprland relaunch, not a reboot.
 
 Caveat: the `omarchy` dispatcher execs `$OMARCHY_BIN_DIR/<binary>` by absolute
 path, so it **ignores PATH**. Anything that must hit a patched script has to

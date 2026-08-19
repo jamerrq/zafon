@@ -1,0 +1,21 @@
+# Changes require a relaunch of Hyprland to take effect.
+
+# Ensure Omarchy bins are in the path
+export OMARCHY_PATH=$HOME/.local/share/omarchy
+export PATH=$OMARCHY_PATH/bin/:$PATH
+
+# Put ~/.local/bin ahead of Omarchy's bin. Omarchy's bin is a git checkout of
+# basecamp/omarchy, so editing scripts in place means omarchy-update clobbers
+# them; patched copies live in yadm and are symlinked into ~/.local/bin, which
+# wins by PATH precedence while the upstream clone stays pristine.
+#
+# This has to live here rather than in ~/.config/environment.d: uwsm sources
+# this file and pushes the result into the systemd user manager AFTER the
+# environment.d generators run, overwriting whatever PATH they produced.
+export PATH=$HOME/.local/bin:$HOME/bin:$PATH
+
+# Set default terminal and editor
+source ~/.config/uwsm/default
+
+# Activate mise if present on the system
+omarchy-cmd-present mise && eval "$(mise activate bash --shims)"
