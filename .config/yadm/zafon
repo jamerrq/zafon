@@ -431,6 +431,41 @@ cmd_tree() {
     sed "1s|.*|${BOLD}~${NC} ${DIM}(yadm tracked)${NC}|"
 }
 
+cmd_untracked() {
+  # yadm sets status.showUntrackedFiles=no, because the work tree is $HOME and a
+  # full scan means ~1.2M files. The cost is that `yadm status` never reports a
+  # NEW file -- add one next to tracked config and it stays invisible forever.
+  #
+  # Scope the scan to directories that already contain tracked files, which is
+  # where a forgotten file actually matters. Top-level $HOME is excluded on
+  # purpose: that is the unscannable part.
+  banner
+  local -a dirs=()
+  mapfile -t dirs < <(yadm list -a | xargs -n1 dirname | sort -u | grep -v '^\.$')
+
+  if ((${#dirs[@]} == 0)); then
+    say "  no tracked directories found"
+    return 0
+  fi
+
+  local out
+  out=$(yadm status --short --untracked-files=all -- "${dirs[@]}" 2>/dev/null | grep '^??' | sed 's/^?? //')
+
+  if [[ -z $out ]]; then
+    say "  ${GREEN}No untracked files alongside tracked config.${NC}"
+    return 0
+  fi
+
+  say "  ${YELLOW}Untracked files in directories yadm already tracks:${NC}"
+  say ""
+  while IFS= read -r f; do
+    [[ -n $f ]] && printf '    %s\n' "$f"
+  done <<<"$out"
+  say ""
+  say "  ${DIM}Add with: yadm add <path>${NC}"
+  return 1
+}
+
 usage() {
   cat <<USAGE
 zafon $VERSION -- apply capablanca customizations over Omarchy
@@ -443,6 +478,7 @@ Commands:
   check           Report drift, change nothing
   list            List available modules
   tree            Show every yadm-tracked file as a tree
+  untracked       Find new files sitting next to tracked config
 
 Flags:
   -y, --yes       Skip the per-module prompts; apply everything except optional
@@ -470,7 +506,7 @@ USAGE
 COMMAND=""
 while (($#)); do
   case $1 in
-    check|apply|list|tree) COMMAND=$1 ;;
+    check|apply|list|tree|untracked) COMMAND=$1 ;;
     -y|--yes|--no-confirm) ASSUME_YES=true ;;
     -v|--verbose) VERBOSE=true ;;
     -s|--silent) SILENT=true ;;
@@ -492,4 +528,5 @@ case ${COMMAND:-apply} in
   apply) cmd_apply ;;
   list)  cmd_list ;;
   tree)  cmd_tree ;;
+  untracked) cmd_untracked ;;
 esac

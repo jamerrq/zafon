@@ -1,0 +1,24 @@
+# yadm's work tree is $HOME. yadm sets status.showUntrackedFiles=no, so most of
+# $HOME is invisible to `yadm status` anyway; what this file is really for is
+# keeping editor state out of the way of the directories that DO hold tracked
+# config, so `zafon untracked` can surface genuinely forgotten files.
+
+# --- editor state: history, caches, per-workspace storage. Not configuration.
+.config/Code/User/History/
+.config/Code/User/globalStorage/
+.config/Code/User/workspaceStorage/
+.config/Code/User/profiles/
+.config/Code/User/sync/
+.config/Code - OSS/
+.config/Cursor/
+.config/Antigravity/User/History/
+.config/Antigravity/User/globalStorage/
+.config/Antigravity/User/workspaceStorage/
+
+# --- upstream repos cloned by zafon.d/40-zsh.sh, deliberately not tracked
+.config/zsh/.oh-my-zsh/
+
+# --- transient
+*.bak
+*.bak.[0-9]*
+*.log
