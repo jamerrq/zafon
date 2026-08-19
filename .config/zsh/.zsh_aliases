@@ -11,6 +11,8 @@ alias grubmkconfig="sudo grub-mkconfig -o /boot/grub/grub.cfg"
 alias t1="tree -L 1"
 alias t2="tree -L 2"
 alias t3="tree -L 3"
+alias yt="tree -a --noreport --fromfile <(yadm list -a | sort) 2>/dev/null |
+    sed \"1s|.*|${BOLD}~${NC} ${DIM}(yadm tracked)${NC}|\""
 
 # gtime
 alias gtime="/usr/bin/time -v"
