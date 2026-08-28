@@ -1,0 +1,19 @@
+[font]
+base-size = 12
+
+# Thick borders on the Quickshell surfaces that replaced mako and walker.
+# Corner radius is NOT set here -- the shell mirrors Hyprland's
+# decoration:rounding (set to 10 in ~/.config/hypr/looknfeel.lua).
+# User keys win over the theme's shell.toml, so these survive theme changes.
+
+# Notification toasts (the old mako border-size=4).
+[notifications]
+border-width = 4
+
+# Launcher and menu cards (the old walker border).
+[menu]
+border-width = 4
+
+# Bar flyouts / dropdowns / OSD, kept consistent with the above.
+[popups]
+border-width = 4
