@@ -1,95 +1,96 @@
 #!/bin/bash
 
-# omarchy:summary=Switch between audio outputs while preserving the mute status. By default mapped to Super + Mute.
+# omarchy:summary=Switch between audio outputs, including analog/HDMI on a single card
+# omarchy:examples=omarchy audio output switch
 
-sinks=$(pactl -f json list sinks | jq '[.[] | select((.ports | length == 0) or ([.ports[]? | .availability != "not available"] | any))]')
-sinks_count=$(echo "$sinks" | jq '. | length')
+# Local override of the Omarchy default, tracked in yadm and symlinked into
+# ~/.local/bin so it shadows /usr/bin on PATH.
+#
+# Why this exists: upstream rotates between *sinks*. This machine has one card
+# (alsa_card.pci-0000_00_1f.3) whose analog and HDMI outputs are mutually
+# exclusive card PROFILES, so PipeWire only ever exposes one sink for it. With a
+# single sink upstream computes next = (0 + 1) % 1 = 0, lands back on the sink it
+# started from, and shows an OSD without changing anything -- pressing the key
+# appears to do nothing. Switching output here means switching the profile.
+#
+# This is deliberately a thin wrapper rather than the full fork it used to be:
+# it handles only the single-sink profile case and delegates everything else to
+# the packaged script, so upstream's speaker-tuning awareness, timeouts and
+# volume/mute handling keep improving without being re-implemented here.
+#
+# Rewritten for quattro: the old copy called swayosd-client and
+# omarchy-swayosd-client, both removed when the OSD moved into the Quickshell
+# shell. The replacement is `omarchy-osd`.
 
-if (( sinks_count <= 1 )); then
-  first_card=$(pactl -f json list cards | jq -r '[.[] | select(.name | startswith("alsa_card"))][0].name')
+set -uo pipefail
 
-  if [[ -n $first_card ]] && [[ $first_card != "null" ]]; then
-    active_profile=$(pactl -f json list cards | jq -r ".[] | select(.name == \"$first_card\") | .active_profile")
+UPSTREAM=/usr/bin/omarchy-audio-output-switch
 
-    was_playing=false
-    if command -v playerctl >/dev/null 2>&1 && [[ $(playerctl status 2>/dev/null) == "Playing" ]]; then
-      was_playing=true
-    fi
+delegate() { exec "$UPSTREAM" "$@"; }
 
-    if [[ $active_profile == *"analog-stereo"* ]]; then
-      if pactl set-card-profile "$first_card" "output:hdmi-stereo" 2>/dev/null; then
-        swayosd-client \
-          --monitor "$focused_monitor" \
-          --custom-message "Digital Output (HDMI)" \
-          --custom-icon "video-display"
-        [[ $was_playing == true ]] && sleep 0.5 && playerctl play >/dev/null 2>&1
-        exit 0
-      fi
-    elif [[ $active_profile == *"hdmi-stereo"* ]]; then
-      if pactl set-card-profile "$first_card" "output:analog-stereo" 2>/dev/null; then
-        swayosd-client \
-          --monitor "$focused_monitor" \
-          --custom-message "Analog Output (Headphones)" \
-          --custom-icon "audio-headphones"
-        [[ $was_playing == true ]] && sleep 0.5 && playerctl play >/dev/null 2>&1
-        exit 0
-      fi
-    fi
-  fi
-fi
+[[ -x $UPSTREAM ]] || { echo "packaged $UPSTREAM not found" >&2; exit 1; }
 
-if (( sinks_count == 0 )); then
-  omarchy-swayosd-client --custom-message "No audio devices found"
-  exit 1
-fi
+# Count usable sinks the same way upstream does, so the handoff point matches.
+sinks_count=$(timeout 2 pactl -f json list sinks 2>/dev/null |
+  jq '[.[] | select((.ports | length == 0) or ([.ports[]? | .availability != "not available"] | any))] | length' 2>/dev/null)
 
-current_sink_name=$(pactl get-default-sink)
-current_sink_index=$(echo "$sinks" | jq -r --arg name "$current_sink_name" 'map(.name) | index($name)')
+# More than one sink to rotate through, or we could not tell: upstream's job.
+[[ $sinks_count =~ ^[0-9]+$ ]] || delegate "$@"
+(( sinks_count == 1 )) || delegate "$@"
 
-if [[ $current_sink_index != "null" ]]; then
-  next_sink_index=$(((current_sink_index + 1) % sinks_count))
-else
-  next_sink_index=0
-fi
+card=$(timeout 2 pactl -f json list cards 2>/dev/null |
+  jq -r '[.[] | select(.name | startswith("alsa_card"))][0].name // empty')
+[[ -n $card ]] || delegate "$@"
 
-next_sink=$(echo "$sinks" | jq -r ".[$next_sink_index]")
-next_sink_name=$(echo "$next_sink" | jq -r '.name')
+card_json=$(timeout 2 pactl -f json list cards 2>/dev/null |
+  jq -c --arg c "$card" '.[] | select(.name == $c)')
+active=$(jq -r '.active_profile' <<<"$card_json")
 
-next_sink_description=$(echo "$next_sink" | jq -r '.description')
-if [[ $next_sink_description == "(null)" ]] || [[ $next_sink_description == "null" ]] || [[ -z $next_sink_description ]]; then
-  # For Bluetooth devices, the friendly name is on the Device entry (device.id), not the Sink entry (object.id)
-  device_id=$(echo "$next_sink" | jq -r '.properties."device.id"')
-  if [[ $device_id != "null" ]] && [[ -n $device_id ]]; then
-    next_sink_description=$(wpctl status | grep -E "^\s*│?\s+${device_id}\." | sed -E 's/^.*[0-9]+\.\s+//' | sed -E 's/\s+\[.*$//')
-  fi
-  # Fall back to object.id lookup if device.id didn't yield a result
-  if [[ -z $next_sink_description ]]; then
-    sink_id=$(echo "$next_sink" | jq -r '.properties."object.id"')
-    next_sink_description=$(wpctl status | grep -E "\s+\*?\s+${sink_id}\." | sed -E 's/^.*[0-9]+\.\s+//' | sed -E 's/\s+\[.*$//')
-  fi
-fi
+case "$active" in
+  *analog-stereo*) target="output:hdmi-stereo";   icon="display";     label="Digital Output (HDMI)" ;;
+  *hdmi-stereo*)   target="output:analog-stereo"; icon="volume-high"; label="Analog Output (Headphones)" ;;
+  *)               delegate "$@" ;;
+esac
 
-next_sink_volume=$(echo "$next_sink" | jq -r \
-  '.volume | to_entries[0].value.value_percent | sub("%"; "")')
-next_sink_is_muted=$(echo "$next_sink" | jq -r '.mute')
+# Only switch to a profile the card actually reports as available -- unplugging
+# the HDMI monitor makes its profile unavailable, and forcing it would leave the
+# machine with no working output at all.
+jq -e --arg p "$target" '.profiles[$p].available == true' <<<"$card_json" >/dev/null 2>&1 || delegate "$@"
 
-if [[ $next_sink_is_muted = "true" ]] || (( next_sink_volume == 0 )); then
-  icon_state="muted"
-elif (( next_sink_volume <= 33 )); then
-  icon_state="low"
-elif (( next_sink_volume <= 66 )); then
-  icon_state="medium"
-else
-  icon_state="high"
-fi
+# Carry mute across the switch: the new profile brings a fresh sink that defaults
+# to unmuted, which is a surprise if you switched outputs while muted.
+was_muted=false
+[[ $(timeout 2 pactl get-sink-mute @DEFAULT_SINK@ 2>/dev/null) == *yes ]] && was_muted=true
 
-next_sink_volume_icon="sink-volume-${icon_state}-symbolic"
+# Media state comes from the shell's MPRIS service, not playerctl -- quattro
+# dropped playerctl entirely and moved MPRIS into omarchy-shell. The old
+# `command -v playerctl` guard meant this silently did nothing: the command was
+# missing, so was_playing never became true and playback was never resumed.
+#
+# Note the missing -q here: omarchy-shell's quiet flag suppresses stdout, not
+# just errors, so `-q media status` returns an empty string and every read of
+# .playing comes back false. -q belongs on the action below, where swallowing a
+# failure is fine, never on a query whose output we need.
+was_playing=false
+[[ $(timeout 2 omarchy-shell media status 2>/dev/null | jq -r '.playing // false' 2>/dev/null) == true ]] &&
+  was_playing=true
 
-if [[ $next_sink_name != $current_sink_name ]]; then
-  next_sink_wpid=$(echo "$next_sink" | jq -r '.properties."object.id"')
-  wpctl set-default "$next_sink_wpid"
-fi
+pactl set-card-profile "$card" "$target" 2>/dev/null || delegate "$@"
 
-omarchy-swayosd-client \
-  --custom-message "$next_sink_description" \
-  --custom-icon "$next_sink_volume_icon"
+# The new sink takes a moment to register; without this the mute below lands on
+# the sink that is on its way out.
+for _ in {1..20}; do
+  new_sink=$(timeout 2 pactl get-default-sink 2>/dev/null)
+  [[ -n $new_sink && $new_sink != "@DEFAULT_SINK@" ]] && break
+  sleep 0.05
+done
+
+[[ $was_muted == true ]] && pactl set-sink-mute @DEFAULT_SINK@ 1 2>/dev/null
+
+omarchy-osd -i "$icon" -m "$label" 2>/dev/null
+
+# Switching the profile tears down the old sink, which pauses whatever was
+# playing through it. Give the new sink a moment to settle, then resume.
+[[ $was_playing == true ]] && { sleep 0.5; omarchy-shell -q media play >/dev/null 2>&1; }
+
+exit 0

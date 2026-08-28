@@ -158,21 +158,10 @@ More info:
 - [x] M7. expand readme (include yadm)
 - [x] M8. fix broken waybar step — `omarchy-refresh-waybar` no longer runs
 - [ ] M9. update yadm
+- [x] M10. update to quattro
 
-## Ideas for the script (zafon)
+## Some ideas
 
-- [x] I1. ascii art
-- [x] I2. some optional steps — `# zafon:optional=true`, skipped by `--yes`
-- [x] I3. flags (--silent, --verbose, etc.)
-- [x] I4. interactive menu like gum — with a plain-bash fallback
-- [x] I5. preferible to use bash, if not possible, then python — pure bash
-- [x] I6. let's use progress bars along
-
-### Still open
-
-- `omarchy-refresh-hyprland` still resets `monitors.conf` to defaults on every
-  run, which would hurt on a multi-monitor setup.
-- `omarchy-brightness-display` logs every invocation to `/tmp/brightness.log`,
-  and the ddcutil path is currently reporting `Display not found`.
-- The patched brightness script drops upstream's Apple-display branch; that is
-  a permanent divergence to keep in mind when comparing against upstream.
+- [ ] a way to pause the media sources in the bar widget
+- [ ] let's wrap some of the desktop images and updated some of them (maybe to add categories)
+- [ ] let's discuss about the behaviour of the pause/resume button when there are more than one source

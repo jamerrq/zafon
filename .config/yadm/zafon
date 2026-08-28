@@ -12,7 +12,11 @@
 
 set -uo pipefail
 
-VERSION="0.1.0"
+VERSION="0.2.0"
+# The Omarchy release these modules were last reconciled against. Static on
+# purpose: it records what zafon was updated FOR, so it still reads true (and
+# visibly stale) after Omarchy moves on. `omarchy version` is the live number.
+OMARCHY_TARGET="4.0.0"
 MODULE_DIR="${ZAFON_MODULE_DIR:-$HOME/.config/yadm/zafon.d}"
 
 VERBOSE=false
@@ -134,7 +138,7 @@ banner() {
       printf '%s%s%s\n' "$BLUE" "$art" "$NC"
     fi
   fi
-  printf '%s  capablanca over omarchy%s  %sv%s%s\n\n' "$DIM" "$NC" "$DIM" "$VERSION" "$NC"
+  printf '%s  last updated for omarchy %s%s  %sv%s%s\n\n' "$DIM" "$OMARCHY_TARGET" "$NC" "$DIM" "$VERSION" "$NC"
 }
 
 progress() {

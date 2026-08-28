@@ -1,0 +1,15 @@
+# Put ~/.local/bin ahead of /usr/bin on the session PATH.
+#
+# Omarchy ships its omarchy-* scripts as an Arch package into /usr/bin, so
+# editing them in place means the next package upgrade clobbers them. Patched
+# copies live in yadm (~/.config/yadm/omarchy/bin) and are symlinked into
+# ~/.local/bin, which wins by PATH precedence while the packaged copies stay
+# pristine.
+#
+# This has to live here rather than in ~/.config/environment.d: uwsm sources
+# env.d and pushes the result into the systemd user manager AFTER the
+# environment.d generators run, overwriting whatever PATH they produced.
+# The 99- prefix keeps it after Omarchy's own 10-omarchy drop-in.
+#
+# Changes require a relaunch of Hyprland to take effect.
+export PATH="$HOME/.local/bin:$HOME/bin:$PATH"
