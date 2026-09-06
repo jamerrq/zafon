@@ -19,6 +19,7 @@ DEST_DIR="$HOME/.local/bin"
 # Where the packaged omarchy binaries now live.
 PACKAGED_DIR="/usr/bin"
 UWSM_DROPIN="$HOME/.config/uwsm/env.d/99-zafon-path"
+ZAFON_LUA="$HOME/.config/hypr/zafon.lua"
 ENV_DROPIN="$HOME/.config/environment.d/10-zafon-path.conf"
 
 # omarchy-brightness-display was dropped from this list in quattro. Upstream
@@ -71,6 +72,15 @@ check() {
   done
 
   [[ -f $UWSM_DROPIN ]] || problems+=("uwsm env.d PATH drop-in is missing (${UWSM_DROPIN##*/})")
+
+  # The session PATH is not what keybinds use. Omarchy's default/hypr/envs.lua
+  # forces $OMARCHY_PATH/bin to the front of a separate PATH it hands every
+  # dispatched process, so a bare-name binding runs the packaged copy however
+  # the session PATH is ordered. hypr/zafon.lua re-asserts ~/.local/bin there,
+  # and without that line every override is dead on its keybind while looking
+  # perfectly installed here.
+  grep -q 'hl.env("PATH"' "$ZAFON_LUA" 2>/dev/null ||
+    problems+=("zafon.lua does not re-assert ~/.local/bin in the keybind dispatcher PATH")
   [[ -f $ENV_DROPIN ]] || problems+=("environment.d PATH drop-in is missing")
 
   # The systemd user manager reads its environment once, at session start, so
@@ -91,7 +101,7 @@ check() {
     if ((ours < 0)); then
       problems+=("~/.local/bin not on the session PATH yet -- relaunch Hyprland to pick it up")
     elif ((theirs >= 0 && ours > theirs)); then
-      problems+=("~/.local/bin is on the session PATH but after $PACKAGED_DIR -- the overrides are being shadowed; relaunch Hyprland")
+      problems+=("~/.local/bin is on the session PATH but after $PACKAGED_DIR -- relaunch Hyprland (note: this governs shells, not keybinds)")
     fi
   fi
 
@@ -100,7 +110,7 @@ check() {
     return 1
   fi
 
-  echo "${#SCRIPTS[@]} overrides installed and ahead of $PACKAGED_DIR on PATH"
+  echo "${#SCRIPTS[@]} overrides installed, ahead on the session PATH and in the keybind dispatcher"
   return 0
 }
 

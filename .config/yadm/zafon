@@ -414,6 +414,42 @@ cmd_apply() {
   return 0
 }
 
+cmd_logo() {
+  # Just the art, horizontally centred, nothing else -- for README screenshots.
+  local art_file="${ZAFON_ART:-$HOME/.config/yadm/zafon.art}"
+  if [[ ! -r $art_file ]]; then
+    err "art file not found: $art_file"
+    return 3
+  fi
+
+  # Widest line, in characters. The art is drawn with multibyte block glyphs,
+  # so this has to count characters rather than bytes -- ${#line} does in a
+  # UTF-8 locale, which is also what gradient_line relies on.
+  local line width=0
+  while IFS= read -r line; do
+    ((${#line} > width)) && width=${#line}
+  done <"$art_file"
+
+  # Indent the block as a whole rather than centring each line independently:
+  # the art's internal alignment is part of the drawing, and per-line centring
+  # would shear it.
+  local cols pad prefix=""
+  cols=$(tput cols 2>/dev/null) || cols=80
+  [[ $cols =~ ^[0-9]+$ ]] || cols=80
+  pad=$(((cols - width) / 2))
+  ((pad > 0)) && printf -v prefix '%*s' "$pad" ''
+
+  while IFS= read -r line; do
+    if truecolor_ok; then
+      printf '%s' "$prefix"
+      gradient_line "$line"
+    else
+      printf '%s%s%s%s\n' "$prefix" "$BLUE" "$line" "$NC"
+    fi
+  done <"$art_file"
+  return 0
+}
+
 cmd_list() {
   banner
   local i
@@ -483,6 +519,7 @@ Commands:
   list            List available modules
   tree            Show every yadm-tracked file as a tree
   untracked       Find new files sitting next to tracked config
+  logo            Print just the ASCII art, centred (also: --logo)
 
 Flags:
   -y, --yes       Skip the per-module prompts; apply everything except optional
@@ -510,7 +547,8 @@ USAGE
 COMMAND=""
 while (($#)); do
   case $1 in
-    check|apply|list|tree|untracked) COMMAND=$1 ;;
+    check|apply|list|tree|untracked|logo) COMMAND=$1 ;;
+    --logo) COMMAND=logo ;;
     -y|--yes|--no-confirm) ASSUME_YES=true ;;
     -v|--verbose) VERBOSE=true ;;
     -s|--silent) SILENT=true ;;
@@ -524,6 +562,14 @@ while (($#)); do
 done
 
 setup_colors
+
+# Before discover(): the logo needs no modules, and a missing module directory
+# should not stop it from drawing.
+if [[ ${COMMAND:-} == logo ]]; then
+  cmd_logo
+  exit $?
+fi
+
 discover
 
 # Bare `zafon` applies (with a prompt per module) rather than only reporting.
@@ -533,4 +579,5 @@ case ${COMMAND:-apply} in
   list)  cmd_list ;;
   tree)  cmd_tree ;;
   untracked) cmd_untracked ;;
+  logo)  cmd_logo ;;
 esac

@@ -18,6 +18,13 @@
 # --- upstream repos cloned by zafon.d/40-zsh.sh, deliberately not tracked
 .config/zsh/.oh-my-zsh/
 
+# --- zsh generated state. ~/.zshenv points ZDOTDIR at .config/zsh, so these
+# land beside the tracked config instead of littering $HOME. History is
+# machine-local; the completion dump is rebuilt on demand and carries the zsh
+# version in its name, so it churns on every zsh upgrade.
+.config/zsh/.zsh_history
+.config/zsh/.zcompdump*
+
 # --- transient
 *.bak
 *.bak.[0-9]*

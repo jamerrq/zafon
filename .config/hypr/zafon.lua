@@ -78,8 +78,27 @@ hl.monitor({ output = "HDMI-A-2", mode = "1920x1080@100", position = "1920x0", s
 local home = os.getenv("HOME")
 local scripts = home .. "/.config/yadm/scripts"
 
--- Suspend. Not on SUPER+SHIFT+S (Google Maps) and not on SUPER+CTRL+S (Share);
--- both are stock bindings and both are left alone.
+-- Put ~/.local/bin first in the PATH that keybinds inherit.
+--
+-- Omarchy's default/hypr/envs.lua ends with a loop that forces
+-- $OMARCHY_PATH/bin to position 1 of the dispatcher PATH and pushes it through
+-- hl.env. That env is separate from Hyprland's own: /proc/<hyprland>/environ
+-- can have ~/.local/bin first (uwsm/env.d/99-zafon-path puts it there) while a
+-- dispatched process still resolves /usr/share/omarchy/bin -- which is exactly
+-- why a bare-name binding ran the packaged omarchy-audio-output-switch instead
+-- of the override, no matter what the session PATH said.
+--
+-- This file is required last, so re-asserting here wins. Same idiom as the
+-- loop it is correcting, just with a different directory in front.
+local local_bin = home .. "/.local/bin"
+local path_entries = {}
+for entry in (os.getenv("PATH") or "/usr/local/bin:/usr/bin"):gmatch("[^:]+") do
+  if entry ~= local_bin then table.insert(path_entries, entry) end
+end
+table.insert(path_entries, 1, local_bin)
+hl.env("PATH", table.concat(path_entries, ":"))
+
+-- Suspend
 o.bind("SUPER + CTRL + SHIFT + S", "Suspend", "systemctl suspend")
 
 -- Media / extra keys.
@@ -96,6 +115,12 @@ o.bind("SUPER + XF86Calculator", "Toggle bluetooth", scripts .. "/toggle-bluetoo
 -- Apps.
 o.bind("SUPER + SHIFT + L", "Lichess", { webapp = "https://lichess.org" })
 o.bind("SUPER + SHIFT + Z", "Antigravity", "antigravity --disable-gpu")
+-- ALT + M for Minecraft; SUPER + P is Pseudo window and SUPER + SHIFT + P is
+-- Google Photos, both stock. `focus` makes a second press raise the running
+-- instance instead of starting a second launcher -- omarchy-launch-or-focus
+-- matches the pattern against class OR title, and PrismLauncher is the
+-- StartupWMClass from its .desktop file.
+o.bind("SUPER + ALT + M", "Prism Launcher", { launch = "prismlauncher", focus = "PrismLauncher" })
 
 -- Brightness has no binding on purpose: the bar's omarchy.monitor widget
 -- covers it, and it drives the display over DDC without a keybind.
