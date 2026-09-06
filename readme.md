@@ -3,6 +3,11 @@
 [![en](https://img.shields.io/badge/lang-en-red.svg)](./README.md)
 [![es](https://img.shields.io/badge/lang-es-yellow.svg)](./README.es.md)
 
+> [!WARNING]
+> don't use this, this is some ai slop generated stuff for my machine
+> you probably don't need all of this
+> in case you want to use any of this, it's up to your consideration
+
 ## My [Omarchy](https://omarchy.org/) customizations
 
 - Rounded borders for walker, mako, and hyprland (10px)
@@ -69,17 +74,6 @@ scripts in place means `omarchy-update` clobbers them. Patched copies live in
 `~/.config/environment.d/10-zafon-path.conf` puts ahead of Omarchy's `bin` on
 the systemd user PATH. The clone stays pristine.
 
-One caveat: the `omarchy` dispatcher execs `$OMARCHY_BIN_DIR/<binary>` by
-absolute path and ignores PATH. Call patched scripts directly
-(`omarchy-brightness-display +5%`), not via `omarchy brightness display +5%`.
-
-### Waybar
-
-Do not run `omarchy-refresh-waybar`. It copies Omarchy's defaults over
-`~/.config/waybar/`, destroying the spotify and nightlight modules, the Arch
-logo and the FiraCode font. The config is tracked in yadm instead;
-`zafon apply --only waybar` restores it from the repo.
-
 ### ACPI wakeup
 
 Some devices (`XHCI`, `RP09`, `RP10`, `RP05`, `AWAC`) spuriously wake this
@@ -88,7 +82,8 @@ firmware defaults on every boot, so the fix has to be re-applied each time; a
 oneshot systemd unit does that at startup.
 
 ```bash
-~/.config/yadm/system/install.sh    # needs sudo, also run by `zafon apply`
+# needs sudo, also run by `zafon apply`
+~/.config/yadm/system/install.sh
 systemctl status disable-acpi-wakeup
 ```
 
@@ -108,60 +103,13 @@ yay -S yadm gum jq playerctl brightnessctl ddcutil scrcpy
 - `gum` — zafon's interactive menu (falls back to plain prompts if absent)
 - `jq`, `playerctl` — waybar spotify module and audio switching
 - `brightnessctl`, `ddcutil` — brightness, including external monitors over DDC/CI
-- `scrcpy` — Android screen mirroring
+- `scrcpy` — android screen mirroring
 
 ## Snaps
 
-![desktop10](./.config/lib/imgs/desktop_10.webp)
-
-![desktop6](./.config/lib/imgs/desktop_6.webp)
-
-![desktop7](./.config/lib/imgs/desktop_7.webp)
-
-![desktop8](./.config/lib/imgs/desktop_8.webp)
-
-![desktop9](.config/lib/imgs/desktop_9.webp)
-
-![desktop11](./.config/lib/imgs/desktop_11.webp)
-
-![desktop12](./.config/lib/imgs/desktop_12.webp)
-
-![desktop13](./.config/lib/imgs/desktop_13.webp)
-
-![desktop14](./.config/lib/imgs/desktop_14.webp)
-
-![desktop15](./.config/lib/imgs/desktop_15.webp)
-
-![desktop16](./.config/lib/imgs/desktop_16.webp)
-
-![desktop17](./.config/lib/imgs/desktop_17.webp)
-
-![desktop18](./.config/lib/imgs/desktop_18.webp)
-
-![desktop19](./.config/lib/imgs/desktop_19.webp)
-
-![desktop20](./.config/lib/imgs/desktop_20.webp)
+![desktop22](./.config/lib/imgs/desktop_22.png)
 
 More info:
 
 - [omarchy.org](https://omarchy.org/)
 - [Source code on GitHub](https://github.com/basecamp/omarchy)
-
-## Missing
-
-- [x] M1. zsh + omz setup — `.zshrc` tracked, omz/p10k/plugins cloned by zafon
-- [x] M2. include some packages (scrcpy, yadm) — see [Requirements](#requirements)
-- [ ] M3. spanish readme
-- [ ] M4. grok and antigravity on walker (contrib)
-- [x] M5. antigravity + vscode settings — settings + extension lists tracked
-- [x] M6. update waybar config to date (aug 2026)
-- [x] M7. expand readme (include yadm)
-- [x] M8. fix broken waybar step — `omarchy-refresh-waybar` no longer runs
-- [ ] M9. update yadm
-- [x] M10. update to quattro
-
-## Some ideas
-
-- [ ] a way to pause the media sources in the bar widget
-- [ ] let's wrap some of the desktop images and updated some of them (maybe to add categories)
-- [ ] let's discuss about the behaviour of the pause/resume button when there are more than one source
