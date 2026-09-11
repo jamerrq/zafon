@@ -65,13 +65,21 @@
   "plugins": [
     {
       "id": "jamerrq.osd"
+    },
+    {
+      "id": "io.github.sirjul1337.lock-explorer",
+      "boot": "eyes",
+      "design": "my-editorial2",
+      "unlock": "fade"
     }
   ],
   "version": 1,
   "disabledPlugins": [
-    "omarchy.osd"
+    "omarchy.osd",
+    "omarchy.lock"
   ],
   "cloneSourceRestores": [
-    "jamerrq.osd"
+    "jamerrq.osd",
+    "io.github.sirjul1337.lock-explorer"
   ]
 }
