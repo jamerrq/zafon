@@ -1,7 +1,6 @@
-# Zafon - Capablanca
+# Zafon
 
-[![en](https://img.shields.io/badge/lang-en-red.svg)](./README.md)
-[![es](https://img.shields.io/badge/lang-es-yellow.svg)](./README.es.md)
+![desktop22](./.config/lib/imgs/desktop_22.png)
 
 > [!WARNING]
 > don't use this, this is some ai slop generated stuff for my machine
@@ -104,10 +103,6 @@ yay -S yadm gum jq playerctl brightnessctl ddcutil scrcpy
 - `jq`, `playerctl` — waybar spotify module and audio switching
 - `brightnessctl`, `ddcutil` — brightness, including external monitors over DDC/CI
 - `scrcpy` — android screen mirroring
-
-## Snaps
-
-![desktop22](./.config/lib/imgs/desktop_22.png)
 
 More info:
 
