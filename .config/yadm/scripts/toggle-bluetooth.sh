@@ -16,19 +16,19 @@
 set -uo pipefail
 
 if ! command -v omarchy-bluetooth-power >/dev/null 2>&1; then
-  notify-send -u critical "󰂲 Bluetooth" "omarchy-bluetooth-power no encontrado"
+  notify-send -u critical "󰂲 Bluetooth" "omarchy-bluetooth-power not found"
   exit 1
 fi
 
 if ! omarchy-bluetooth-power toggle; then
-  notify-send -u critical "󰂲 Bluetooth" "No se pudo cambiar el estado"
+  notify-send -u critical "󰂲 Bluetooth" "Unable to toggle Bluetooth"
   exit 1
 fi
 
 # Report what actually happened rather than what we asked for: turning the
 # adapter on can still time out waiting for it to come up.
 if omarchy-bluetooth-power is-on >/dev/null 2>&1; then
-  notify-send "󰂯 Bluetooth" "Encendido"
+  notify-send "󰂯 Bluetooth" "Turned On"
 else
-  notify-send "󰂲 Bluetooth" "Apagado"
+  notify-send "󰂲 Bluetooth" "Turned Off"
 fi
