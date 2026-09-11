@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "id": "jamerrq.monitor",
+  "name": "My Display",
+  "version": "1.0.0",
+  "author": "jamerrq",
+  "description": "Brightness slider and display controls, with a monitor toggle that actually works (omacom/omarchy#6968) and persists",
+  "kinds": [
+    "bar-widget"
+  ],
+  "entryPoints": {
+    "barWidget": "Panel.qml"
+  },
+  "barWidget": {
+    "displayName": "My Display",
+    "description": "Brightness slider and display controls, with a monitor toggle that actually works (omacom/omarchy#6968) and persists",
+    "category": "System",
+    "allowMultiple": false
+  },
+  "omarchy": {
+    "clonedFrom": "omarchy.monitor"
+  }
+}

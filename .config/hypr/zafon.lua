@@ -58,11 +58,40 @@ hl.config({
 --
 -- Scale is deliberately 1 on both: these are 1080p panels, nothing to scale up.
 -- The matching omarchy_monitor_scale / omarchy_gdk_scale knobs are in
--- hypr/monitors.lua. HDMI-A-1 ran at 75Hz before quattro; the LG reports 100Hz
--- as a supported mode, so both are pinned to 100.
+-- hypr/monitors.lua.
+--
+-- Refresh rates, read off `hyprctl monitors all -j | jq -r .[].availableModes[]`
+-- rather than assumed: the LG really does list 1920x1080@100, the Samsung tops
+-- out at 75 and prefers 60. An earlier version of this file pinned both to 100.
+-- Hyprland accepts an unavailable rate silently -- it echoes the requested value
+-- back in `hyprctl monitors` and raises nothing in `hyprctl configerrors` -- so
+-- the Samsung appeared to run at 100Hz while it could not.
 
 hl.monitor({ output = "HDMI-A-1", mode = "1920x1080@100", position = "0x0", scale = 1 })
-hl.monitor({ output = "HDMI-A-2", mode = "1920x1080@100", position = "1920x0", scale = 1 })
+
+-- HDMI-A-2 deliberately carries no `disabled` key. Its on/off state lives in
+-- ~/.local/state/omarchy/toggles/hypr/hdmi-a-2-disabled.lua, written and removed
+-- by yadm/scripts/toggle-monitor.sh, bound to SUPER + ALT + U below.
+--
+-- That split is what makes the toggle survive a reload *and* a reboot.
+-- hyprland.lua requires, in order: hypr/monitors.lua (:19, the catch-all
+-- `output = ""` rule that enables every output), default/hypr/toggles (:26,
+-- which auto-requires every *.lua in the state dir above), and finally this
+-- file (:35). So the toggle file gets to decide on/off, and the line below only
+-- ever supplies mode, position and scale.
+--
+-- It works because hl.monitor *edits* the rule for an output instead of
+-- replacing it, so a spec that omits `disabled` leaves whatever the toggle set.
+-- The same merge is a trap in the other direction: re-enabling an output
+-- without an explicit `disabled = false` answers `ok` and leaves it dark, which
+-- is why the script always passes the key.
+--
+-- None of this can go through the bar's Display widget. That widget still
+-- shells out to `hyprctl keyword`, which the Lua config parser rejects outright
+-- ("keyword can't work with non-legacy parsers. Use eval.") while the panel
+-- discards the exit code -- so clicking a display row silently does nothing, in
+-- both directions. Upstream: omacom/omarchy#6968, unfixed as of 4.0.0.alpha.
+hl.monitor({ output = "HDMI-A-2", mode = "1920x1080@75", position = "1920x0", scale = 1 })
 
 -- ---------------------------------------------------------------------------
 -- Bindings
@@ -132,6 +161,11 @@ o.bind("SUPER + U", "Focus next monitor", hl.dsp.focus({ monitor = "+1" }))
 -- hyprctl to reach Hyprland's `movewindow mon:` form.
 o.bind("SUPER + SHIFT + U", "Move window to next monitor", "hyprctl dispatch movewindow mon:+1")
 
+-- Turn HDMI-A-2 off and on. Sits on the monitor family's spare chord: SUPER+U
+-- focuses, SUPER+SHIFT+U moves, SUPER+ALT+U powers. The script takes the output
+-- name as its first argument and defaults to HDMI-A-2.
+o.bind("SUPER + ALT + U", "Toggle second monitor", scripts .. "/toggle-monitor.sh")
+
 -- Pushing a workspace to the other monitor follows it there, mimicking i3.
 -- Two binds on one key fire in order (same trick tiling.lua uses for ALT+TAB).
 -- Moved off SUPER+CTRL+P, which is stock Power.
@@ -162,3 +196,10 @@ o.window("org.omarchy.pop-terminal", {
 
 o.window("re.fossplant.songrec", { tag = "+floating-window", float = true })
 o.window("re.fossplant.songrec", { size = { "(monitor_w/2)", "(monitor_h/2)" } })
+
+
+-- ---------------------------------------------------------------------------
+-- Added plugins
+
+-- Lock Screen Explorer
+o.bind("SUPER + ALT + L", "Lock screen explorer", "omarchy-shell lock explore")
