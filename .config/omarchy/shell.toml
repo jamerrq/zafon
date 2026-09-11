@@ -1,5 +1,5 @@
 [font]
-base-size = 11
+base-size = 12
 
 # Thick borders on the Quickshell surfaces that replaced mako and walker.
 # Corner radius is NOT set here -- the shell mirrors Hyprland's
