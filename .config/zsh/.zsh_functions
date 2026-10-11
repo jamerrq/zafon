@@ -73,3 +73,79 @@ convert_imgs() {
   echo "[INFO]: conversion completed: $converted_count succeeded, $failed_count failed."
   return 0
 }
+
+# Resolve an opencode session by exact title or id.
+# Prints "id<TAB>directory", or nothing if not found.
+_opencode_resolve_session() {
+    local db="$HOME/.local/share/opencode/opencode.db"
+    [ -f "$db" ] || return 1
+    [ -n "$1" ] || return 1
+
+    local safe=${1//\'/\'\'}
+    sqlite3 -separator $'\t' "$db" \
+        "select id, directory from session where parent_id is null and (id = '$safe' or title = '$safe') order by (id = '$safe') desc, time_updated desc limit 1;"
+}
+
+# Wrapper so `opencode -s <title|id>` accepts a session title, not just an id.
+opencode() {
+    local -a args=("$@")
+    local i opt val row id dir has_dir=0
+
+    for (( i = 1; i <= ${#args}; i++ )); do
+        case "${args[$i]}" in
+            --dir|--dir=*) has_dir=1 ;;
+        esac
+    done
+
+    for (( i = 1; i <= ${#args}; i++ )); do
+        opt="${args[$i]}"
+        case "$opt" in
+            -s|--session) val="${args[$((i+1))]}" ;;
+            --session=*)  val="${opt#--session=}" ;;
+            -s=*)         val="${opt#-s=}" ;;
+            *)            continue ;;
+        esac
+
+        [ -n "$val" ] || continue
+
+        row=$(_opencode_resolve_session "$val")
+        id="${row%%$'\t'*}"
+        dir="${row#*$'\t'}"
+        [ -n "$id" ] || continue
+
+        case "$opt" in
+            -s|--session) args[$((i+1))]="$id" ;;
+            *)            args[$i]="${opt%%=*}=$id" ;;
+        esac
+
+        # Resume in the session's own project directory unless the user set --dir
+        if [ "$has_dir" -eq 0 ] && [ -n "$dir" ] && [ -d "$dir" ] && [ "$dir" != "$PWD" ]; then
+            ( cd "$dir" && command opencode "${args[@]}" )
+            return $?
+        fi
+    done
+
+    command opencode "${args[@]}"
+}
+
+opencode-name() {
+    if [ -z "$1" ]; then
+        echo "Usage: opencode-name <title>"
+        return 1
+    fi
+
+    local row id dir
+    row=$(_opencode_resolve_session "$1")
+    id="${row%%$'\t'*}"
+    dir="${row#*$'\t'}"
+
+    if [ -n "$id" ]; then
+        if [ -n "$dir" ] && [ -d "$dir" ]; then
+            (cd "$dir" && command opencode --session "$id")
+        else
+            command opencode --session "$id"
+        fi
+    else
+        echo "Error: No session found with the title '$1'"
+    fi
+}
