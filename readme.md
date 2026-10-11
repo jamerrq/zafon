@@ -3,9 +3,9 @@
 ![desktop22](./.config/lib/imgs/desktop_22.png)
 
 > [!WARNING]
-> don't use this, this is some ai slop generated stuff for my machine
-> you probably don't need all of this
-> in case you want to use any of this, it's up to your consideration
+> this is some slop stuff generated for my machine
+> you probably don't need all of this, maybe a part
+> read before applying anything!
 
 ## My [Omarchy](https://omarchy.org/) customizations
 
