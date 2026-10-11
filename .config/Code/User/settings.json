@@ -15,5 +15,13 @@
     "[markdown]": {
         "editor.wordWrap": "wordWrapColumn"
     },
-    "claudeCode.preferredLocation": "panel"
+    "claudeCode.preferredLocation": "panel",
+    "github.copilot.enable": {
+        "*": false,
+        "plaintext": false,
+        "markdown": true,
+        "scminput": false
+    },
+    "editor.fontLigatures": true,
+    "continue.showInlineTip": false
 }
