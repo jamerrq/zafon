@@ -7,13 +7,14 @@
           "id": "omarchy.indicators"
         },
         {
-          "id": "omarchy.clock",
-          "format": "ddd d MMM HH:mm",
-          "formatAlt": "d MMMM 'W'ww yyyy",
-          "verticalFormat": "HH\n—\nmm"
+          "id": "omarchy.elsewhen",
+          "zones": "Bogota|America/Bogota, London|Europe/London, Dubai|Asia/Dubai, Tokyo|Asia/Tokyo, Honolulu|Pacific/Honolulu"
         },
         {
-          "id": "omarchy.keyboard-layout"
+          "format": "ddd d MMM HH:mm",
+          "formatAlt": "d MMMM 'W'ww yyyy",
+          "id": "omarchy.clock",
+          "verticalFormat": "HH\n—\nmm"
         },
         {
           "id": "omarchy.weather"
@@ -32,6 +33,9 @@
         }
       ],
       "right": [
+        {
+          "id": "omarchy.keyboard-layout"
+        },
         {
           "id": "omarchy.tray"
         },
@@ -56,8 +60,16 @@
       ]
     },
     "position": "top",
-    "transparent": false
+    "transparent": true
   },
+  "cloneSourceRestores": [
+    "jamerrq.osd",
+    "io.github.sirjul1337.lock-explorer"
+  ],
+  "disabledPlugins": [
+    "omarchy.osd",
+    "omarchy.lock"
+  ],
   "idle": {
     "lock": 300,
     "screensaver": 150
@@ -67,19 +79,11 @@
       "id": "jamerrq.osd"
     },
     {
-      "id": "io.github.sirjul1337.lock-explorer",
       "boot": "eyes",
-      "design": "my-editorial2",
+      "design": "poster",
+      "id": "io.github.sirjul1337.lock-explorer",
       "unlock": "fade"
     }
   ],
-  "version": 1,
-  "disabledPlugins": [
-    "omarchy.osd",
-    "omarchy.lock"
-  ],
-  "cloneSourceRestores": [
-    "jamerrq.osd",
-    "io.github.sirjul1337.lock-explorer"
-  ]
+  "version": 1
 }
