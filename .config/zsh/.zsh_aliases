@@ -18,7 +18,7 @@ alias yt="tree -a --noreport --fromfile <(yadm list -a | sort) 2>/dev/null |
 alias gtime="/usr/bin/time -v"
 
 # config files
-alias zshconfig="$EDITOR $HOME/.zshrc"
+alias zshconfig="$EDITOR $HOME/.config/zsh/.zshrc"
 alias zshaliases="nvim $HOME/.config/zsh/.zsh_aliases"
 alias nvimconfig="$EDITOR $HOME/.config/nvim/init.lua"
 alias waybarconfig="$EDITOR $HOME/.config/waybar/config.jsonc"
