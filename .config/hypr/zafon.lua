@@ -132,7 +132,8 @@ o.bind("SUPER + CTRL + SHIFT + S", "Suspend", "systemctl suspend")
 
 -- Media / extra keys.
 o.bind("XF86HomePage", "Pop terminal", scripts .. "/launch-pop-terminal.sh")
-o.bind("XF86Mail", "Email", "omarchy-launch-browser")
+-- Was the browser, which already has SUPER + SHIFT + B.
+o.bind("XF86Mail", "Prism Launcher", { launch = "prismlauncher", focus = "PrismLauncher" })
 o.bind("SUPER + XF86Calculator", "Toggle bluetooth", scripts .. "/toggle-bluetooth.sh")
 
 -- Audio output switching has no binding here. Omarchy's own SHIFT + Mute is
