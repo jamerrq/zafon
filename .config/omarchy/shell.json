@@ -1,26 +1,12 @@
 {
   "bar": {
-    "centerAnchor": "omarchy.clock",
     "layout": {
       "center": [
-        {
-          "id": "omarchy.indicators"
-        },
-        {
-          "id": "omarchy.elsewhen",
-          "zones": "Bogota|America/Bogota, London|Europe/London, Dubai|Asia/Dubai, Tokyo|Asia/Tokyo, Honolulu|Pacific/Honolulu"
-        },
         {
           "format": "ddd d MMM HH:mm",
           "formatAlt": "d MMMM 'W'ww yyyy",
           "id": "omarchy.clock",
           "verticalFormat": "HH\n—\nmm"
-        },
-        {
-          "id": "omarchy.weather"
-        },
-        {
-          "id": "omarchy.system-update"
         }
       ],
       "left": [
@@ -34,16 +20,19 @@
       ],
       "right": [
         {
-          "id": "omarchy.keyboard-layout"
-        },
-        {
           "id": "omarchy.tray"
         },
         {
-          "id": "omarchy.agents"
+          "id": "io.github.mrc04d.opencode-go"
         },
         {
-          "id": "omarchy.bluetooth"
+          "id": "shaunhawk.nordvpn"
+        },
+        {
+          "id": "omarchy.keyboard-layout"
+        },
+        {
+          "id": "jamerrq.bluetooth"
         },
         {
           "id": "omarchy.network"
@@ -57,7 +46,25 @@
         {
           "id": "omarchy.power"
         }
-      ]
+      ],
+      "centerBegin": [
+        {
+          "id": "omarchy.indicators"
+        },
+        {
+          "id": "omarchy.elsewhen",
+          "zones": "Bogota|America/Bogota, London|Europe/London, Dubai|Asia/Dubai, Tokyo|Asia/Tokyo, Honolulu|Pacific/Honolulu"
+        }
+      ],
+      "centerEnd": [
+        {
+          "id": "omarchy.weather"
+        },
+        {
+          "id": "omarchy.system-update"
+        }
+      ],
+      "tray": []
     },
     "position": "top",
     "transparent": true
