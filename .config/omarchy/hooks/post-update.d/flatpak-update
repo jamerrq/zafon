@@ -1,0 +1,4 @@
+#!/bin/bash
+if command -v flatpak >/dev/null; then
+  flatpak update -y
+fi
