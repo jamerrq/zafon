@@ -47,6 +47,22 @@ alias uvU='uv pip install --upgrade pip'
 alias uvI='uv pip install -r ./requirements.txt'
 alias uvIu='uv pip install --upgrade -r ./requirements.txt'
 
+# wine 
+alias wine-ge-8-26="~/.local/share/lutris/runners/wine/wine-ge-8-26-x86_64/bin/wine"
+alias wine-ge="wine-ge-8-26"
+
+# games -- Lutris ids on this machine:
+#   3 GTA SA MODDED | 4 GTA SA (Opti V3.1) | 5 PES 2013 | 7 PES 2013 (Original 1.4)
+# Functions, not aliases: the g*/y* alias wrapper at the bottom of this file
+# would otherwise turn every launch into a blocking foreground command.
+gamedock()  { "$HOME/.local/bin/game-dock" "$@"; }
+pes()       { nohup "$HOME/.local/bin/lutris" lutris:rungameid/5 >/tmp/lutris-pes.log 2>&1 & }
+pesorig()   { nohup "$HOME/.local/bin/lutris" lutris:rungameid/7 >/tmp/lutris-pes-orig.log 2>&1 & }
+gtasa()     { nohup "$HOME/.local/bin/lutris" lutris:rungameid/3 >/tmp/lutris-gtasa.log 2>&1 & }
+gtasaopti() { nohup "$HOME/.local/bin/lutris" lutris:rungameid/4 >/tmp/lutris-gtasa-opti.log 2>&1 & }
+# Minecraft through Prism; DRAFTOUT is the instance id (folder name).
+mc()        { nohup prismlauncher --launch DRAFTOUT >/tmp/prism-minecraft.log 2>&1 & }
+
 # some programs
 alias ils='timg --grid=2x1 --upscale=i --center --title --frames=1 '
 # alias durfetch='$HOME/dev/github/durdraw/durfetch'
