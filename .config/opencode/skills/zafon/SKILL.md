@@ -147,8 +147,8 @@ Personal config tracked outside that directory: `.config/hypr/zafon.lua`,
   `hypr-config`, `t1/t2/t3`, `yt` (yadm tree), `ezala`, `py3`, `uvI`, `st`, `cm`.
 - Wine: `wine-ge` → `wine-ge-8-26` →
   `~/.local/share/lutris/runners/wine/wine-ge-8-26-x86_64/bin/wine`.
-- Games (functions, non-blocking): `gamedock`, `pes` (id 5), `pesorig` (id 7),
-  `gtasa` (id 3), `gtasaopti` (id 4).
+- Games (functions, non-blocking): `gamedock`, `mc` (Minecraft/Prism),
+  `pes` (id 5), `pesorig` (id 7), `gtasa` (id 3), `gtasaopti` (id 4).
 
 ## Games
 
@@ -161,6 +161,12 @@ Personal config tracked outside that directory: `.config/hypr/zafon.lua`,
 - Launch:
   `cd <working_dir> && LUTRIS_SKIP_INIT=1 nohup ~/.local/bin/lutris lutris:rungameid/<id> >/tmp/lutris-<id>.log 2>&1 &`
   (takes ~30 s to reach a title screen).
+- **Minecraft** runs through Prism Launcher (`/usr/bin/prismlauncher`), not
+  Lutris. One instance: id `DRAFTOUT` (folder name in
+  `~/.local/share/PrismLauncher/instances/`). Launch it directly with
+  `prismlauncher --launch DRAFTOUT` (the launcher window closes itself,
+  `CloseAfterLaunch=true`); shell helper `mc`. Prism keeps `SUPER + ALT + M`;
+  the mail key belongs to the games dock.
 - **Games dock**: `~/.local/bin/game-dock`, bound to `XF86Mail` in `zafon.lua`
   (Prism Launcher keeps `SUPER + ALT + M`). It is a floating `foot` window with
   app-id `game-dock`; the `o.window("game-dock", { float = true, center = true })`
