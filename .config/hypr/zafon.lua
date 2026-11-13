@@ -132,8 +132,11 @@ o.bind("SUPER + CTRL + SHIFT + S", "Suspend", "systemctl suspend")
 
 -- Media / extra keys.
 o.bind("XF86HomePage", "Pop terminal", scripts .. "/launch-pop-terminal.sh")
--- Was the browser, which already has SUPER + SHIFT + B.
-o.bind("XF86Mail", "Prism Launcher", { launch = "prismlauncher", focus = "PrismLauncher" })
+-- Was the browser, which already has SUPER + SHIFT + B. The envelope key now
+-- opens the numbered games dock (~/.local/bin/game-dock): a floating foot
+-- window listing only games, one number per game. Prism Launcher keeps its
+-- SUPER + ALT + M binding below.
+o.bind("XF86Mail", "Games dock", home .. "/.local/bin/game-dock")
 o.bind("SUPER + XF86Calculator", "Toggle bluetooth", scripts .. "/toggle-bluetooth.sh")
 
 -- Audio output switching has no binding here. Omarchy's own SHIFT + Mute is
@@ -197,6 +200,10 @@ o.window("org.omarchy.pop-terminal", {
 
 o.window("re.fossplant.songrec", { tag = "+floating-window", float = true })
 o.window("re.fossplant.songrec", { size = { "(monitor_w/2)", "(monitor_h/2)" } })
+
+-- The games dock (a foot window with app-id game-dock, opened by XF86Mail):
+-- float and centre it instead of tiling it into the current workspace.
+o.window("game-dock", { float = true, center = true })
 
 
 -- ---------------------------------------------------------------------------
