@@ -229,6 +229,16 @@ agents-work/
   `nohup ... > log 2>&1 &`, and prints a progress line at least every block of
   work (counts, audio/time processed, rate). Progress must be answerable from the
   log or the DB alone — never only from a still-open terminal.
+- **Long jobs run under `systemd-run --user --unit=<name> --collect`**, not bare
+  `nohup`: a plain background process gets reaped when the agent session's
+  process group is cleaned up (seen: a 3 h job died between turns with no
+  traceback, no OOM, no coredump). `systemctl --user is-active <name>` then tells
+  you if it is still alive, and the exit status lands in the journal.
+- **Never infer "the machine slept" from `ps` ELAPSED.** `sh -c 'a; b'` execs the
+  last command, so the surviving process inherits the shell's start time and
+  looks hours older than it is; `ps` `TIME` then belongs to only the last
+  command. Check per-block timings in the log (a suspend shows up as one
+  multi-hour jump) and total CPU time before claiming anything about suspend.
 - Report progress as fractions of *real work*, not slots touched: for audio that
   is minutes transcribed out of total non-silent minutes, plus a rate and an ETA.
 - **Python tooling is `uv`, always.** `uv venv .venv --python 3.13`, then
