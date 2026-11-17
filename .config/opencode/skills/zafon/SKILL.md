@@ -10,7 +10,8 @@ description: >
   this machine's layout, preferences or helper commands are. Triggers: zafon,
   yadm, capablanca, dotfiles, zafon.lua, zafon.d, aliases, shell functions,
   wine-ge, game dock, games.conf, monitors HDMI-A-1/HDMI-A-2, grim, Lutris,
-  PES 2013, GTA SA, OpenCode config, omarchy PATH, keybinding conflict.
+  PES 2013, GTA SA, OpenCode config, omarchy PATH, keybinding conflict, uv,
+  agents-work, agent scripts, long-running jobs, yadm tracking of work products.
 ---
 
 # zafon — this machine's context
@@ -207,6 +208,35 @@ Personal config tracked outside that directory: `.config/hypr/zafon.lua`,
   `429 FreeUsageLimitError` by design. Paid models need credits ($0 balance).
 - Add an agent/skill as Markdown with YAML frontmatter; validate by running
   `opencode run --archived --agent <name> "reply OK"`.
+
+## Agent work products
+
+Anything an agent writes that should survive the session (scripts, logs, DBs,
+notes, reports) goes in **`<working-dir>/agents-work/`**, laid out as:
+
+```
+agents-work/
+  scripts/     # the code that produced the result
+  logs/        # one timestamped log per run
+  data/        # sqlite, csv, reports
+```
+
+- **Tracked with `yadm`, never plain `git`** (`yadm add agents-work/scripts/...`).
+  `~/.config/opencode/` and `~/Games/**` are both inside the yadm work tree, so a
+  folder under the project can be tracked directly. Keep binaries, media,
+  archives and virtualenvs out — yadm is for code, logs and small data.
+- **Every long-running job logs to `agents-work/logs/<name>.<epoch>.log`** via
+  `nohup ... > log 2>&1 &`, and prints a progress line at least every block of
+  work (counts, audio/time processed, rate). Progress must be answerable from the
+  log or the DB alone — never only from a still-open terminal.
+- Report progress as fractions of *real work*, not slots touched: for audio that
+  is minutes transcribed out of total non-silent minutes, plus a rate and an ETA.
+- **Python tooling is `uv`, always.** `uv venv .venv --python 3.13`, then
+  `uv pip install --python .venv/bin/python <pkg>`; run with `.venv/bin/python`.
+  No system `pip`, no `pipx`, no `sudo pip`. Check `uv` is on PATH first.
+- Existing exception: `~/Games/PES2013/commentary/` predates this and keeps its
+  own `scripts/ data/ build/ logs/` layout — match whichever layout the project
+  already uses instead of migrating it mid-run.
 
 ## Conventions and preferences
 
