@@ -246,7 +246,9 @@ agents-work/
   No system `pip`, no `pipx`, no `sudo pip`. Check `uv` is on PATH first.
 - Existing exception: `~/Games/PES2013/commentary/` predates this and keeps its
   own `scripts/ data/ build/ logs/` layout — match whichever layout the project
-  already uses instead of migrating it mid-run.
+  already uses instead of migrating it mid-run. Projects that keep their own
+  private layout (not tracked by yadm) decide this for themselves; ask before
+  imposing `agents-work/` on them.
 
 ## Conventions and preferences
 
