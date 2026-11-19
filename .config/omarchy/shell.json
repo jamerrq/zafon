@@ -1,5 +1,6 @@
 {
   "bar": {
+    "background": "none",
     "layout": {
       "center": [
         {
@@ -7,6 +8,26 @@
           "formatAlt": "d MMMM 'W'ww yyyy",
           "id": "omarchy.clock",
           "verticalFormat": "HH\n—\nmm"
+        }
+      ],
+      "centerBegin": [
+        {
+          "id": "omarchy.indicators"
+        },
+        {
+          "id": "omarchy.elsewhen",
+          "zones": "Bogota|America/Bogota, London|Europe/London, Dubai|Asia/Dubai, Tokyo|Asia/Tokyo, Honolulu|Pacific/Honolulu"
+        }
+      ],
+      "centerEnd": [
+        {
+          "id": "omarchy.weather"
+        },
+        {
+          "id": "omarchy.background"
+        },
+        {
+          "id": "omarchy.system-update"
         }
       ],
       "left": [
@@ -47,27 +68,9 @@
           "id": "omarchy.power"
         }
       ],
-      "centerBegin": [
-        {
-          "id": "omarchy.indicators"
-        },
-        {
-          "id": "omarchy.elsewhen",
-          "zones": "Bogota|America/Bogota, London|Europe/London, Dubai|Asia/Dubai, Tokyo|Asia/Tokyo, Honolulu|Pacific/Honolulu"
-        }
-      ],
-      "centerEnd": [
-        {
-          "id": "omarchy.weather"
-        },
-        {
-          "id": "omarchy.system-update"
-        }
-      ],
       "tray": []
     },
-    "position": "top",
-    "transparent": true
+    "position": "top"
   },
   "cloneSourceRestores": [
     "jamerrq.osd",

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Disable spurious ACPI wakeup sources.
+# Disable spurious ACPI and sysfs wakeup sources.
 #
 # /proc/acpi/wakeup is runtime state: it resets to the firmware defaults on
 # every boot, which is why this has to run each time rather than once.
@@ -8,32 +8,54 @@
 # Writing a device name to that file TOGGLES its state, so an unguarded write
 # would re-enable a device that was already disabled. The *enabled check below
 # is what makes this idempotent -- keep it.
+#
+# The ACPI toggle alone does not survive a resume. On resume ACPI re-arms the
+# wake GPE of every device that still has power/wakeup enabled, so the xHCI
+# controller comes back armed even though the boot unit disabled it. Clearing
+# the generic wake *capability* is what stops the re-arm; the sleep hook in
+# system/disable-acpi-wakeup-sleep-hook re-applies this around every suspend.
 
 set -uo pipefail
+shopt -s nullglob
 
 WAKEUP=/proc/acpi/wakeup
 
 # Devices that spuriously wake this machine from suspend.
 DEVICES=(XHCI RP09 RP10 RP05 AWAC)
 
-if [[ ! -e $WAKEUP ]]; then
-  echo "$WAKEUP does not exist; nothing to do." >&2
-  exit 0
-fi
-
-if [[ ! -w $WAKEUP ]]; then
-  echo "$WAKEUP is not writable -- run as root." >&2
-  exit 1
-fi
+# Wake capability exposed by the xHCI PCI device and every USB device on it.
+# A USB mouse/keyboard receiver with wakeup enabled is what actually presses
+# the buzzer when the ACPI GPE is armed.
+WAKEUP_FILES=(
+  /sys/bus/pci/drivers/xhci_hcd/*/power/wakeup
+  /sys/bus/usb/devices/*/power/wakeup
+)
 
 changed=0
-for dev in "${DEVICES[@]}"; do
-  if grep -q "^${dev}[[:space:]].*\*enabled" "$WAKEUP"; then
-    echo "$dev" >"$WAKEUP"
-    echo "disabled wakeup: $dev"
+
+for file in "${WAKEUP_FILES[@]}"; do
+  [[ -e $file ]] || continue
+  [[ $(cat "$file") == disabled ]] && continue
+  if echo disabled >"$file" 2>/dev/null; then
+    echo "disabled wake capability: ${file#/sys/}"
     ((changed++))
   fi
 done
+
+if [[ ! -e $WAKEUP ]]; then
+  echo "$WAKEUP does not exist; skipping ACPI toggle." >&2
+elif [[ ! -w $WAKEUP ]]; then
+  echo "$WAKEUP is not writable -- run as root." >&2
+  exit 1
+else
+  for dev in "${DEVICES[@]}"; do
+    if grep -q "^${dev}[[:space:]].*\*enabled" "$WAKEUP"; then
+      echo "$dev" >"$WAKEUP"
+      echo "disabled wakeup: $dev"
+      ((changed++))
+    fi
+  done
+fi
 
 if ((changed == 0)); then
   echo "All target wakeup sources were already disabled."

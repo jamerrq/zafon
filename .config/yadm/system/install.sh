@@ -25,8 +25,19 @@ fi
 
 install -m 755 "$SRC_DIR/disable-acpi-wakeup" /usr/local/bin/disable-acpi-wakeup
 install -m 644 "$SRC_DIR/disable-acpi-wakeup.service" /etc/systemd/system/disable-acpi-wakeup.service
+install -m 755 "$SRC_DIR/disable-acpi-wakeup-sleep-hook" /etc/systemd/system-sleep/disable-acpi-wakeup
+
+# The old manual experiment used a tmpfiles entry that writes XHCI to the
+# toggle interface at boot. It is redundant with the unit and hides which piece
+# does what, so drop it.
+if [[ -e /etc/tmpfiles.d/acpi-wakeup.conf ]]; then
+  rm -f /etc/tmpfiles.d/acpi-wakeup.conf
+  echo "Removed legacy /etc/tmpfiles.d/acpi-wakeup.conf"
+fi
 
 systemctl daemon-reload
-systemctl enable --now disable-acpi-wakeup.service
+systemctl enable disable-acpi-wakeup.service
+# restart (not just enable --now) so an updated binary is applied immediately
+systemctl restart disable-acpi-wakeup.service
 
-echo -e "${GREEN}OK${NC}: disable-acpi-wakeup.service installed and enabled"
+echo -e "${GREEN}OK${NC}: disable-acpi-wakeup.service installed, enabled and applied"

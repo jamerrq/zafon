@@ -26,6 +26,14 @@ if (( ${#ARGV[@]} == 0 )); then
     exit 1
 fi
 
+# Chromium/Electron (Brave, Code-OSS, ...) call setproctitle(), which rewrites
+# /proc/PID/cmdline into a single space-joined string with no NUL separators.
+# Re-split it, otherwise uwsm-app receives the whole command line as one path
+# and fails with "Path ... does not exist".
+if (( ${#ARGV[@]} == 1 )) && [[ ${ARGV[0]} == *[[:space:]]* ]]; then
+    read -r -a ARGV <<<"${ARGV[0]}"
+fi
+
 CWD=$(readlink /proc/"$PID"/cwd 2>/dev/null)
 
 # Every descendant (Chromium/Electron zygotes, renderers, native hosts...).

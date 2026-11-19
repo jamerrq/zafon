@@ -69,7 +69,25 @@ while true; do
     [1-9])
       idx=$((key - 1))
       if (( idx >= 0 && idx < n )); then
-        nohup bash -c "${cmds[$idx]}" >/tmp/game-dock.log 2>&1 &
+        # setsid, and do not exit until it has left this session.
+        #
+        # The dock closes its foot window right after this, and foot kills the
+        # pty's process group on the way out -- nohup does not survive it
+        # (nohup only ignores SIGHUP), so the game died with the window.
+        # setsid puts the launcher in its own session with no controlling
+        # terminal, where foot's signal cannot reach it. But fork/exec/setsid
+        # takes a moment, and exiting at once races that: foot sometimes kills
+        # the child before it manages to call setsid(). So wait until the
+        # launcher reports a different session id, and only then let the window
+        # close (bounded, in case it already exited).
+        setsid bash -c "${cmds[$idx]}" </dev/null >/tmp/game-dock.log 2>&1 &
+        launcher=$!
+        for _ in {1..50}; do
+          ss=$(ps -o sid= -p "$$" 2>/dev/null | tr -d ' ')
+          ls_sid=$(ps -o sid= -p "$launcher" 2>/dev/null | tr -d ' ')
+          [[ -z "$ls_sid" || "$ls_sid" != "$ss" ]] && break
+          sleep 0.02
+        done
         exit 0
       fi
       ;;

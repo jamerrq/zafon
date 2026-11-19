@@ -29,6 +29,7 @@ SCRIPTS=(force-kill-active.sh launch-pop-terminal.sh restart-active.sh toggle-bl
 MARKERS=(
   "border_size = 4|thick borders"
   "rounding = 10|rounded corners"
+  "inactive_border = \"rgba(59595900)\"|transparent borders"
   "allow_session_lock_restore = true|lock restore"
   "kb_layout = \"latam\"|latam keyboard"
   "HDMI-A-1|monitor layout"

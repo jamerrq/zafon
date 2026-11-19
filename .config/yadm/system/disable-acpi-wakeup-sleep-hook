@@ -1,0 +1,14 @@
+#!/bin/bash
+
+# Re-apply the wakeup fix around every sleep transition.
+#
+# The boot-time unit cannot help after a resume: ACPI re-arms the wake GPE of
+# any device whose power/wakeup is still enabled, and USB devices are re-armed
+# as they reappear. Running before and after sleep keeps the state correct for
+# the next suspend.
+
+set -uo pipefail
+
+case "${1:-}" in
+  pre|post) /usr/local/bin/disable-acpi-wakeup ;;
+esac

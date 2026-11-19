@@ -18,14 +18,12 @@ alias yt="tree -a --noreport --fromfile <(yadm list -a | sort) 2>/dev/null |
 alias gtime="/usr/bin/time -v"
 
 # config files
-alias zshconfig="$EDITOR $HOME/.config/zsh/.zshrc"
-alias zshaliases="nvim $HOME/.config/zsh/.zsh_aliases"
-alias nvimconfig="$EDITOR $HOME/.config/nvim/init.lua"
-alias waybarconfig="$EDITOR $HOME/.config/waybar/config.jsonc"
-alias nikkiconf="$EDITOR $HOME/.config/hypr/nikki.conf"
-alias sshconfig="$EDITOR $HOME/.ssh/config"
-alias hyprconfig="$EDITOR $HOME/.config/hypr/hyprland.conf"
-alias makoconfig="$EDITOR $HOME/.config/mako/config"
+alias zsh-config="$EDITOR $HOME/.config/zsh/.zshrc"
+alias zsh-aliases="nvim $HOME/.config/zsh/.zsh_aliases"
+alias nvim-config="$EDITOR $HOME/.config/nvim/init.lua"
+alias ssh-config="$EDITOR $HOME/.ssh/config"
+alias hypr-config="$EDITOR $HOME/.config/hypr/hyprland.conf"
+alias zafon-hypr-config="$EDITOR $HOME/.config/hypr/zafon.lua"
 
 # for nix
 alias nixrb="sudo nixos-rebuild switch"
@@ -63,10 +61,28 @@ gtasaopti() { nohup "$HOME/.local/bin/lutris" lutris:rungameid/4 >/tmp/lutris-gt
 # Minecraft through Prism; DRAFTOUT is the instance id (folder name).
 mc()        { nohup prismlauncher --launch DRAFTOUT >/tmp/prism-minecraft.log 2>&1 & }
 
+# Codeforces workspace: the same script as SUPER + XF86HomePage (zafon.lua).
+# `cfw` opens the dedicated workspace 3, `cfw --here` arranges the focused one.
+# The script lives in ~/.config/yadm/scripts, which is not on PATH.
+cfw()       { "$HOME/.config/yadm/scripts/cf-workspace.sh" "$@"; }
+
 # some programs
 alias ils='timg --grid=2x1 --upscale=i --center --title --frames=1 '
 # alias durfetch='$HOME/dev/github/durdraw/durfetch'
 alias youtube-dl-fix='youtube-dl --user-agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"'
+
+# yt-dlp: /usr/local/bin/yt-dlp is root-owned, so it stays at whatever version
+# it was installed at. Once it falls behind, YouTube's player changes make every
+# download fail with "HTTP Error 403: Forbidden" even with cookies. uvx pulls
+# and caches the current release instead.
+#
+# A function rather than an alias on purpose: the loop at the bottom of this
+# file rewrites every alias starting with y into a wrapper that echoes the
+# command before running it, which would put a banner in front of every
+# download.
+yt-dlp() {
+  uvx --from 'yt-dlp[default]' yt-dlp "$@"
+}
 # alias bun="$HOME/.bun/bin/bun"
 
 # git & branch aliases
