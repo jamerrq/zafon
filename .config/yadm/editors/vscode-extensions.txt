@@ -1,4 +1,3 @@
-anthropic.claude-code
 astro-build.astro-vscode
 continue.continue
 ms-python.debugpy
