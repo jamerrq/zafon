@@ -80,7 +80,7 @@ models=$(jq -c '
   [(.models // [])[]
    | ((.tokens.input // 0) + (.tokens.output // 0) + (.tokens.reasoning // 0) +
       (.tokens.cache.read // 0) + (.tokens.cache.write // 0)) as $t
-   | select($t > 0)
+   | select((.steps // 0) > 0)
    | {key: ((.model.providerID // "") + "/" + (.model.id // "unknown")),
       model: (.model.id // "unknown"),
       providerID: (.model.providerID // ""),
