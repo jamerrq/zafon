@@ -8,6 +8,10 @@ Item {
   property var settings: ({})
   property var account: null
   property var recentDays: []
+  property var models: []
+  property int totalTokens: 0
+  property int totalSteps: 0
+  property int sessions: 0
   property bool refreshing: false
   property string lastError: ""
   property date lastUpdated: new Date(0)
@@ -58,6 +62,10 @@ Item {
       if (!parsed.ok) { root.lastError = parsed.error; return }
       root.account = parsed.data.account
       root.recentDays = parsed.data.recentDays
+      root.models = parsed.data.models
+      root.totalTokens = parsed.data.totalTokens
+      root.totalSteps = parsed.data.totalSteps
+      root.sessions = parsed.data.sessions
       root.lastError = parsed.data.error
       root.lastUpdated = new Date()
     }

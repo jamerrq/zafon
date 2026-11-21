@@ -173,7 +173,7 @@ Panel {
             Text {
               id: usageValue
               visible: service.recentDays.length > 0
-              text: Model.tokenCount(Model.recentTotal(service.recentDays)) + " TOKENS"
+              text: Model.tokenCount(Model.recentTotal(service.recentDays)) + " STEPS"
               color: root.dim
               font.family: root.fontFamily
               font.pixelSize: Style.font.caption
@@ -228,6 +228,68 @@ Panel {
               }
             }
           }
+          Item {
+            width: parent.width
+            implicitHeight: Math.max(modelsHeader.implicitHeight, modelsValue.implicitHeight)
+
+            PanelSectionHeader {
+              id: modelsHeader
+              text: "MODELS"
+              foreground: root.foreground
+              fontFamily: root.fontFamily
+              anchors.left: parent.left
+              anchors.verticalCenter: parent.verticalCenter
+            }
+
+            Text {
+              id: modelsValue
+              visible: service.models.length > 0
+              text: Model.tokenCount(service.totalTokens) + " TOKENS"
+              color: root.dim
+              font.family: root.fontFamily
+              font.pixelSize: Style.font.caption
+              font.bold: true
+              anchors.right: parent.right
+              anchors.rightMargin: Style.space(6)
+              anchors.verticalCenter: parent.verticalCenter
+            }
+          }
+
+          Column {
+            width: parent.width
+            spacing: Style.space(4)
+            visible: service.models.length > 0
+
+            Repeater {
+              model: service.models
+
+              delegate: RowLayout {
+                required property var modelData
+                width: parent.width
+                spacing: Style.space(6)
+
+                Text {
+                  Layout.fillWidth: true
+                  text: modelData.model + "  (" + modelData.providerID + ")"
+                  color: root.dim
+                  font.family: root.fontFamily
+                  font.pixelSize: Style.font.caption
+                  elide: Text.ElideRight
+                }
+
+                Text {
+                  text: Model.tokenCount(modelData.tokens) + " tok"
+                  color: root.dim
+                  font.family: root.fontFamily
+                  font.pixelSize: Style.font.caption
+                  font.bold: true
+                  horizontalAlignment: Text.AlignRight
+                }
+              }
+            }
+          }
+
+
         }
       }
     }

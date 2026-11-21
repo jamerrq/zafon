@@ -63,7 +63,7 @@ function parseCollector(text) {
       return { ok: false, error: "Could not parse OpenCode Go usage" }
     }
     var account = {
-      label: "Go",
+      label: "OpenCode",
       active: true,
       status: parsed.status,
       rolling: parsed.rolling || null,
@@ -75,6 +75,10 @@ function parseCollector(text) {
       data: {
         account: account,
         recentDays: Array.isArray(parsed.recentDays) ? parsed.recentDays : [],
+        models: Array.isArray(parsed.models) ? parsed.models : [],
+        totalTokens: number(parsed.totalTokens, 0),
+        totalSteps: number(parsed.totalSteps, 0),
+        sessions: number(parsed.sessions, 0),
         updatedAt: String(parsed.updatedAt || ""),
         error: String(parsed.error || "")
       }
