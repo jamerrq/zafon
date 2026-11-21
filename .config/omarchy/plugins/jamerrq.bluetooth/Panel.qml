@@ -62,6 +62,10 @@ Panel {
   // Connected peripherals reporting a charge — what the bar summarises in
   // place of the plain Bluetooth glyph.
   readonly property var batteryDevices: Model.batteryEntries(connectedDevices, upowerDevices)
+  // Charge level below which a connected device is considered low.
+  readonly property int lowBatteryThreshold: 20
+  // Addresses already notified at low level, so we do not spam.
+  property var notifiedLowBatteries: ({})
 
   readonly property string icon: {
     if (!adapter) return ""
@@ -298,6 +302,49 @@ Panel {
   function forgetDevice(device) {
     if (!device || !device.address) return
     runDeviceAction(device, "forget", "forgetting")
+  }
+
+  function checkLowBatteries() {
+    var entries = root.batteryDevices || []
+    var next = Model.cloneMap(root.notifiedLowBatteries)
+    var changed = false
+
+    for (var i = 0; i < entries.length; i++) {
+      var entry = entries[i]
+      if (!entry || !entry.address) continue
+      if (entry.percent <= root.lowBatteryThreshold) {
+        if (!root.notifiedLowBatteries[entry.address]) {
+          root.notifyLowBattery(entry)
+          next[entry.address] = true
+          changed = true
+        }
+      } else if (root.notifiedLowBatteries[entry.address]) {
+        delete next[entry.address]
+        changed = true
+      }
+    }
+
+    // drop stale entries for disconnected devices
+    for (var addr in root.notifiedLowBatteries) {
+      var still = false
+      for (var j = 0; j < entries.length; j++) {
+        if (entries[j] && entries[j].address === addr) { still = true; break }
+      }
+      if (!still) { delete next[addr]; changed = true }
+    }
+
+    if (changed) root.notifiedLowBatteries = next
+  }
+
+  function notifyLowBattery(entry) {
+    var label = (entry && entry.label) ? entry.label : "Bluetooth device"
+    var percent = entry ? Math.round(entry.percent) : 0
+    var title = "Low battery: " + label
+    var body = percent + "% remaining"
+    Quickshell.execDetached(["notify-send", "-a", "Bluetooth", "-u", "critical",
+      "-i", "battery-low", title, body])
+    var sound = Quickshell.env("HOME") + "/Music/Audios/low_battery.mp3"
+    Quickshell.execDetached(["mpv", "--no-video", "--really-quiet", "--volume=70", sound])
   }
 
   function syncPendingActions() {
@@ -584,6 +631,17 @@ Panel {
       if (items[i] && items[i] !== root) { items[i].owesDiscoveryStop = true; return }
     }
     if (adapter !== null && adapter.discovering) adapter.discovering = false
+  }
+
+  onBatteryDevicesChanged: root.checkLowBatteries()
+
+  Timer {
+    id: lowBatteryTimer
+    interval: 60000
+    running: true
+    repeat: true
+    triggeredOnStart: true
+    onTriggered: root.checkLowBatteries()
   }
 
   Timer {
