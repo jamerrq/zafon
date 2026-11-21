@@ -8,7 +8,7 @@ function deviceLabel(device) {
 var GLYPHS = {
   headphones: "\u{F02CB}",
   headset: "\u{F02CE}",
-  gamepad: "\u{F0297}",
+  gamepad: "\u{F05BA}",
   keyboard: "\u{F030C}",
   mouse: "\u{F037D}",
   speaker: "\u{F04C3}",
