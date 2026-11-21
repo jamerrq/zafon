@@ -61,7 +61,13 @@ function addressFromText(value) {
 // BlueZ itself only reports battery for devices implementing Battery1, so
 // peripherals such as controllers surface their charge through UPower
 // (hid-playstation et al. register a power supply) instead.
-function upowerPercent(device, upowerDevices) {
+function isCharging(upower) {
+  if (!upower) return false
+  // UPowerDeviceState: Charging = 1, PendingCharge = 5
+  return upower.state === 1 || upower.state === 5
+}
+
+function upowerBattery(device, upowerDevices) {
   var address = normalizedAddress(device && device.address)
   var label = deviceLabel(device).toLowerCase()
   var byModel = null
@@ -73,7 +79,8 @@ function upowerPercent(device, upowerDevices) {
     if (typeof upower.percentage !== "number" || upower.percentage <= 0) continue
 
     var nativePath = String(upower.nativePath || "")
-    if (address !== "" && addressFromText(nativePath) === address) return clampPercent(upower.percentage * 100)
+    if (address !== "" && addressFromText(nativePath) === address)
+      return { percent: clampPercent(upower.percentage * 100), charging: isCharging(upower) }
 
     // Model names collide when two of the same device are paired, so only
     // use one when nothing matched by address.
@@ -81,17 +88,19 @@ function upowerPercent(device, upowerDevices) {
     if (byModel === null && label !== "" && model === label) byModel = upower
   }
 
-  return byModel === null ? null : clampPercent(byModel.percentage * 100)
+  return byModel === null ? null : { percent: clampPercent(byModel.percentage * 100), charging: isCharging(byModel) }
 }
 
 function deviceBattery(device, upowerDevices) {
-  if (!device) return { available: false, percent: 0 }
+  if (!device) return { available: false, percent: 0, charging: false }
   // BlueZ's own Battery1 property when the device implements it.
   if (device.batteryAvailable && typeof device.battery === "number")
-    return { available: true, percent: clampPercent(device.battery * 100) }
+    return { available: true, percent: clampPercent(device.battery * 100), charging: false }
 
-  var percent = upowerPercent(device, upowerDevices)
-  return percent === null ? { available: false, percent: 0 } : { available: true, percent: percent }
+  var result = upowerBattery(device, upowerDevices)
+  return result === null
+    ? { available: false, percent: 0, charging: false }
+    : { available: true, percent: result.percent, charging: result.charging }
 }
 
 function toArray(values) {
@@ -187,6 +196,7 @@ function deviceRow(d, upowerDevices) {
     state: d.state !== undefined ? d.state : -1,
     batteryAvailable: battery.available,
     batteryPercent: battery.percent,
+    batteryCharging: battery.charging,
     pairing: !!d.pairing,
     icon: deviceIcon(d)
   }
@@ -207,7 +217,8 @@ function batteryEntries(devices, upowerDevices) {
       address: d.address || "",
       label: deviceLabel(d),
       icon: deviceIcon(d),
-      percent: battery.percent
+      percent: battery.percent,
+      charging: battery.charging
     })
   }
 

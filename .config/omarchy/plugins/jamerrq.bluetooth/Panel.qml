@@ -65,11 +65,11 @@ Panel {
   // Charge levels (percent) at which a connected device is reported as low.
   // Edit this list to customize the thresholds.
   property var lowBatteryThresholds: [20, 15, 10, 5]
-  // Command used to speak the alert. Defaults to espeak-ng (installed);
-  // swap in piper for a nicer voice, e.g.
-  //   ["piper", "--model", "/usr/share/piper-voices/en/en_US/lessac/medium/en_US-lessac-medium.onnx", "--output_file", "/tmp/low.wav"]
-  // (then play the file) — or any TTS that accepts the text as its last arg.
-  property var ttsCommand: ["espeak-ng"]
+  // Command used to speak the alert. Defaults to the bundled speak-piper.sh
+  // wrapper, which runs Piper (better quality) and plays the result with mpv.
+  // Swap in ["espeak-ng"] for a zero-dependency fallback, or any command that
+  // accepts the spoken text as its last argument.
+  property var ttsCommand: ["/home/jamerrq/.config/omarchy/plugins/jamerrq.bluetooth/speak-piper.sh"]
   // Addresses -> last threshold level notified, so each level fires once.
   property var notifiedLowBatteries: ({})
 
@@ -791,7 +791,7 @@ Panel {
 
         Text {
           textFormat: Text.PlainText
-          text: Commons.I18n.formatNumber(modelData.percent) + "%"
+          text: Commons.I18n.formatNumber(modelData.percent) + "%" + (modelData.charging ? " \u{F0084}" : "")
           color: modelData.percent <= 20 ? root.bar.urgent : root.bar.foreground
           font.family: root.bar.fontFamily
           font.pixelSize: Style.bar.iconFont
@@ -1162,7 +1162,7 @@ Panel {
         id: rowBattery
         visible: row.showBattery
         textFormat: Text.PlainText
-        text: Commons.I18n.formatNumber(row.dev ? row.dev.batteryPercent : 0) + "%"
+        text: Commons.I18n.formatNumber(row.dev ? row.dev.batteryPercent : 0) + "%" + (row.dev && row.dev.batteryCharging ? " \u{F0084}" : "")
         color: row.dev && row.dev.batteryPercent <= 20 ? root.bar.urgent : root.bar.foreground
         font.family: root.bar.fontFamily
         font.pixelSize: Style.font.caption
