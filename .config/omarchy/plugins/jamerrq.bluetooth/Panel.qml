@@ -786,7 +786,7 @@ Panel {
           text: modelData.icon
           color: root.bar.foreground
           font.family: root.bar.fontFamily
-          font.pixelSize: Style.bar.iconFont
+          font.pixelSize: modelData.icon === "\u{F05BA}" ? Style.bar.iconFont + 3 : Style.bar.iconFont
         }
 
         Text {

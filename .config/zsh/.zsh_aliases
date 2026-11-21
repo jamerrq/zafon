@@ -7,6 +7,14 @@ alias zshreload="source $HOME/.zshrc"
 # regenerate grub config
 alias grubmkconfig="sudo grub-mkconfig -o /boot/grub/grub.cfg"
 
+# plugins
+## lock explorer
+test-boot-animation () {
+  local staged
+  staged="$(~/.config/omarchy/plugins/io.github.sirjul1337.lock-explorer/plymouth/apply.sh "$@" --stage-only | tail -n 1)"
+  ~/.config/omarchy/plugins/io.github.sirjul1337.lock-explorer/extras/boot-vm-test.sh "$staged"
+}
+
 # tree
 alias t1="tree -L 1"
 alias t2="tree -L 2"
@@ -45,7 +53,7 @@ alias uvU='uv pip install --upgrade pip'
 alias uvI='uv pip install -r ./requirements.txt'
 alias uvIu='uv pip install --upgrade -r ./requirements.txt'
 
-# wine 
+# wine
 alias wine-ge-8-26="~/.local/share/lutris/runners/wine/wine-ge-8-26-x86_64/bin/wine"
 alias wine-ge="wine-ge-8-26"
 

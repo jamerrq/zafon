@@ -7,7 +7,7 @@
           "format": "ddd d MMM HH:mm",
           "formatAlt": "d MMMM 'W'ww yyyy",
           "id": "omarchy.clock",
-          "verticalFormat": "HH\n—\nmm"
+          "verticalFormat": "HH\n\u2014\nmm"
         }
       ],
       "centerBegin": [
@@ -44,10 +44,7 @@
           "id": "omarchy.tray"
         },
         {
-          "id": "io.github.mrc04d.opencode-go"
-        },
-        {
-          "id": "shaunhawk.nordvpn"
+          "id": "jamerrq.opencode-go"
         },
         {
           "id": "omarchy.keyboard-layout"
@@ -89,10 +86,10 @@
       "id": "jamerrq.osd"
     },
     {
-      "boot": "eyes",
-      "design": "poster",
       "id": "io.github.sirjul1337.lock-explorer",
-      "unlock": "fade"
+      "design": "poster",
+      "unlock": "fade",
+      "boot": "eyes"
     }
   ],
   "version": 1
