@@ -62,9 +62,15 @@ Panel {
   // Connected peripherals reporting a charge — what the bar summarises in
   // place of the plain Bluetooth glyph.
   readonly property var batteryDevices: Model.batteryEntries(connectedDevices, upowerDevices)
-  // Charge level below which a connected device is considered low.
-  readonly property int lowBatteryThreshold: 20
-  // Addresses already notified at low level, so we do not spam.
+  // Charge levels (percent) at which a connected device is reported as low.
+  // Edit this list to customize the thresholds.
+  property var lowBatteryThresholds: [20, 15, 10, 5]
+  // Command used to speak the alert. Defaults to espeak-ng (installed);
+  // swap in piper for a nicer voice, e.g.
+  //   ["piper", "--model", "/usr/share/piper-voices/en/en_US/lessac/medium/en_US-lessac-medium.onnx", "--output_file", "/tmp/low.wav"]
+  // (then play the file) — or any TTS that accepts the text as its last arg.
+  property var ttsCommand: ["espeak-ng"]
+  // Addresses -> last threshold level notified, so each level fires once.
   property var notifiedLowBatteries: ({})
 
   readonly property string icon: {
@@ -304,22 +310,48 @@ Panel {
     runDeviceAction(device, "forget", "forgetting")
   }
 
+  function deviceTypeWord(entry) {
+    var icon = String(entry && entry.icon ? entry.icon : "").toLowerCase()
+    var label = String(entry && entry.label ? entry.label : "").toLowerCase()
+    if (icon.indexOf("gaming") !== -1 || /controller|gamepad|joystick/.test(label)) return "controller"
+    if (icon.indexOf("headset") !== -1 || icon.indexOf("headphone") !== -1
+        || /headphone|headset|earbud|airpod|buds/.test(label)) return "headphones"
+    return "device"
+  }
+
   function checkLowBatteries() {
     var entries = root.batteryDevices || []
+    var thresholds = (root.lowBatteryThresholds || []).slice().sort(function(a, b) { return b - a })
+    if (thresholds.length === 0) return
+
     var next = Model.cloneMap(root.notifiedLowBatteries)
     var changed = false
 
     for (var i = 0; i < entries.length; i++) {
       var entry = entries[i]
       if (!entry || !entry.address) continue
-      if (entry.percent <= root.lowBatteryThreshold) {
-        if (!root.notifiedLowBatteries[entry.address]) {
-          root.notifyLowBattery(entry)
-          next[entry.address] = true
+      var percent = entry.percent
+
+      // recovered above every threshold: re-arm for the next drop
+      if (percent > thresholds[0]) {
+        if (root.notifiedLowBatteries[entry.address] !== undefined) {
+          delete next[entry.address]
           changed = true
         }
-      } else if (root.notifiedLowBatteries[entry.address]) {
-        delete next[entry.address]
+        continue
+      }
+
+      // smallest crossed threshold (most specific level reached)
+      var crossed = null
+      for (var t = thresholds.length - 1; t >= 0; t--) {
+        if (percent <= thresholds[t]) { crossed = thresholds[t]; break }
+      }
+      if (crossed === null) continue
+
+      var last = root.notifiedLowBatteries[entry.address]
+      if (last === undefined || crossed < last) {
+        root.notifyLowBattery(entry, crossed)
+        next[entry.address] = crossed
         changed = true
       }
     }
@@ -336,15 +368,20 @@ Panel {
     if (changed) root.notifiedLowBatteries = next
   }
 
-  function notifyLowBattery(entry) {
+  function notifyLowBattery(entry, threshold) {
     var label = (entry && entry.label) ? entry.label : "Bluetooth device"
+    var typeWord = deviceTypeWord(entry)
     var percent = entry ? Math.round(entry.percent) : 0
     var title = "Low battery: " + label
     var body = percent + "% remaining"
     Quickshell.execDetached(["notify-send", "-a", "Bluetooth", "-u", "critical",
       "-i", "battery-low", title, body])
-    var sound = Quickshell.env("HOME") + "/Music/Audios/low_battery.mp3"
-    Quickshell.execDetached(["mpv", "--no-video", "--really-quiet", "--volume=70", sound])
+
+    var spoken = "low battery, " + typeWord + " is at " + percent + " percent"
+    var cmd = (root.ttsCommand && root.ttsCommand.length)
+      ? root.ttsCommand.slice() : ["espeak-ng"]
+    cmd.push(spoken)
+    Quickshell.execDetached(cmd)
   }
 
   function syncPendingActions() {
