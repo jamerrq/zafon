@@ -204,7 +204,7 @@ Panel {
 
               delegate: UsageBar {
                 required property var modelData
-                label: (modelData.tokens === 0 ? "\u{F0874}  " : "") + modelData.model
+                label: modelData.model
                 value: modelData.tokens
                 max: service.models.length > 0 ? service.models[0].tokens : 1
                 valueText: Model.tokenCount(modelData.tokens) + " tok"
