@@ -59,7 +59,7 @@ function paceText(window, nowMs) {
 function parseCollector(text) {
   try {
     var parsed = JSON.parse(String(text || ""))
-    if (!parsed || typeof parsed !== "object" || parsed.label !== "Go" || typeof parsed.status !== "string") {
+    if (!parsed || typeof parsed !== "object" || (parsed.label !== "Go" && parsed.label !== "OpenCode") || typeof parsed.status !== "string") {
       return { ok: false, error: "Could not parse OpenCode Go usage" }
     }
     var account = {
