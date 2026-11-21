@@ -57,7 +57,7 @@ Panel {
     anchors.fill: parent
     bar: root.bar
     text: "\u{F169D}"
-    tooltipText: "OpenCode Go usage · click for details"
+    tooltipText: "Models Usage · click for details"
     active: root.alarming
     onPressed: function(buttonCode) {
       if (buttonCode === Qt.RightButton || buttonCode === Qt.MiddleButton) root.refresh()
@@ -109,8 +109,8 @@ Panel {
 
           PanelHero {
             width: parent.width
-            title: "OpenCode"
-            meta: service.account && service.account.status === "ok" ? service.account.label : "Free tier"
+            title: "Models Usage"
+            meta: ""
             foreground: root.foreground
             fontFamily: root.fontFamily
             iconComponent: Component {
@@ -121,6 +121,15 @@ Panel {
                 color: root.foreground
               }
             }
+          }
+
+          Text {
+            visible: service.freeResetAt !== ""
+            width: parent.width
+            text: "Free messages reset · " + Model.resetDateLabel(service.freeResetAt)
+            color: root.dim
+            font.family: root.fontFamily
+            font.pixelSize: Style.font.bodySmall
           }
 
           Text {
@@ -145,268 +154,125 @@ Panel {
           PanelSeparator { width: parent.width; foreground: root.foreground }
 
           PanelSectionHeader {
-            visible: service.account && service.account.status === "ok"
-            text: "LIMIT WINDOWS"
+            text: "TOKEN USAGE BY DAY"
             foreground: root.foreground
             fontFamily: root.fontFamily
           }
 
-          AccountCard {
-            visible: service.account && service.account.status === "ok"
-            width: body.width
-            account: service.account
-          }
-
-          Item {
+          Column {
             width: parent.width
-            implicitHeight: Math.max(usageHeader.implicitHeight, usageValue.implicitHeight)
-
-            PanelSectionHeader {
-              id: usageHeader
-              text: "RECENT USAGE"
-              foreground: root.foreground
-              fontFamily: root.fontFamily
-              anchors.left: parent.left
-              anchors.verticalCenter: parent.verticalCenter
-            }
-
-            Text {
-              id: usageValue
-              visible: service.recentDays.length > 0
-              text: Model.tokenCount(Model.recentTotal(service.recentDays)) + " STEPS"
-              color: root.dim
-              font.family: root.fontFamily
-              font.pixelSize: Style.font.caption
-              font.bold: true
-              anchors.right: parent.right
-              anchors.rightMargin: Style.space(6)
-              anchors.verticalCenter: parent.verticalCenter
-            }
-          }
-
-          Row {
-            width: parent.width
-            spacing: Style.space(4)
+            spacing: Style.space(6)
+            visible: service.recentDays.length > 0
 
             Repeater {
               model: service.recentDays
 
-              delegate: Column {
+              delegate: UsageBar {
                 required property var modelData
-                width: (body.width - Style.space(24)) / 7
-
-                Text {
-                  width: parent.width
-                  text: Model.tokenCount(modelData.tokens)
-                  color: root.dim
-                  font.family: root.fontFamily
-                  font.pixelSize: Style.font.caption
-                  horizontalAlignment: Text.AlignHCenter
-                }
-
-                Item {
-                  width: parent.width
-                  height: Style.space(28)
-
-                  Rectangle {
-                    anchors.bottom: parent.bottom
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    width: Style.space(10)
-                    height: parent.height * Model.dayTokens(modelData) / Math.max(1, Model.recentPeak(service.recentDays))
-                    color: root.foreground
-                  }
-                }
-
-                Text {
-                  width: parent.width
-                  text: Model.dayLabel(modelData.date)
-                  color: root.dim
-                  font.family: root.fontFamily
-                  font.pixelSize: Style.font.caption
-                  horizontalAlignment: Text.AlignHCenter
-                }
+                label: Model.dayShort(modelData.date)
+                value: Model.dayTokens(modelData)
+                max: Model.recentPeak(service.recentDays)
+                valueText: Model.tokenCount(modelData.tokens) + " tok"
               }
             }
           }
-          Item {
+
+          Text {
+            visible: service.recentDays.length === 0 && !service.refreshing
             width: parent.width
-            implicitHeight: Math.max(modelsHeader.implicitHeight, modelsValue.implicitHeight)
+            text: "No daily usage yet"
+            color: root.dim
+            font.family: root.fontFamily
+            font.pixelSize: Style.font.caption
+          }
 
-            PanelSectionHeader {
-              id: modelsHeader
-              text: "MODELS"
-              foreground: root.foreground
-              fontFamily: root.fontFamily
-              anchors.left: parent.left
-              anchors.verticalCenter: parent.verticalCenter
-            }
+          PanelSeparator { width: parent.width; foreground: root.foreground }
 
-            Text {
-              id: modelsValue
-              visible: service.models.length > 0
-              text: Model.tokenCount(service.totalTokens) + " TOKENS"
-              color: root.dim
-              font.family: root.fontFamily
-              font.pixelSize: Style.font.caption
-              font.bold: true
-              anchors.right: parent.right
-              anchors.rightMargin: Style.space(6)
-              anchors.verticalCenter: parent.verticalCenter
-            }
+          PanelSectionHeader {
+            text: "TOKEN USAGE BY MODEL"
+            foreground: root.foreground
+            fontFamily: root.fontFamily
           }
 
           Column {
             width: parent.width
-            spacing: Style.space(4)
+            spacing: Style.space(6)
             visible: service.models.length > 0
 
             Repeater {
               model: service.models
 
-              delegate: RowLayout {
+              delegate: UsageBar {
                 required property var modelData
-                width: parent.width
-                spacing: Style.space(6)
-
-                Text {
-                  Layout.fillWidth: true
-                  text: modelData.model + "  (" + modelData.providerID + ")"
-                  color: root.dim
-                  font.family: root.fontFamily
-                  font.pixelSize: Style.font.caption
-                  elide: Text.ElideRight
-                }
-
-                Text {
-                  text: Model.tokenCount(modelData.tokens) + " tok"
-                  color: root.dim
-                  font.family: root.fontFamily
-                  font.pixelSize: Style.font.caption
-                  font.bold: true
-                  horizontalAlignment: Text.AlignRight
-                }
+                label: modelData.model
+                value: modelData.tokens
+                max: service.models.length > 0 ? service.models[0].tokens : 1
+                valueText: Model.tokenCount(modelData.tokens) + " tok"
               }
             }
           }
 
-
+          Text {
+            visible: service.models.length === 0 && !service.refreshing
+            width: parent.width
+            text: "No model usage yet"
+            color: root.dim
+            font.family: root.fontFamily
+            font.pixelSize: Style.font.caption
+          }
         }
       }
     }
   }
 
-  component AccountCard: Column {
-    id: card
-    required property var account
-    readonly property var windows: [
-      { key: "rolling", label: "5h", dollars: 12 },
-      { key: "weekly", label: "Weekly", dollars: 30 },
-      { key: "monthly", label: "Monthly", dollars: 60 }
-    ]
-    spacing: Style.space(6)
+  component UsageBar: Column {
+    required property string label
+    required property real value
+    required property real max
+    required property string valueText
+    width: parent.width
+    spacing: Style.space(3)
 
-    RowLayout {
+    Item {
       width: parent.width
+      implicitHeight: Math.max(nameLabel.implicitHeight, amountLabel.implicitHeight)
 
       Text {
-        Layout.fillWidth: true
-        text: card.account ? card.account.label : "Go"
+        id: nameLabel
+        width: parent.width - Style.space(60)
+        text: label
         color: root.foreground
         font.family: root.fontFamily
-        font.pixelSize: Style.font.subtitle
-        font.bold: true
+        font.pixelSize: Style.font.caption
         elide: Text.ElideRight
       }
-    }
-
-    Repeater {
-      model: card.windows
-
-      delegate: Column {
-        id: windowRow
-        required property var modelData
-        width: card.width
-        spacing: Style.space(2)
-        readonly property var w: Model.normalizeWindow(card.account ? card.account[modelData.key] : null, modelData.key, root.nowMs)
-
-        RowLayout {
-          width: parent.width
-
-          Text {
-            Layout.preferredWidth: Style.space(58)
-            text: modelData.label
-            color: root.dim
-            font.family: root.fontFamily
-            font.pixelSize: Style.font.caption
-          }
-
-          Item { Layout.fillWidth: true }
-
-          Text {
-            Layout.fillWidth: true
-            text: windowRow.w
-              ? Model.percent(windowRow.w.percent) + " · $" + (windowRow.w.limitDollars || modelData.dollars)
-              : (card.account && card.account.status && card.account.status !== "ok" ? card.account.status : "—")
-            color: root.dim
-            font.family: root.fontFamily
-            font.pixelSize: Style.font.caption
-            font.bold: true
-            horizontalAlignment: Text.AlignRight
-            elide: Text.ElideRight
-          }
-        }
-
-        Rectangle {
-          width: parent.width
-          height: Style.space(5)
-          radius: height / 2
-          color: Qt.rgba(root.foreground.r, root.foreground.g, root.foreground.b, 0.22)
-
-          Rectangle {
-            width: parent.width * (windowRow.w ? windowRow.w.percent : 0)
-            height: parent.height
-            radius: parent.radius
-            color: modelData.key === "weekly" && Model.behindPace(windowRow.w, root.nowMs) ? root.urgent : root.foreground
-
-            Behavior on width { NumberAnimation { duration: 320; easing.type: Easing.OutCubic } }
-            Behavior on color { ColorAnimation { duration: 60 } }
-          }
-        }
-
-        Text {
-          visible: !!windowRow.w
-          width: parent.width
-          text: windowRow.w ? "resets " + Model.countdown(windowRow.w.resetMs, root.nowMs) : ""
-          color: root.dim
-          font.family: root.fontFamily
-          font.pixelSize: Style.font.caption
-        }
-      }
-    }
-
-    RowLayout {
-      id: paceRow
-      width: card.width
-      visible: !!paceRow.weekly && paceRow.weekly.resetMs > 0
-      readonly property var weekly: Model.normalizeWindow(card.account ? card.account.weekly : null, "weekly", root.nowMs)
 
       Text {
-        Layout.fillWidth: true
-        text: paceRow.weekly ? Model.paceText(paceRow.weekly, root.nowMs) : ""
-        color: Model.behindPace(paceRow.weekly, root.nowMs) ? root.urgent : root.dim
-        font.family: root.fontFamily
-        font.pixelSize: Style.font.caption
-      }
-
-      Text {
-        visible: !!paceRow.weekly
-        text: paceRow.weekly ? "Expected " + Model.percent(1 - Model.expectedRemaining(paceRow.weekly, root.nowMs)) + " used" : ""
+        id: amountLabel
+        anchors.right: parent.right
+        text: valueText
         color: root.dim
         font.family: root.fontFamily
         font.pixelSize: Style.font.caption
+        font.bold: true
       }
     }
 
-    PanelSeparator { width: parent.width; foreground: root.foreground }
+    Rectangle {
+      width: parent.width
+      height: Style.space(5)
+      radius: height / 2
+      color: Qt.rgba(root.foreground.r, root.foreground.g, root.foreground.b, 0.22)
+
+      Rectangle {
+        width: parent.width * (max > 0 ? Math.min(1, value / max) : 0)
+        height: parent.height
+        radius: parent.radius
+        color: root.foreground
+
+        Behavior on width { NumberAnimation { duration: 320; easing.type: Easing.OutCubic } }
+      }
+    }
   }
+
 }

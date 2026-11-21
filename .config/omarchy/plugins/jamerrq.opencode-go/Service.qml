@@ -12,6 +12,7 @@ Item {
   property int totalTokens: 0
   property int totalSteps: 0
   property int sessions: 0
+  property string freeResetAt: ""
   property bool refreshing: false
   property string lastError: ""
   property date lastUpdated: new Date(0)
@@ -66,6 +67,7 @@ Item {
       root.totalTokens = parsed.data.totalTokens
       root.totalSteps = parsed.data.totalSteps
       root.sessions = parsed.data.sessions
+      root.freeResetAt = parsed.data.freeResetAt
       root.lastError = parsed.data.error
       root.lastUpdated = new Date()
     }

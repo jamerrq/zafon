@@ -79,6 +79,7 @@ function parseCollector(text) {
         totalTokens: number(parsed.totalTokens, 0),
         totalSteps: number(parsed.totalSteps, 0),
         sessions: number(parsed.sessions, 0),
+        freeResetAt: String(parsed.freeResetAt || ""),
         updatedAt: String(parsed.updatedAt || ""),
         error: String(parsed.error || "")
       }
@@ -135,6 +136,26 @@ function dayLabel(value) {
   return ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][date.getDay()]
 }
 
+function dayShort(value) {
+  var match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(value || ""))
+  if (!match) return "—"
+  var date = new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3]))
+  return ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][date.getDay()] + " " + Number(match[3])
+}
+
+function resetDateLabel(value) {
+  var ms = Date.parse(String(value || ""))
+  if (!isFinite(ms)) return ""
+  var date = new Date(ms)
+  var hour = date.getHours()
+  var suffix = hour >= 12 ? "PM" : "AM"
+  var hour12 = hour % 12
+  if (hour12 === 0) hour12 = 12
+  var minute = String(date.getMinutes())
+  while (minute.length < 2) minute = "0" + minute
+  return ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][date.getDay()] + " " + hour12 + ":" + minute + " " + suffix
+}
+
 var exportsObject = {
   ROLLING_MS: ROLLING_MS,
   WEEK_MS: WEEK_MS,
@@ -152,7 +173,9 @@ var exportsObject = {
   dayTokens: dayTokens,
   recentTotal: recentTotal,
   recentPeak: recentPeak,
-  dayLabel: dayLabel
+  dayLabel: dayLabel,
+  dayShort: dayShort,
+  resetDateLabel: resetDateLabel
 }
 
 if (typeof module !== "undefined" && module.exports) module.exports = exportsObject
