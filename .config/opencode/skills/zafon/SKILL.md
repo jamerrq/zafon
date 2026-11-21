@@ -107,6 +107,10 @@ Personal config tracked outside that directory: `.config/hypr/zafon.lua`,
   `{ launch = "...", focus = "..." }`. **Don't unbind Omarchy defaults** — move
   the personal binding to a free chord so `omarchy menu keybindings --print`
   stays accurate (`omarchy-menu-keybindings -p | grep -i <thing>`).
+  **Known conflict:** `SUPER + ALT + L` is stock "Cycle workspace layout back"
+  (`/usr/share/omarchy/default/hypr/bindings/tiling.lua`); binding it to
+  something else (e.g. Lock Screen Explorer) makes both fire. Use a free chord
+  instead — Lock Screen Explorer lives on `SUPER + ALT + O`."
 - Window rules: prefer declarative `o.window("class", { float = true, center = true })`.
   `size` wants a **table**: `size = { "(monitor_w/2)", "(monitor_h/2)" }`;
   a string parses and is silently ignored.

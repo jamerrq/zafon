@@ -311,9 +311,10 @@ o.bind("SUPER + Super_R", "Swallow bare SUPER (PES 2013 leaves fullscreen)", fun
 local CF_LEFT_RATIO = 0.65
 local CF_EDITOR_RATIO = 0.52
 
--- Browser left, nvim top right, everything else bottom right. "Everything
--- else" is normally the run terminal (foot, or the app-id that
--- cf-workspace.sh gives it); a man page or a second shell stacks there too.
+-- Browser left, nvim top right, the terminal this script launches bottom
+-- right. Anything else on the workspace is left out of the arrangement: the
+-- layout must not pull an unrelated foot (an opencode session, say) into a
+-- pane just because it happens to be tiled there.
 local function cf_pane(target)
   local class = target.window and target.window.class or ""
 
@@ -321,9 +322,11 @@ local function cf_pane(target)
     return 1
   elseif class:match("org%.omarchy%.nvim") then
     return 2
+  elseif class:match("org%.omarchy%.cf%-terminal") then
+    return 3
   end
 
-  return 3
+  return nil
 end
 
 -- Place a group of targets side by side in one box without leaving a gap.
@@ -348,8 +351,10 @@ hl.layout.register("codeforces", {
 
     for _, target in ipairs(ctx.targets) do
       local pane = cf_pane(target)
-      local group = pane == 1 and browser or pane == 2 and editor or other
-      group[#group + 1] = target
+      if pane then
+        local group = pane == 1 and browser or pane == 2 and editor or other
+        group[#group + 1] = target
+      end
     end
 
     -- Closing the browser gives its column back to the editor and terminal
@@ -372,15 +377,20 @@ hl.layout.register("codeforces", {
   end,
 })
 
--- Workspace 3 on the daily monitor is the Codeforces one. A one-off layout
--- change (SUPER + L, or cf-workspace.sh --here on another workspace) overrides
--- this for the session; a reload brings the rule back.
-hl.workspace_rule({ workspace = "3", layout = "lua:codeforces" })
+-- No permanent layout rule for workspace 3. Hyprland 0.57 only gives a custom
+-- Lua layout a recalculate() callback: it can place windows, but it never sees
+-- mouse resizes or layout messages such as "togglesplit". Pinning workspace 3
+-- to lua:codeforces therefore made SUPER + right-drag and SUPER + J silently
+-- dead there for the whole session. cf-workspace.sh now opts the workspace into
+-- this layout only when it builds the Codeforces panes, so day-to-day workspace
+-- 3 stays ordinary dwindle and remains resizable. Switch back with SUPER + L
+-- (cycle layout) when the Codeforces arrangement is no longer wanted.
 
 
 -- ---------------------------------------------------------------------------
 -- Added plugins
 
--- Lock Screen Explorer
-o.bind("SUPER + ALT + L", "Lock screen explorer", "omarchy-shell lock explore")
+-- Lock Screen Explorer (moved off SUPER + ALT + L, which is Omarchy's
+-- "Cycle workspace layout back"; see zafon skill Hyprland notes)
+o.bind("SUPER + ALT + O", "Lock screen explorer", "omarchy-shell lock explore")
 
