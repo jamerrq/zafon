@@ -18,17 +18,6 @@ set -u
 conf="${XDG_CONFIG_HOME:-$HOME/.config}/game-dock/games.conf"
 self="$(readlink -f "$0")"
 
-# No controlling terminal (e.g. launched from a Hyprland keybind): open the
-# menu in its own small window. foot sets the app-id, which zafon.lua floats
-# and centres.
-if [[ ! -t 0 ]]; then
-  # 13 rows: the header, list and prompt need all of them. At 12 the first
-  # line (the top border) scrolled out of view as soon as "Launch:" printed.
-  exec foot --app-id=game-dock --title=Games \
-    --window-size-chars=46x13 \
-    -e "$self" "$@"
-fi
-
 if [[ ! -r "$conf" ]]; then
   printf 'game-dock: missing %s\n' "$conf" >&2
   printf 'Create it with lines like:  PES 2013|%s lutris:rungameid/5\n' \
@@ -48,6 +37,17 @@ n=${#labels[@]}
 if (( n == 0 )); then
   printf 'game-dock: no games in %s\n' "$conf" >&2
   exit 1
+fi
+
+# No controlling terminal (e.g. launched from a Hyprland keybind): open the
+# menu in its own small window. foot sets the app-id, which zafon.lua floats
+# and centres. Size it from the entry count: three header lines, the list,
+# and four prompt/blank lines. A fixed height scrolled the top rule away as
+# soon as a sixth game was added.
+if [[ ! -t 0 ]]; then
+  exec foot --app-id=game-dock --title=Games \
+    --window-size-chars="46x$((n + 8))" \
+    -e "$self" "$@"
 fi
 
 # Build the header from one width so the rules and both side borders line up.
