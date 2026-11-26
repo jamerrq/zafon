@@ -1,0 +1,56 @@
+#!/bin/bash
+# Post-update hook: keep the locally built disktree in sync with upstream,
+# and tell me when the omarchy package has caught up so I can switch back.
+#
+# Installed by: ~/.config/omarchy/hooks/post-update.d/disktree-update
+# (runs as part of `omarchy-hook post-update` after every `omarchy update`)
+
+REPO="$HOME/dev/disktree"
+LOG=/tmp/disktree-post-update.log
+NOTIFY() { command -v omarchy-notification-send >/dev/null 2>&1 && omarchy-notification-send "$@"; }
+
+# 1. Rebuild from upstream when it has moved ahead of the local checkout.
+if [[ -d "$REPO/.git" ]]; then
+  nohup bash -c '
+    set -u
+    REPO="$1"; LOG="$2"
+    cd "$REPO" || exit 0
+    git fetch --quiet origin main 2>>"$LOG" || exit 0
+    behind=$(git rev-list --count HEAD..origin/main 2>/dev/null || echo 0)
+    [[ "$behind" -gt 0 ]] || exit 0
+    # Do not clobber a dirty working tree.
+    if [[ -n $(git status --porcelain 2>/dev/null) ]]; then
+      omarchy-notification-send -u normal "disktree update skipped" \
+        "Local checkout has uncommitted changes; pull manually." 2>/dev/null || true
+      exit 0
+    fi
+    if git pull --ff-only --quiet origin main >>"$LOG" 2>&1; then
+      if make install >>"$LOG" 2>&1; then
+        omarchy-notification-send -u low "disktree rebuilt" \
+          "Pulled $behind commit(s) from upstream and reinstalled." 2>/dev/null || true
+      else
+        omarchy-notification-send -u critical "disktree rebuild failed" \
+          "See $LOG" 2>/dev/null || true
+      fi
+    else
+      omarchy-notification-send -u critical "disktree pull failed" \
+        "See $LOG" 2>/dev/null || true
+    fi
+  ' _ "$REPO" "$LOG" >>"$LOG" 2>&1 &
+  disown
+fi
+
+# 2. If omarchy now ships a version that includes the font work, I can
+#    drop the local build and go back to the package.
+if command -v pacman >/dev/null 2>&1 && pacman -Q disktree-bin >/dev/null 2>&1; then
+  pkgver=$(pacman -Q disktree-bin 2>/dev/null | awk "{print \$2}")
+  if command -v vercmp >/dev/null 2>&1 && [[ -n "$pkgver" ]]; then
+    if (( $(vercmp "$pkgver" "1.0.0") >= 0 )); then
+      NOTIFY -u normal "disktree: switch back available" \
+        "omarchy now ships disktree $pkgver. Run: cd $REPO && make uninstall"
+    fi
+  fi
+fi
+
+exit 0
+" path="/home/jamerrq/.config/omarchy/hooks/post-update.d/disktree-update
